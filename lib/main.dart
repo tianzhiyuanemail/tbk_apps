@@ -1,88 +1,100 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
-import 'open_page.dart';
-import 'login_page.dart';
+import 'package:flutter/services.dart';
+import 'package:provide/provide.dart';
+import 'package:tbk_app/pages/splash/splash_widget.dart';
+import 'package:tbk_app/provide/child_cate.dart';
+import 'package:fluro/fluro.dart';
+import 'package:tbk_app/router/routers.dart';
+import 'package:tbk_app/router/application.dart';
 import 'package:nautilus/nautilus.dart' as nautilus;
-void main() => runApp(MyApp());
 
-class MyApp extends StatefulWidget {
-  @override
-  _MyAppState createState() => _MyAppState();
-}
+void main() {
+  var childCate  = ChildCate();
 
-class _MyAppState extends State<MyApp> {
+  /// 初始化 状态
+  var providers = Providers();
+  providers
+    ..provide(Provider<ChildCate>.value(childCate))
+  ;
+  /// 强制竖屏
+  SystemChrome.setPreferredOrientations([
+    DeviceOrientation.portraitUp,
+    DeviceOrientation.portraitDown
+  ]);
 
-  @override
-  void initState() {
-    super.initState();
+  /// 设置Android头部的导航栏透明
+  if(Platform.isAndroid){
+    SystemUiOverlayStyle style = new SystemUiOverlayStyle(statusBarColor: Colors.transparent);
+    SystemChrome.setSystemUIOverlayStyle(style);
   }
 
 
+  nautilus.initTradeAsync(debuggable: false).then((data){
+    print("初始化淘宝客结果：${data.isSuccessful}");
+  });
+  runApp(ProviderNode(child: MyApp(),providers: providers,));
+
+
+}
+
+class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      routes:<String, WidgetBuilder>{
-        "Login":(context)=> LoginPage(),
-        "OpenPage":(context)=>OpenByPage()
-      },
-      home: Scaffold(
-        appBar: AppBar(
-          title: const Text('Plugin example app'),
+
+    /// 初始化路由
+    final router = Router();
+    Routers.configureRouters(router);
+    Application.router = router;
+
+    return new RestartWidget(
+      child: MaterialApp(
+        onGenerateRoute: Application.router.generator,
+        debugShowCheckedModeBanner: false,
+        theme: ThemeData(backgroundColor: Colors.white),
+        home: Scaffold(
+          resizeToAvoidBottomPadding: false,
+          body: SplashWidget(),
         ),
-        body:HomeBody()
       ),
-    );
+    ) ;
   }
 }
 
-class HomeBody extends StatefulWidget {
-  @override
-  HomeBodyState createState() {
-    return new HomeBodyState();
+
+///这个组件用来重新加载整个child Widget的。当我们需要重启APP的时候，可以使用这个方案
+///https://stackoverflow.com/questions/50115311/flutter-how-to-force-an-application-restart-in-production-mode
+class RestartWidget extends StatefulWidget {
+
+  final Widget child;
+  RestartWidget({Key key, @required this.child}): assert(child != null), super(key: key);
+
+  static restartApp(BuildContext context) {
+    final _RestartWidgetState state = context.ancestorStateOfType(const TypeMatcher<_RestartWidgetState>());
+    state.restartApp();
   }
+
+  @override
+  _RestartWidgetState createState() => _RestartWidgetState();
+
 }
 
-class HomeBodyState extends State<HomeBody> {
+class _RestartWidgetState extends State<RestartWidget> {
+  Key key = UniqueKey();
 
-  String _initTradeServiceResult="初始化结果：";
-  @override
-  void initState() {
-    super.initState();
-    initTradeService();
-  }
-
-  void initTradeService(){
-    nautilus.initTradeAsync(debuggable: false).then((data){
-      setState(() {
-        _initTradeServiceResult ="初始化结果：${data.isSuccessful}";
-      });
+  void restartApp() {
+    setState(() {
+      key = UniqueKey();
     });
   }
+
   @override
   Widget build(BuildContext context) {
-    return  ListView(
-      children: <Widget>[
-        Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: new Text(_initTradeServiceResult)),
-        Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: new OutlineButton(
-              onPressed: () {
-                Navigator.of(context).pushNamed("Login");
-              },
-              child: const Text("Login with Taobao")),
-        ),
-        Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: new OutlineButton(
-              onPressed: () {
-                Navigator.of(context).pushNamed("OpenPage");
-              },
-              child: const Text("Open Page")),
-        )
-      ],
+    return Container(
+      key: key,
+      child: widget.child,
     );
   }
 }
-

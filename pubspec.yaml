@@ -23,10 +23,30 @@ dependencies:
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.
   cupertino_icons: ^0.1.2
+  dio: ^2.0.9
+  #  适配
+  flutter_swiper: ^1.1.4
+  #  打电话
+  flutter_screenutil: ^0.5.1
+  #  上拉加载 下拉刷新
+  flutter_easyrefresh: ^1.2.7
+  #  拨打电话
+  url_launcher: ^5.0.1
+  #  状态
+  provide: ^1.0.2
+  #  阿里百川电商Flutter插件
   nautilus:
     git:
       url: https://github.com/tianzhiyuanemail/nautilus.git
 
+
+  #  富文本
+  flutter_html_widget:
+    git:
+      url: https://github.com/tianzhiyuanemail/flutter_html_widget.git
+
+  #  路由配置
+  fluro: "^1.4.0"
 dev_dependencies:
   flutter_test:
     sdk: flutter
