@@ -21,4 +21,21 @@ class Constant {
 
   static String URL_MP4_DEMO_1 = 'http://vt1.doubanio.com/201903032315/702b9ad25c0da91e1c693e5e4dc5a86e/view/movie/M/302430864.mp4';
 
+
+
+
+  static const String keyLanguage = 'key_language';
+
+  static const int status_success = 0;
+
+  static const String server_address = wan_android;
+
+  static const String wan_android = "https://www.wanandroid.com/";
+
+  static const int type_sys_update = 1;
+  static const int type_refresh_all = 5;
+
+  static const String key_theme_color = 'key_theme_color';
+  static const String key_guide = 'key_guide';
+  static const String key_splash_model = 'key_splash_models';
 }

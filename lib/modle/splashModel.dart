@@ -1,0 +1,6 @@
+class splashModel{
+
+
+  String image;
+
+}

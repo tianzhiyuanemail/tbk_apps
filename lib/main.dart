@@ -3,12 +3,13 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provide/provide.dart';
-import 'package:tbk_app/pages/splash/splash_widget.dart';
 import 'package:tbk_app/provide/child_cate.dart';
 import 'package:fluro/fluro.dart';
 import 'package:tbk_app/router/routers.dart';
 import 'package:tbk_app/router/application.dart';
 import 'package:nautilus/nautilus.dart' as nautilus;
+
+import 'pages/splash/splash_page.dart';
 
 void main() {
   var childCate  = ChildCate();
@@ -56,7 +57,7 @@ class MyApp extends StatelessWidget {
         theme: ThemeData(backgroundColor: Colors.white),
         home: Scaffold(
           resizeToAvoidBottomPadding: false,
-          body: SplashWidget(),
+          body: SplashPage(),
         ),
       ),
     ) ;
