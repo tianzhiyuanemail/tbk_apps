@@ -6,6 +6,8 @@ import 'router_handler.dart';
 class Routers {
   static String root = '/';
   static String detailsPage = '/detail';
+  static String searchPage = '/searchPagee';
+  static String searchProductListPage = '/searchProductListPage';
 
   static void configureRouters(Router router){
 
@@ -15,10 +17,13 @@ class Routers {
         print("没有路由");
       }
     );
-    /// 配置路由
-      router.define(detailsPage, handler: detailsHandler);
-      router.define(root, handler: rootHandler);
 
+
+    /// 配置路由
+    router.define(detailsPage, handler: detailsHandler);
+    router.define(searchPage, handler: searchPageHandler);
+    router.define(searchProductListPage, handler: searchProductListPageHandler);
+    router.define(root, handler: rootHandler);
   }
 
 }

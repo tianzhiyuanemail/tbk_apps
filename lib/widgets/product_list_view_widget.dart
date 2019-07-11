@@ -2,13 +2,12 @@
  * Copyright (C) 2019 Baidu, Inc. All Rights Reserved.
  */
 
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:tbk_app/router/application.dart';
 import 'package:tbk_app/router/routers.dart';
-import 'package:nautilus/nautilus.dart' as nautilus;
-import 'package:nautilus/nautilus.dart' ;
 
 /// Sliver 商品列表  SliverGrid
 class SliverProductListSliverGrid extends StatelessWidget {
@@ -18,12 +17,11 @@ class SliverProductListSliverGrid extends StatelessWidget {
   SliverProductListSliverGrid({Key key,this.list}):super(key : key);
 
   /// 商品列表 双列构造
-  List<Widget> _getListVidget(){
+  List<Widget> _getListVidget(BuildContext context){
     return list.map((obj){
       return  InkWell(
         onTap: () {
-
-
+          Application.router.navigateTo(context,Routers.detailsPage+"?id="+obj['numIid'].toString() );
         },
         child: Container(
           color: Colors.white,
@@ -54,14 +52,14 @@ class SliverProductListSliverGrid extends StatelessWidget {
       );
     }).toList();
   }
-  Widget _List() {
+  Widget _List(BuildContext context) {
     if (list.length != 0) {
       return SliverGrid.count(
           crossAxisCount: 2, //横轴数量
           crossAxisSpacing: 1.0,//横轴间距
           mainAxisSpacing: 1.0,//纵轴间距
           childAspectRatio: 0.75,//横纵比例 长宽只能这个属性设置
-          children: _getListVidget(),
+          children: _getListVidget(context),
       );
     } else {
       return SliverToBoxAdapter(
@@ -73,12 +71,12 @@ class SliverProductListSliverGrid extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      child: _List(),
+      child: _List(context),
     );
   }
 }
 
-/// Sliver 商品列表 GridView
+///  商品列表 GridView
 class ProductListGridView extends StatelessWidget {
 
   final List list;
@@ -98,7 +96,7 @@ class ProductListGridView extends StatelessWidget {
           margin: EdgeInsets.only(bottom: 3),
           child: Column(
             children: <Widget>[
-              Image.network(obj['pictUrl'], width: ScreenUtil().setWidth(370)),
+              Image(image: CachedNetworkImageProvider(obj['pictUrl']), width: ScreenUtil().setWidth(370)),
               Text(
                 obj['title'],
                 style: TextStyle(
@@ -147,8 +145,7 @@ class ProductListGridView extends StatelessWidget {
   }
 }
 
-
-/// Sliver 商品列表 ListView
+///  商品列表 ListView
 class ProductListListView extends StatelessWidget {
 
   final List list;
@@ -156,17 +153,19 @@ class ProductListListView extends StatelessWidget {
   ProductListListView({Key key,this.list}):super(key : key);
 
   /// 商品列表 单列构造
-  List<Widget> _getListWidget(){
+  List<Widget> _getListWidget(BuildContext context){
     return list.map((obj){
       return  InkWell(
-        onTap: () {},
+        onTap: () {
+          Application.router.navigateTo(context,Routers.detailsPage+"?id="+obj['numIid'].toString() );
+        },
         child: Container(
           color: Colors.white,
           padding: EdgeInsets.all(5),
           margin: EdgeInsets.only(bottom: 3),
           child: Column(
             children: <Widget>[
-              Image.network(obj['pictUrl'], width: ScreenUtil().setWidth(370)),
+              Image(image: CachedNetworkImageProvider(obj['pictUrl']), width: ScreenUtil().setWidth(370)),
               Text(
                 obj['title'],
                 style: TextStyle(
@@ -191,7 +190,7 @@ class ProductListListView extends StatelessWidget {
   }
 
 
-  Widget _List() {
+  Widget _List(BuildContext context) {
     if (list.length != 0) {
       return GridView.count(
         shrinkWrap:true,
@@ -200,7 +199,7 @@ class ProductListListView extends StatelessWidget {
         crossAxisSpacing: 1.0,//横轴间距
         mainAxisSpacing: 1.0,//纵轴间距
         childAspectRatio: 0.75,//横纵比例 长宽只能这个属性设置
-        children: _getListWidget(),
+        children: _getListWidget(context),
       );
     } else {
       return Text("正在加载");
@@ -210,7 +209,7 @@ class ProductListListView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      child: _List(),
+      child: _List(context),
     );
   }
 }

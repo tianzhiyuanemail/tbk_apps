@@ -11,3 +11,4 @@ class TabItem{
   TabItem(this.name,this.cateId,this.img,this.isName);
 
 }
+

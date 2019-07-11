@@ -8,10 +8,10 @@ import 'package:tbk_app/config/service_method.dart';
 import 'package:tbk_app/config/service_url.dart';
 import 'package:tbk_app/modle/tab_item_modle.dart';
 import 'package:tbk_app/pages/home/tab_bar_view.dart';
+import 'package:tbk_app/router/application.dart';
+import 'package:tbk_app/router/routers.dart';
 import 'package:tbk_app/widgets/search_text_field_widget.dart';
 import 'dart:math' as math;
-
-
 
 /// 首页
 class HomePage extends StatefulWidget {
@@ -24,7 +24,10 @@ class HomePage extends StatefulWidget {
 /// 首页 state
 class _BookAudioVideoPageState extends State<HomePage>
     with SingleTickerProviderStateMixin {
-  List<TabItem> titleList = [TabItem("首页", "","", true), TabItem("618", "","", true)];
+  List<TabItem> titleList = [
+    TabItem("首页", "", "", true),
+    TabItem("618", "", "", true)
+  ];
   List<Widget> tabList = [];
   int tabsLength = 12;
 
@@ -80,7 +83,11 @@ class _BookAudioVideoPageState extends State<HomePage>
             ),
             title: SearchTextFieldWidget(
               hintText: "搜索什么",
+              onTab: () {
+                Application.router.navigateTo(context, Routers.searchPage);
+              },
             ),
+
             actions: <Widget>[
               IconButton(
                 color: Colors.black54,
@@ -112,7 +119,8 @@ class _BookAudioVideoPageState extends State<HomePage>
           body: new Container(
             color: Colors.white,
             child: new SafeArea(
-              child: FlutterTabBarView(tabController: tabController, titleList: titleList),
+              child: FlutterTabBarView(
+                  tabController: tabController, titleList: titleList),
             ),
           ),
         ));
@@ -122,10 +130,12 @@ class _BookAudioVideoPageState extends State<HomePage>
     getHttpRes('cateListByPid', 'parentId=0').then((val) {
       setState(() {
         List cateList = val['data'] as List;
+
         titleList.addAll(cateList
             .map((cate) => TabItem(cate['tbkName'].toString(),
-            cate['cateId'].toString(),"", true))
-            .toList().sublist(0,10));
+                cate['cateId'].toString(), "", true))
+            .toList()
+            .sublist(0, 10));
 
         tabList = titleList
             .map((tabItem) => tabItem.isName
