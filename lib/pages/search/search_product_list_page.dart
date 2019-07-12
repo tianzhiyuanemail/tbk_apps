@@ -1,19 +1,19 @@
 /*
  * Copyright (C) 2019 Baidu, Inc. All Rights Reserved.
  */
-import 'dart:math' as math;
-
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_easyrefresh/easy_refresh.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:tbk_app/config/service_method.dart';
+import 'package:tbk_app/modle/sort_modle.dart';
 import 'package:tbk_app/router/application.dart';
 import 'package:tbk_app/util/easy_refresh_util.dart';
+import 'package:tbk_app/util/map_url_params_utils.dart';
 import 'package:tbk_app/widgets/back_top_widget.dart';
 import 'package:tbk_app/widgets/product_list_view_widget.dart';
+import 'package:tbk_app/widgets/product_silvrs_sort_static_bar_widget.dart';
 
 class SearchProductListPage extends StatefulWidget {
   String searchText;
@@ -34,23 +34,11 @@ class _SearchProductListPage extends State<SearchProductListPage>
 
   bool showToTopBtn = false; //是否显示“返回到顶部”按钮
   List goodsList = [];
-  int page = 0;
-
-
-
+  int page = 1;
   /// 排序相关
-  String s1 = "total_sales";
-  String s2 = "_des";
-//  排序_des（降序），排序_asc（升序），
-//  销量（total_sales）， 人气（tk_total_sales），价格（price）
-  String up = "_des";
-  String down = "_asc";
-  String total_sales = "total_sales";
-  String price = "price";
-  /// 排序相关
+  SortModle _sortModle = new SortModle();
+  String searchText;
 
-  @override
-  bool get wantKeepAlive => true;
 
   @override
   void initState() {
@@ -70,14 +58,39 @@ class _SearchProductListPage extends State<SearchProductListPage>
       }
     });
 
+    searchText = widget.searchText;
     super.initState();
   }
 
-  @override
-  void dispose() {
-    ///为了避免内存泄露，需要调用_controller.dispose
-    _controller.dispose();
-    super.dispose();
+  void _getGoods() {
+
+    Map<String, Object> map  = Map();
+    map["query"] = searchText == null ? widget.searchText : searchText;
+    map["pageNo"] = page;
+    map["sort"] = _sortModle.s1+_sortModle.s2;
+
+    getHttpRes('getProductList', MapUrlParamsUtils.getUrlParamsByMap(map)).then((val) {
+      if(val["success"]){
+        List list = val['data'];
+        setState(() {
+          if (page == 1){
+            goodsList = list;
+          }else{
+            goodsList.addAll(list);
+          }
+          page++;
+        });
+      }else{
+
+        setState(() {
+          print(val["message"]);
+          goodsList = List();
+          page  = 1;
+        });
+      }
+
+    });
+
   }
 
   @override
@@ -110,11 +123,18 @@ class _SearchProductListPage extends State<SearchProductListPage>
           alignment: AlignmentDirectional.center,
           height: 30.0,
           decoration: BoxDecoration(
-              color: Color.fromARGB(255, 237, 236, 237),
-              borderRadius: BorderRadius.circular(24.0),),
+            color: Color.fromARGB(255, 237, 236, 237),
+            borderRadius: BorderRadius.circular(24.0),
+          ),
           child: TextField(
-            onTap: () {},
-            onSubmitted: (s) {},
+            onSubmitted: (val) {
+              this.setState(() {
+                this.searchText = val;
+                this.page = 1;
+                _getGoods();
+              });
+            },
+            controller: TextEditingController(text: this.searchText),
             autofocus: true,
             maxLines: 1,
             keyboardType: TextInputType.text,
@@ -122,11 +142,6 @@ class _SearchProductListPage extends State<SearchProductListPage>
             decoration: InputDecoration(
                 contentPadding: const EdgeInsets.only(top: 8.0),
                 border: InputBorder.none,
-                hintText: widget.searchText,
-                hintStyle: TextStyle(
-                  fontSize: 17,
-                  color: Color.fromARGB(255, 192, 191, 191),
-                ),
                 prefixIcon: Container(
                   margin: EdgeInsets.only(top: 3),
                   child: Icon(
@@ -148,153 +163,39 @@ class _SearchProductListPage extends State<SearchProductListPage>
           _getGoods();
         },
         onRefresh: () async {
-          getHomePageGoods(1).then((val) {
-            List swiper = val['data'];
-            setState(() {
-              goodsList = swiper;
-              page = 1;
-            });
+          setState(() {
+            page = 1;
           });
+          _getGoods();
         },
         child: CustomScrollView(
           controller: _controller,
           slivers: <Widget>[
-            _buildStickyBar(),
-            SliverProductListSliverGrid(list: goodsList),
+            SliverSortStaticyBar.buildStickyBar(_sortModle,
+                (SortModle sortModle) {
+              setState(() {
+                _sortModle = sortModle;
+                page = 1;
+              });
+              _getGoods();
+            }),
+            SliverProductList(
+              list: goodsList,
+              crossAxisCount: _sortModle.crossAxisCount,
+            ),
           ],
         ),
       ),
     );
   }
 
-
-
-
-  Widget _buildStickyBar() {
-    return SliverPersistentHeader(
-      pinned: true, //是否固定在顶部
-      floating: true,
-      delegate: _SliverAppBarDelegate(
-        maxHeight: 30.0,
-        minHeight: 30.0,
-        child: Container(
-          padding: EdgeInsets.only(left: 20, right: 20),
-          alignment: Alignment.centerLeft,
-          decoration: BoxDecoration(
-            color: Colors.white,
-            border: Border(
-              top: BorderSide(color: Colors.black12, width: 0.1),
-              bottom: BorderSide(color: Colors.black12, width: 0.1),
-            ),
-          ),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: <Widget>[
-              InkWell(
-                onTap: () {
-                  setState(() {
-                    s1 = total_sales;
-                    s2 = s2 == up ? down : up;
-                  });
-                },
-                child: Container(
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: <Widget>[
-                      Text("销量",style: TextStyle(color: s1 == total_sales? Colors.redAccent:null),),
-                      Icon(
-                        (s1+s2) == total_sales+up
-                            ? Icons.keyboard_arrow_up
-                            : Icons.keyboard_arrow_down,
-                        color: s1 == total_sales? Colors.redAccent:null,
-                        size: 22,
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-              InkWell(
-                onTap: () {
-                  setState(() {
-                    s1 = price;
-                    s2 = s2 == up ? down : up;
-                  });
-                },
-                child: Container(
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: <Widget>[
-                      Text("价格",style: TextStyle(color: s1 == price? Colors.redAccent:null),),
-                      Icon(
-                        s1+s2 == price+up
-                            ? Icons.keyboard_arrow_up
-                            : Icons.keyboard_arrow_down,
-                        color: s1 == price? Colors.redAccent:null,
-                        size: 22,
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-              InkWell(
-                  onTap: () {
-                    setState(() {
-                      s1 = total_sales;
-                      s2 = s2 == up ? down : up;
-                    });
-                  },
-                  child: Container(
-                    child: Icon(
-                      s2 == up ? Icons.list : Icons.list,
-                      color: s1 == price? Colors.redAccent:null,
-                      size: 22,
-                    ),
-                  ))
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-
-  void _getGoods() {
-    getHomePageGoods(page).then((val) {
-      List swiper = val['data'];
-      setState(() {
-        goodsList.addAll(swiper);
-        page++;
-      });
-    });
-  }
-}
-
-class _SliverAppBarDelegate extends SliverPersistentHeaderDelegate {
-  _SliverAppBarDelegate({
-    @required this.minHeight,
-    @required this.maxHeight,
-    @required this.child,
-  });
-
-  final double minHeight;
-  final double maxHeight;
-  final Widget child;
+  @override
+  bool get wantKeepAlive => true;
 
   @override
-  double get minExtent => minHeight;
-
-  @override
-  double get maxExtent => math.max((minHeight ?? kToolbarHeight), minExtent);
-
-  @override
-  Widget build(
-      BuildContext context, double shrinkOffset, bool overlapsContent) {
-    return child;
-  }
-
-  @override
-  bool shouldRebuild(_SliverAppBarDelegate oldDelegate) {
-    return maxHeight != oldDelegate.maxHeight ||
-        minHeight != oldDelegate.minHeight ||
-        child != oldDelegate.child;
+  void dispose() {
+    ///为了避免内存泄露，需要调用_controller.dispose
+    _controller.dispose();
+    super.dispose();
   }
 }

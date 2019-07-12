@@ -26,7 +26,17 @@ class _BookAudioVideoPageState extends State<HomePage>
     with SingleTickerProviderStateMixin {
   List<TabItem> titleList = [
     TabItem("首页", "", "", true),
-    TabItem("618", "", "", true)
+    TabItem("猜你喜欢", "", "", true),
+    TabItem("母婴", "", "", true),
+    TabItem("食品", "", "", true),
+    TabItem("女装", "", "", true),
+    TabItem("彩妆", "", "", true),
+    TabItem("洗护", "", "", true),
+    TabItem("内衣", "", "", true),
+    TabItem("百货", "", "", true),
+    TabItem("家电", "", "", true),
+    TabItem("家居", "", "", true),
+    TabItem("数码", "", "", true)
   ];
   List<Widget> tabList = [];
   int tabsLength = 12;
@@ -127,22 +137,10 @@ class _BookAudioVideoPageState extends State<HomePage>
   }
 
   void getTabList() {
-    getHttpRes('cateListByPid', 'parentId=0').then((val) {
-      setState(() {
-        List cateList = val['data'] as List;
-
-        titleList.addAll(cateList
-            .map((cate) => TabItem(cate['tbkName'].toString(),
-                cate['cateId'].toString(), "", true))
-            .toList()
-            .sublist(0, 10));
-
-        tabList = titleList
-            .map((tabItem) => tabItem.isName
-                ? Text(tabItem.name, style: TextStyle(fontSize: 15))
-                : Image.network(tabItem.img))
-            .toList();
-      });
-    });
+    tabList = titleList
+        .map((tabItem) => tabItem.isName
+        ? Text(tabItem.name, style: TextStyle(fontSize: 15))
+        : Image.network(tabItem.img))
+        .toList();
   }
 }

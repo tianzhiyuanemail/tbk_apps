@@ -10,11 +10,15 @@ import 'package:flutter/widgets.dart';
 import 'package:flutter_easyrefresh/easy_refresh.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:tbk_app/config/service_method.dart';
+import 'package:tbk_app/modle/sort_modle.dart';
 import 'package:tbk_app/util/easy_refresh_util.dart';
+import 'package:tbk_app/util/map_url_params_utils.dart';
 import 'package:tbk_app/widgets/back_top_widget.dart';
 import 'package:tbk_app/widgets/product_list_view_widget.dart';
+import 'package:tbk_app/widgets/product_silvrs_sort_static_bar_widget.dart';
 
 class HomePageOther extends StatefulWidget {
+  String cateId = "16";
   @override
   _HomePageOtherState createState() => _HomePageOtherState();
 }
@@ -38,12 +42,14 @@ class _HomePageOtherState extends State<HomePageOther>
   List goodsList = [];
   int page = 0;
 
+  SortModle _sortModle = new SortModle();
+
   @override
   bool get wantKeepAlive => true;
 
   @override
   void initState() {
-    _getCateGoods();
+    _getGoods();
     //监听滚动事件，打印滚动位置
     _controller.addListener(() {
       if (_controller.offset < 1000 && showToTopBtn) {
@@ -78,16 +84,13 @@ class _HomePageOtherState extends State<HomePageOther>
         refreshFooter: EasyRefreshUtil.classicsFooter(_refreshFooterState),
         refreshHeader: EasyRefreshUtil.classicsHeader(_refreshHeaderState),
         loadMore: () async {
-          _getCateGoods();
+          _getGoods();
         },
         onRefresh: () async {
-          getHomePageGoods(1).then((val) {
-            List swiper = val['data'];
-            setState(() {
-              goodsList = swiper;
-              page = 1;
-            });
+          setState(() {
+            page = 1;
           });
+          _getGoods();
         },
         child: CustomScrollView(
           controller: _controller,
@@ -99,40 +102,56 @@ class _HomePageOtherState extends State<HomePageOther>
             SecondaryCategory(
               secondaryCategoryList: secondaryCategoryList,
             ),
-            _buildStickyBar(),
-            SliverProductListSliverGrid(list: goodsList),
+            SliverSortStaticyBar.buildStickyBar(_sortModle,
+                    (SortModle sortModle) {
+                  setState(() {
+                    _sortModle = sortModle;
+                    page = 1;
+                  });
+                  _getGoods();
+                }),
+            SliverProductList(
+              list: goodsList,
+              crossAxisCount: _sortModle.crossAxisCount,
+            ),
           ],
         ),
       ),
     );
   }
 
-  Widget _buildStickyBar() {
-    return SliverPersistentHeader(
-      pinned: true, //是否固定在顶部
-      floating: true,
-      delegate: _SliverAppBarDelegate(
-        maxHeight: 50.0,
-        minHeight: 50.0,
-        child: Container(
-          padding: EdgeInsets.only(left: 16),
-          color: Colors.blue,
-          alignment: Alignment.centerLeft,
-          child: Text("浮动", style: TextStyle(fontSize: 18)),
-        ),
-      ),
-    );
+
+  void _getGoods() {
+
+    Map<String, Object> map  = Map();
+    map["cateId"] =   widget.cateId;
+    map["pageNo"] =   page;
+    map["sort"]   = _sortModle.s1+_sortModle.s2;
+
+    getHttpRes('getProductList', MapUrlParamsUtils.getUrlParamsByMap(map)).then((val) {
+      if(val["success"]){
+        List list = val['data'];
+        setState(() {
+          if (page == 1){
+            goodsList = list;
+          }else{
+            goodsList.addAll(list);
+          }
+          page++;
+        });
+      }else{
+
+        setState(() {
+          print(val["message"]);
+          goodsList = List();
+          page  = 1;
+        });
+      }
+
+    });
+
   }
 
-  void _getCateGoods() {
-    getHomePageGoods(page).then((val) {
-      List swiper = val['data'];
-      setState(() {
-        goodsList.addAll(swiper);
-        page++;
-      });
-    });
-  }
 }
 
 class CateHotProduct extends StatelessWidget {

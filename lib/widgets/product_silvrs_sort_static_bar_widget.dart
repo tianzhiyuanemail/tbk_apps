@@ -1,31 +1,11 @@
-import 'package:cached_network_image/cached_network_image.dart';
-import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'dart:math' as math;
 
-class SliverProductSortListView extends StatelessWidget {
-  String sort;
-  Function function;
+import 'package:flutter/material.dart';
+import 'package:tbk_app/modle/sort_modle.dart';
 
-  String s1;
-  String s2;
-
-  bool b1 = false;
-  bool b2 = false;
-  bool b3 = false;
-
-//  排序_des（降序），排序_asc（升序），
-//  销量（total_sales）， 人气（tk_total_sales），价格（price）
-  String up = "_des";
-  String down = "_asc";
-  String total_sales = "total_sales";
-  String price = "price";
-
-  SliverProductSortListView({Key key, this.sort, this.function})
-      : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
+class SliverSortStaticyBar {
+  /// 固定导航
+  static Widget buildStickyBar(SortModle _sortModle, Function function) {
     return SliverPersistentHeader(
       pinned: true, //是否固定在顶部
       floating: true,
@@ -47,23 +27,31 @@ class SliverProductSortListView extends StatelessWidget {
             children: <Widget>[
               InkWell(
                 onTap: () {
-                  s1 = total_sales;
-                  if (s2 == up){
-                    s2 = down;
-                  }else {
-                    s2 = up;
-                  }
-                  function(s1 + s2);
+                  _sortModle.s1 = _sortModle.total_sales;
+                  _sortModle.s2 = _sortModle.s2 == _sortModle.up
+                      ? _sortModle.down
+                      : _sortModle.up;
+                  function(_sortModle);
                 },
                 child: Container(
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: <Widget>[
-                      Text("销量"),
+                      Text(
+                        "销量",
+                        style: TextStyle(
+                            color: _sortModle.s1 == _sortModle.total_sales
+                                ? Colors.redAccent
+                                : null),
+                      ),
                       Icon(
-                        s2 == up
+                        (_sortModle.s1 + _sortModle.s2) ==
+                            _sortModle.total_sales + _sortModle.up
                             ? Icons.keyboard_arrow_up
                             : Icons.keyboard_arrow_down,
+                        color: _sortModle.s1 == _sortModle.total_sales
+                            ? Colors.redAccent
+                            : null,
                         size: 22,
                       ),
                     ],
@@ -72,19 +60,31 @@ class SliverProductSortListView extends StatelessWidget {
               ),
               InkWell(
                 onTap: () {
-                  s1 = price;
-                  s2 = s2 == up ? down : up;
-                  function(s1 + s2);
+                  _sortModle.s1 = _sortModle.price;
+                  _sortModle.s2 = _sortModle.s2 == _sortModle.up
+                      ? _sortModle.down
+                      : _sortModle.up;
+                  function(_sortModle);
                 },
                 child: Container(
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: <Widget>[
-                      Text("价格"),
+                      Text(
+                        "价格",
+                        style: TextStyle(
+                            color: _sortModle.s1 == _sortModle.price
+                                ? Colors.redAccent
+                                : null),
+                      ),
                       Icon(
-                        s2 == up
+                        _sortModle.s1 + _sortModle.s2 ==
+                            _sortModle.price + _sortModle.up
                             ? Icons.keyboard_arrow_up
                             : Icons.keyboard_arrow_down,
+                        color: _sortModle.s1 == _sortModle.price
+                            ? Colors.redAccent
+                            : null,
                         size: 22,
                       ),
                     ],
@@ -93,13 +93,13 @@ class SliverProductSortListView extends StatelessWidget {
               ),
               InkWell(
                   onTap: () {
-                    s1 = total_sales;
-                    s2 = s2 == up ? down : up;
-                    function(s1 + s2);
+                    _sortModle.crossAxisCount =
+                    _sortModle.crossAxisCount == 1 ? 2 : 1;
+                    function(_sortModle);
                   },
                   child: Container(
                     child: Icon(
-                      s2 == up ? Icons.list : Icons.list,
+                      _sortModle.crossAxisCount == 1 ? Icons.list : Icons.sort,
                       size: 22,
                     ),
                   ))
@@ -109,7 +109,9 @@ class SliverProductSortListView extends StatelessWidget {
       ),
     );
   }
+
 }
+
 
 class _SliverAppBarDelegate extends SliverPersistentHeaderDelegate {
   _SliverAppBarDelegate({
@@ -141,3 +143,5 @@ class _SliverAppBarDelegate extends SliverPersistentHeaderDelegate {
         child != oldDelegate.child;
   }
 }
+
+

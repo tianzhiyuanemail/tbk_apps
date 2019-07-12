@@ -12,6 +12,7 @@ import 'package:flutter_easyrefresh/easy_refresh.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_swiper/flutter_swiper.dart';
 import 'package:tbk_app/config/service_method.dart';
+import 'package:tbk_app/modle/navigator_modle.dart';
 import 'package:tbk_app/util/easy_refresh_util.dart';
 import 'package:tbk_app/widgets/back_top_widget.dart';
 import 'package:tbk_app/widgets/product_list_view_widget.dart';
@@ -29,6 +30,8 @@ class _HomePageFirstState extends State<HomePageFirst>
   GlobalKey<RefreshFooterState>();
   GlobalKey<RefreshHeaderState> _refreshHeaderState =
   GlobalKey<RefreshHeaderState>();
+  SwiperController _swiperController;
+
   bool showToTopBtn = false; //是否显示“返回到顶部”按钮
 
   int page = 1;
@@ -73,6 +76,9 @@ class _HomePageFirstState extends State<HomePageFirst>
         });
       }
     });
+
+    _swiperController = new SwiperController();
+    _swiperController.startAutoplay();
     super.initState();
   }
 
@@ -80,6 +86,8 @@ class _HomePageFirstState extends State<HomePageFirst>
   void dispose() {
     //为了避免内存泄露，需要调用_controller.dispose
     _controller.dispose();
+    _swiperController.stopAutoplay();
+    _swiperController.dispose();
     super.dispose();
   }
 
@@ -111,7 +119,7 @@ class _HomePageFirstState extends State<HomePageFirst>
         child: ListView(
           controller: _controller,
           children: <Widget>[
-            SwiperDiy(swiperDataList: swiper),
+            SwiperDiy(swiperDataList: swiper,swiperController: _swiperController,),
             TopNavigator(navigatorList: navigatorList),
             AdBanner(adPicture: adPicture),
             LeaderPhone(leaderImage: leaderImage, leaderPhone: leaderPhone),
@@ -148,8 +156,9 @@ class _HomePageFirstState extends State<HomePageFirst>
 // 首页轮播组件编写
 class SwiperDiy extends StatelessWidget {
   final List swiperDataList;
+  final SwiperController swiperController;
 
-  SwiperDiy({Key key, this.swiperDataList}) : super(key: key);
+  SwiperDiy({Key key, this.swiperDataList,this.swiperController}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -162,9 +171,12 @@ class SwiperDiy extends StatelessWidget {
           return Image.network("${swiperDataList[index]['bannerImg']}",
               fit: BoxFit.fill);
         },
+
         itemCount: swiperDataList.length,
         pagination: new SwiperPagination(),
-        autoplay: true,
+        loop: false,
+        autoplay: false,
+        controller: swiperController,
       ),
     );
   }
@@ -175,18 +187,18 @@ class TopNavigator extends StatelessWidget {
 
   TopNavigator({Key key, this.navigatorList}) : super(key: key);
 
-  Widget _gridViewItemUI(BuildContext context, item) {
+  Widget _gridViewItemUI(BuildContext context,NavigatorModle navigatorModle) {
     return InkWell(
       onTap: () {
-        print("点击了导航");
+        print(navigatorModle.url);
       },
       child: Column(
         children: <Widget>[
           Image.network(
-            'http://e.hiphotos.baidu.com/image/pic/item/359b033b5bb5c9eac1754f45df39b6003bf3b396.jpg',
+            navigatorModle.imageUrl,
             width: ScreenUtil().setHeight(95),
           ),
-          Text("首页")
+          Text(navigatorModle.name)
         ],
       ),
     );
