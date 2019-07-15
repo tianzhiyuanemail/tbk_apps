@@ -12,11 +12,16 @@ import 'package:flutter_easyrefresh/easy_refresh.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_swiper/flutter_swiper.dart';
 import 'package:tbk_app/config/service_method.dart';
-import 'package:tbk_app/modle/navigator_modle.dart';
+import 'package:tbk_app/modle/banners_entity.dart';
+import 'package:tbk_app/modle/navigator_entity.dart';
 import 'package:tbk_app/util/easy_refresh_util.dart';
+import 'package:tbk_app/util/map_url_params_utils.dart';
 import 'package:tbk_app/widgets/back_top_widget.dart';
 import 'package:tbk_app/widgets/product_list_view_widget.dart';
 import 'package:url_launcher/url_launcher.dart';
+
+import '../../entity_factory.dart';
+import '../../entity_list_factory.dart';
 
 class HomePageFirst extends StatefulWidget {
   @override
@@ -36,8 +41,8 @@ class _HomePageFirstState extends State<HomePageFirst>
 
   int page = 1;
   List hotGoodsList = [];
-  List swiper = [];
-  List navigatorList = List(10);
+  List<BannersEntity> swiperList = [];
+  List<NavigatorEntity> navigatorList =  [];
   List recommendList = List(6);
   List flootGoodsList = List(6);
   String adPicture =
@@ -58,9 +63,8 @@ class _HomePageFirstState extends State<HomePageFirst>
   @override
   void initState() {
     _getHotGoods();
-    getHomePageContent().then((val) {
-      swiper = val['data'] as List;
-    });
+    _bannersQueryListForMap();
+    _navigatorQueryListForMap();
 
     //监听滚动事件，打印滚动位置
     _controller.addListener(() {
@@ -119,7 +123,7 @@ class _HomePageFirstState extends State<HomePageFirst>
         child: ListView(
           controller: _controller,
           children: <Widget>[
-            SwiperDiy(swiperDataList: swiper,swiperController: _swiperController,),
+            SwiperDiy(swiperDataList: swiperList,swiperController: _swiperController,),
             TopNavigator(navigatorList: navigatorList),
             AdBanner(adPicture: adPicture),
             LeaderPhone(leaderImage: leaderImage, leaderPhone: leaderPhone),
@@ -144,6 +148,30 @@ class _HomePageFirstState extends State<HomePageFirst>
     });
   }
 
+  void _bannersQueryListForMap() {
+    Map<String, Object> map  = Map();
+    map["pageNo"] = page;
+    getHttpRes('banners/queryListForMap', MapUrlParamsUtils.getUrlParamsByMap(map)).then((val) {
+      if(val["success"]){
+        setState(() {
+          swiperList = EntityListFactory.generateList<BannersEntity>(val['data']);
+        });
+      }
+    });
+  }
+
+  void _navigatorQueryListForMap() {
+    Map<String, Object> map  = Map();
+    map["pageNo"] = page;
+    getHttpRes('homeNavigator/queryListForMap', MapUrlParamsUtils.getUrlParamsByMap(map)).then((val) {
+      if(val["success"]){
+        setState(() {
+          navigatorList = EntityListFactory.generateList<NavigatorEntity>(val['data']);
+        });
+      }
+    });
+  }
+
   Widget hotTitle = Container(
     margin: EdgeInsets.only(top: 10),
     padding: EdgeInsets.all(1),
@@ -155,7 +183,7 @@ class _HomePageFirstState extends State<HomePageFirst>
 
 // 首页轮播组件编写
 class SwiperDiy extends StatelessWidget {
-  final List swiperDataList;
+  final List<BannersEntity> swiperDataList;
   final SwiperController swiperController;
 
   SwiperDiy({Key key, this.swiperDataList,this.swiperController}) : super(key: key);
@@ -168,7 +196,7 @@ class SwiperDiy extends StatelessWidget {
       child: Swiper(
         index: 0,
         itemBuilder: (BuildContext context, int index) {
-          return Image.network("${swiperDataList[index]['bannerImg']}",
+          return Image.network("${swiperDataList[index].imageUrl}",
               fit: BoxFit.fill);
         },
 
@@ -183,22 +211,22 @@ class SwiperDiy extends StatelessWidget {
 }
 
 class TopNavigator extends StatelessWidget {
-  final List navigatorList;
+  final List<NavigatorEntity> navigatorList;
 
   TopNavigator({Key key, this.navigatorList}) : super(key: key);
 
-  Widget _gridViewItemUI(BuildContext context,NavigatorModle navigatorModle) {
+  Widget _gridViewItemUI(BuildContext context,NavigatorEntity navigatorEntity) {
     return InkWell(
       onTap: () {
-        print(navigatorModle.url);
+        print(navigatorEntity.url);
       },
       child: Column(
         children: <Widget>[
           Image.network(
-            navigatorModle.imageUrl,
+            navigatorEntity.imageUrl,
             width: ScreenUtil().setHeight(95),
           ),
-          Text(navigatorModle.name)
+          Text(navigatorEntity.title)
         ],
       ),
     );
