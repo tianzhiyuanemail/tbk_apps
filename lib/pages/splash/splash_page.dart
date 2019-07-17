@@ -9,6 +9,7 @@ import 'package:tbk_app/constant/constant.dart';
 import 'package:tbk_app/modle/splashModel.dart';
 import 'package:tbk_app/router/application.dart';
 import 'package:tbk_app/router/routers.dart';
+import 'package:tbk_app/util/fluro_navigator_util.dart';
 import 'package:tbk_app/util/sp_util.dart';
 
 class SplashPage extends StatefulWidget {
@@ -140,7 +141,7 @@ class SplashPageState extends State<SplashPage> {
   }
 
   void _goMain() {
-    Application.router.navigateTo(context,Routers.root );
+    NavigatorUtil.gotransitionPage(context,Routers.root );
 
   }
 

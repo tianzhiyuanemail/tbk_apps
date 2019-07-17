@@ -10,12 +10,15 @@ import 'package:flutter/widgets.dart';
 import 'package:flutter_easyrefresh/easy_refresh.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:tbk_app/config/service_method.dart';
+import 'package:tbk_app/modle/product_list_entity.dart';
 import 'package:tbk_app/modle/sort_modle.dart';
 import 'package:tbk_app/util/easy_refresh_util.dart';
 import 'package:tbk_app/util/map_url_params_utils.dart';
 import 'package:tbk_app/widgets/back_top_widget.dart';
 import 'package:tbk_app/widgets/product_list_view_widget.dart';
 import 'package:tbk_app/widgets/product_silvrs_sort_static_bar_widget.dart';
+
+import '../../entity_list_factory.dart';
 
 class HomePageOther extends StatefulWidget {
   String cateId = "16";
@@ -39,7 +42,7 @@ class _HomePageOtherState extends State<HomePageOther>
       "http://kaze-sora.com/sozai/blog_haru/blog_mitubachi01.jpg";
 
   List secondaryCategoryList = List(10);
-  List goodsList = [];
+  List<ProductListEntity> goodsList = [];
   int page = 0;
 
   SortModle _sortModle = new SortModle();
@@ -130,7 +133,7 @@ class _HomePageOtherState extends State<HomePageOther>
 
     getHttpRes('getProductList', MapUrlParamsUtils.getUrlParamsByMap(map)).then((val) {
       if(val["success"]){
-        List list = val['data'];
+        List<ProductListEntity> list = EntityListFactory.generateList<ProductListEntity>(val['data']);
         setState(() {
           if (page == 1){
             goodsList = list;

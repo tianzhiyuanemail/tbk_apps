@@ -13,14 +13,19 @@ import 'package:flutter_html_widget/flutter_html_widget.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_swiper/flutter_swiper.dart';
 import 'package:tbk_app/config/service_method.dart';
-import 'package:tbk_app/modle/product_model.dart';
+import 'package:tbk_app/modle/product_entity.dart';
+import 'package:tbk_app/modle/product_list_entity.dart';
 import 'package:tbk_app/router/application.dart';
 import 'package:tbk_app/router/routers.dart';
 import 'package:tbk_app/util/easy_refresh_util.dart';
+import 'package:tbk_app/util/fluro_navigator_util.dart';
 import 'package:tbk_app/widgets/back_top_widget.dart';
 import 'package:tbk_app/widgets/product_list_view_widget.dart';
 import 'package:nautilus/nautilus.dart' as nautilus;
 import 'package:nautilus/nautilus.dart' ;
+
+import '../../entity_factory.dart';
+import '../../entity_list_factory.dart';
 // ignore: must_be_immutable
 class ProductDetail extends StatefulWidget {
   String productId;
@@ -45,8 +50,8 @@ class _ProductDetailState extends State<ProductDetail> {
 
   ///是否显示 导航栏
 
-  ProductModel productModel;
-  List productList = [];
+  ProductEntity productEntity;
+  List<ProductListEntity> productList = [];
 
   @override
   void initState() {
@@ -81,7 +86,8 @@ class _ProductDetailState extends State<ProductDetail> {
 
     /// todo 商品推荐接口 暂时调用首页商品接口
     getHomePageGoods(1).then((val) {
-      List list = val['data'];
+      List<ProductListEntity> list = EntityListFactory.generateList<ProductListEntity>(val['data']);
+
       setState(() {
         productList.addAll(list);
       });
@@ -100,7 +106,7 @@ class _ProductDetailState extends State<ProductDetail> {
     return Scaffold(
       floatingActionButton:
           BackTopButton(controller: _controller, showToTopBtn: showToTopBtn),
-      body: productModel == null
+      body: productEntity == null
           ? Text("")
           : Stack(
               children: <Widget>[
@@ -121,7 +127,7 @@ class _ProductDetailState extends State<ProductDetail> {
                 Positioned(
                   bottom: 0,
                   left: 0,
-                  child: DetailsBottom(productModel: productModel),
+                  child: DetailsBottom(productEntity: productEntity),
                 )
               ],
             ),
@@ -132,7 +138,7 @@ class _ProductDetailState extends State<ProductDetail> {
   void _getProductInfo() {
     getHttpRes('getProductInfo', 'productId=' + widget.productId).then((val) {
       setState(() {
-        productModel = ProductModel.fromJson(val['data']['product']);
+        productEntity = EntityFactory.generateOBJ<ProductEntity>(val['data']['product']);
       });
     });
   }
@@ -166,10 +172,10 @@ class _ProductDetailState extends State<ProductDetail> {
   List<Widget> _sliverListChild() {
     List<Widget> list = List();
 
-    list.add(SwiperDiy(list: productModel.smallImages));
-    list.add(ProductInfomation(productModel: productModel));
-    list.add(ShopInfomation(productModel: productModel));
-    list.add(ItemDetails(productModel: productModel));
+    list.add(SwiperDiy(list: productEntity.smallImages));
+    list.add(ProductInfomation(productEntity: productEntity));
+    list.add(ShopInfomation(productEntity: productEntity));
+    list.add(ItemDetails(productEntity: productEntity));
     list.add(ProductRecommend(list: productList));
     return list;
   }
@@ -179,10 +185,10 @@ class _ProductDetailState extends State<ProductDetail> {
     return ListView(
       controller: _controller,
       children: <Widget>[
-        SwiperDiy(list: productModel.smallImages),
-        ProductInfomation(productModel: productModel),
-        ShopInfomation(productModel: productModel),
-        ItemDetails(productModel: productModel),
+        SwiperDiy(list: productEntity.smallImages),
+        ProductInfomation(productEntity: productEntity),
+        ShopInfomation(productEntity: productEntity),
+        ItemDetails(productEntity: productEntity),
         ProductRecommend(list: productList),
       ],
     );
@@ -255,9 +261,9 @@ class SwiperDiy extends StatelessWidget {
 
 /// 商品基础信息
 class ProductInfomation extends StatelessWidget {
-  ProductModel productModel;
+  ProductEntity productEntity;
 
-  ProductInfomation({this.productModel});
+  ProductInfomation({this.productEntity});
 
   Widget _row1() {
     return Container(
@@ -277,7 +283,7 @@ class ProductInfomation extends StatelessWidget {
               children: [
                 TextSpan(text: "券后价 ¥ ", style: TextStyle()),
                 TextSpan(
-                  text: '${productModel.afterCouponPrice}',
+                  text: '${productEntity.afterCouponPrice}',
                   style: TextStyle(
                     fontSize: 20,
                   ),
@@ -301,7 +307,7 @@ class ProductInfomation extends StatelessWidget {
                 children: [
                   TextSpan(text: "预估收益:¥ ", style: TextStyle()),
                   TextSpan(
-                    text: "${productModel.reservePrice}",
+                    text: "${productEntity.estimatedRevenueAmount}",
                     style: TextStyle(),
                   ),
                 ],
@@ -322,7 +328,7 @@ class ProductInfomation extends StatelessWidget {
           Container(
               child: Text.rich(
             TextSpan(
-              text: "原价 ¥ ${productModel.zkFinalPrice}",
+              text: "原价 ¥ ${productEntity.zkFinalPrice}",
               style: TextStyle(
                 color: Colors.black38,
                 wordSpacing: 4,
@@ -343,7 +349,7 @@ class ProductInfomation extends StatelessWidget {
                 ),
                 children: [
                   TextSpan(
-                      text: "已售${productModel.tkTotalSales}",
+                      text: "已售${productEntity.tkTotalSales}",
                       style: TextStyle()),
                 ],
               ),
@@ -367,12 +373,12 @@ class ProductInfomation extends StatelessWidget {
                 border: Border.all(width: 0.70, color: Colors.red),
                 borderRadius: BorderRadius.circular(2)),
             child: Text(
-              productModel.includeMkt ? "天猫" : "淘宝",
+              productEntity.userType==1 ? "天猫" : "淘宝",
               style: TextStyle(fontSize: 8),
             ),
           ),
           Text(
-            "          ${productModel.title}",
+            "          ${productEntity.title}",
             style: TextStyle(
               color: Colors.black,
               fontSize: 11,
@@ -457,9 +463,9 @@ class ProductInfomation extends StatelessWidget {
 
 /// 店铺基础信息
 class ShopInfomation extends StatelessWidget {
-  ProductModel productModel;
+  ProductEntity productEntity;
 
-  ShopInfomation({this.productModel});
+  ShopInfomation({this.productEntity});
 
   Widget _row1() {
     return Container(
@@ -598,9 +604,9 @@ class ShopInfomation extends StatelessWidget {
 
 /// 商品详情页
 class ItemDetails extends StatefulWidget {
-  ProductModel productModel;
+  ProductEntity productEntity;
 
-  ItemDetails({this.productModel});
+  ItemDetails({this.productEntity});
 
   @override
   _ItemDetailsState createState() => _ItemDetailsState();
@@ -622,7 +628,7 @@ class _ItemDetailsState extends State<ItemDetails> {
   void _getItemDeatilRichText() {
     if (richText == '' || richText == null) {
       getHttpRes('getProductDetail',
-              'data=%7B"id":"${widget.productModel.numIid}"%7D')
+              'data=%7B"id":"${widget.productEntity.itemId}"%7D')
           .then((val) {
         setState(() {
           hidden = !hidden;
@@ -732,7 +738,7 @@ class ProductRecommend extends StatelessWidget {
       child: Column(
         children: <Widget>[
           _recommendText(),
-          ProductListListView(list: list),
+          ProductList(list: list,crossAxisCount: 2,),
         ],
       ),
     );
@@ -741,9 +747,9 @@ class ProductRecommend extends StatelessWidget {
 
 class DetailsBottom extends StatelessWidget {
 
-  ProductModel productModel;
+  ProductEntity productEntity;
 
-  DetailsBottom({this.productModel});
+  DetailsBottom({this.productEntity});
 
   @override
   Widget build(BuildContext context) {
@@ -756,7 +762,7 @@ class DetailsBottom extends StatelessWidget {
         children: <Widget>[
           InkWell(
             onTap: () {
-              Application.router.navigateTo(context, Routers.root);
+              NavigatorUtil.gotransitionPage(context, Routers.root);
             },
             child: Container(
               alignment: Alignment.center,
@@ -801,7 +807,7 @@ class DetailsBottom extends StatelessWidget {
                   extraParams['isv_code'] = 'appisvcode';
 
                   nautilus.openUrl(
-                      pageUrl: productModel.couponShareUrl,
+                      pageUrl: productEntity.couponShareUrl,
                       openType:nautilus.OpenType.NATIVE,
                       schemeType:"taobao_oscheme",
                       extParams:extraParams
@@ -842,7 +848,7 @@ class DetailsBottom extends StatelessWidget {
                   extraParams['isv_code'] = 'appisvcode';
 
                   nautilus.openItemDetail(
-                      itemID: productModel.numIid,
+                      itemID: productEntity.itemId.toString(),
                       taoKeParams: nautilus.TaoKeParams(
                           unionId: "",
                           subPid: "mm_114747138_45538443_624654015",

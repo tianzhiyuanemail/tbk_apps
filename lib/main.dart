@@ -10,6 +10,7 @@ import 'package:tbk_app/router/application.dart';
 import 'package:nautilus/nautilus.dart' as nautilus;
 
 import 'pages/splash/splash_page.dart';
+import 'util/colors_util.dart';
 
 void main() {
   var childCate  = ChildCate();
@@ -54,7 +55,7 @@ class MyApp extends StatelessWidget {
       child: MaterialApp(
         onGenerateRoute: Application.router.generator,
         debugShowCheckedModeBanner: false,
-        theme: ThemeData(backgroundColor: Colors.white),
+        theme: ThemeData(backgroundColor: ColorsUtil.hexToColor(ColorsUtil.backGroundColor)),
         home: Scaffold(
           resizeToAvoidBottomPadding: false,
           body: SplashPage(),

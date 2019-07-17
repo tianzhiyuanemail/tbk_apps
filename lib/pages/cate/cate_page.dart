@@ -8,6 +8,10 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:provide/provide.dart';
 import 'package:tbk_app/config/service_method.dart';
 import 'package:tbk_app/provide/child_cate.dart';
+import 'package:tbk_app/router/application.dart';
+import 'package:tbk_app/router/routers.dart';
+import 'package:tbk_app/util/fluro_convert_util.dart';
+import 'package:tbk_app/util/fluro_navigator_util.dart';
 
 class CatePage extends StatefulWidget {
   @override
@@ -25,8 +29,10 @@ class _CatePageState extends State<CatePage>
   @override
   void initState() {
     super.initState();
-    _scrollController = new ScrollController(initialScrollOffset: 0, keepScrollOffset: true);
-    controller = new AnimationController(duration: const Duration(milliseconds: 300), vsync: this);
+    _scrollController =
+        new ScrollController(initialScrollOffset: 0, keepScrollOffset: true);
+    controller = new AnimationController(
+        duration: const Duration(milliseconds: 300), vsync: this);
     _changeSelected(selectIndex, 0);
 
     getCatePage().then((val) {
@@ -35,8 +41,6 @@ class _CatePageState extends State<CatePage>
         _updateCateChild(0);
       });
     });
-
-
   }
 
   @override
@@ -61,8 +65,6 @@ class _CatePageState extends State<CatePage>
 
   /// 切换选择
   _changeSelected(double begin, double end) {
-
-
     final CurvedAnimation curve =
         new CurvedAnimation(parent: controller, curve: Curves.elasticOut);
     numberAnimation = new Tween(begin: begin, end: end).animate(controller)
@@ -72,8 +74,6 @@ class _CatePageState extends State<CatePage>
         });
       });
     controller.forward(from: 0.0);
-
-
   }
 
   /// 滚动到选择的位置
@@ -84,9 +84,9 @@ class _CatePageState extends State<CatePage>
   }
 
   /// 初始化二级类目
-  _updateCateChild(int index){
-        List childCate = list[index.toInt()]['data'] as List;
-        Provide.value<ChildCate>(context).getChildCate(childCate);
+  _updateCateChild(int index) {
+    List childCate = list[index.toInt()]['data'] as List;
+    Provide.value<ChildCate>(context).getChildCate(childCate);
   }
 
   Widget _item(double index) {
@@ -152,9 +152,11 @@ class _CatePageState extends State<CatePage>
           builder: (context, child, data) {
             return Container(
               decoration: BoxDecoration(
-                  color: Colors.white,
-                  border: Border(
-                      bottom: BorderSide(width: 1, color: Colors.black12))),
+                color: Colors.white,
+                border: Border(
+                  bottom: BorderSide(width: 1, color: Colors.black12),
+                ),
+              ),
               child: rightList(data.chileCate),
             );
           },
@@ -167,13 +169,20 @@ class _CatePageState extends State<CatePage>
       crossAxisSpacing: 5,
       mainAxisSpacing: 5.0,
       childAspectRatio: 0.8,
-      children: cateChild.map((cate){
+      children: cateChild.map((cate) {
         return InkWell(
-          onTap: (){print("子分类");},
-          child:  Container(
+          onTap: () {
+            NavigatorUtil.gotransitionPage(context, Routers.productListPage +
+                "?cateId=" +
+                cate["cateId"].toString() +
+                "&cateName="+
+                FluroConvertUtils.fluroCnParamsEncode(cate["tbkName"])
+            );
+          },
+          child: Container(
             //width: 20,
             padding: EdgeInsets.all(30),
-            child:  Column(
+            child: Column(
               children: <Widget>[
                 Image.network(
                   cate['tbkImg'],
@@ -181,7 +190,10 @@ class _CatePageState extends State<CatePage>
                 ),
                 Container(
                   margin: EdgeInsets.only(top: 4),
-                  child: Text(cate['tbkName'].toString().length>2?cate['tbkName'].toString().substring(0,2):cate['tbkName'].toString(),
+                  child: Text(
+                    cate['tbkName'].toString().length > 2
+                        ? cate['tbkName'].toString().substring(0, 2)
+                        : cate['tbkName'].toString(),
                     style: TextStyle(fontSize: ScreenUtil().setSp(20)),
                   ),
                 )
@@ -191,6 +203,5 @@ class _CatePageState extends State<CatePage>
         );
       }).toList(),
     );
-
   }
 }

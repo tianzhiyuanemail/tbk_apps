@@ -10,6 +10,8 @@ import 'package:tbk_app/modle/tab_item_modle.dart';
 import 'package:tbk_app/pages/home/tab_bar_view.dart';
 import 'package:tbk_app/router/application.dart';
 import 'package:tbk_app/router/routers.dart';
+import 'package:tbk_app/util/colors_util.dart';
+import 'package:tbk_app/util/fluro_navigator_util.dart';
 import 'package:tbk_app/widgets/search_text_field_widget.dart';
 import 'dart:math' as math;
 
@@ -59,7 +61,7 @@ class _BookAudioVideoPageState extends State<HomePage>
         length: tabsLength,
         child: Scaffold(
           appBar: AppBar(
-            backgroundColor: Colors.pink,
+            backgroundColor: ColorsUtil.hexToColor(ColorsUtil.appBarColor),
             //导航栏和状态栏的的颜色
             elevation: 0,
             //阴影的高度
@@ -94,7 +96,7 @@ class _BookAudioVideoPageState extends State<HomePage>
             title: SearchTextFieldWidget(
               hintText: "搜索什么",
               onTab: () {
-                Application.router.navigateTo(context, Routers.searchPage);
+                NavigatorUtil.gotransitionPage(context, Routers.searchPage);
               },
             ),
 

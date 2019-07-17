@@ -7,7 +7,12 @@ class Routers {
   static String root = '/';
   static String detailsPage = '/detail';
   static String searchPage = '/searchPagee';
+
   static String searchProductListPage = '/searchProductListPage';
+  static String productListPage = '/productListPage';
+
+  static String navigatorRouterPage = '/navigatorRouterPage';
+  static String navigatorWebViewPage = '/navigatorWebViewPage';
 
   static void configureRouters(Router router){
 
@@ -22,7 +27,13 @@ class Routers {
     /// 配置路由
     router.define(detailsPage, handler: detailsHandler);
     router.define(searchPage, handler: searchPageHandler);
+
     router.define(searchProductListPage, handler: searchProductListPageHandler);
+    router.define(productListPage, handler: productListPageHandler);
+
+    router.define(navigatorRouterPage, handler: navigatorRouterPageHandler);
+    router.define(navigatorWebViewPage, handler: navigatorWebViewPageHandler);
+
     router.define(root, handler: rootHandler);
   }
 

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:tbk_app/router/application.dart';
 import 'package:tbk_app/router/routers.dart';
+import 'package:tbk_app/util/fluro_navigator_util.dart';
 
 class SearchPage extends StatefulWidget {
   @override
@@ -13,7 +14,7 @@ class _SearchPageState extends State<SearchPage> {
 
   void _onSubmitted(String searchText) {
     print(searchText);
-    Application.router.navigateTo(context, Routers.searchProductListPage+"?searchText="+searchText.toString());
+    NavigatorUtil.gotransitionPage(context, Routers.searchProductListPage+"?searchText="+searchText.toString());
   }
 
   @override

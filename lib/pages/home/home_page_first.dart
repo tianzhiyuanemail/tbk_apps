@@ -14,7 +14,12 @@ import 'package:flutter_swiper/flutter_swiper.dart';
 import 'package:tbk_app/config/service_method.dart';
 import 'package:tbk_app/modle/banners_entity.dart';
 import 'package:tbk_app/modle/navigator_entity.dart';
+import 'package:tbk_app/modle/product_list_entity.dart';
+import 'package:tbk_app/router/application.dart';
+import 'package:tbk_app/router/routers.dart';
 import 'package:tbk_app/util/easy_refresh_util.dart';
+import 'package:tbk_app/util/fluro_convert_util.dart';
+import 'package:tbk_app/util/fluro_navigator_util.dart';
 import 'package:tbk_app/util/map_url_params_utils.dart';
 import 'package:tbk_app/widgets/back_top_widget.dart';
 import 'package:tbk_app/widgets/product_list_view_widget.dart';
@@ -32,17 +37,17 @@ class _HomePageFirstState extends State<HomePageFirst>
     with AutomaticKeepAliveClientMixin {
   ScrollController _controller = new ScrollController();
   GlobalKey<RefreshFooterState> _refreshFooterState =
-  GlobalKey<RefreshFooterState>();
+      GlobalKey<RefreshFooterState>();
   GlobalKey<RefreshHeaderState> _refreshHeaderState =
-  GlobalKey<RefreshHeaderState>();
+      GlobalKey<RefreshHeaderState>();
   SwiperController _swiperController;
 
   bool showToTopBtn = false; //是否显示“返回到顶部”按钮
 
   int page = 1;
-  List hotGoodsList = [];
+  List<ProductListEntity> hotGoodsList = [];
   List<BannersEntity> swiperList = [];
-  List<NavigatorEntity> navigatorList =  [];
+  List<NavigatorEntity> navigatorList = [];
   List recommendList = List(6);
   List flootGoodsList = List(6);
   String adPicture =
@@ -98,18 +103,13 @@ class _HomePageFirstState extends State<HomePageFirst>
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      floatingActionButton: BackTopButton(controller: _controller, showToTopBtn: showToTopBtn),
+      floatingActionButton:
+          BackTopButton(controller: _controller, showToTopBtn: showToTopBtn),
       body: EasyRefresh(
         refreshFooter: EasyRefreshUtil.classicsFooter(_refreshFooterState),
         refreshHeader: EasyRefreshUtil.classicsHeader(_refreshHeaderState),
         loadMore: () async {
-          getHomePageGoods(page).then((val) {
-            List swiper = val['data'];
-            setState(() {
-              hotGoodsList.addAll(swiper);
-              page++;
-            });
-          });
+          _getHotGoods();
         },
         onRefresh: () async {
           getHomePageGoods(page).then((val) {
@@ -123,7 +123,10 @@ class _HomePageFirstState extends State<HomePageFirst>
         child: ListView(
           controller: _controller,
           children: <Widget>[
-            SwiperDiy(swiperDataList: swiperList,swiperController: _swiperController,),
+            SwiperDiy(
+              swiperDataList: swiperList,
+              swiperController: _swiperController,
+            ),
             TopNavigator(navigatorList: navigatorList),
             AdBanner(adPicture: adPicture),
             LeaderPhone(leaderImage: leaderImage, leaderPhone: leaderPhone),
@@ -131,7 +134,10 @@ class _HomePageFirstState extends State<HomePageFirst>
             FlootTitle(picture_address: picture_address),
             FlootContent(flootGoodsList: flootGoodsList),
             hotTitle,
-            ProductListGridView(list: hotGoodsList)
+            ProductList(
+              list: hotGoodsList,
+              crossAxisCount: 2,
+            )
           ],
         ),
       ),
@@ -140,33 +146,41 @@ class _HomePageFirstState extends State<HomePageFirst>
 
   void _getHotGoods() {
     getHomePageGoods(page).then((val) {
-      List swiper = val['data'];
+      List<ProductListEntity> list =
+          EntityListFactory.generateList<ProductListEntity>(val['data']);
+
       setState(() {
-        hotGoodsList.addAll(swiper);
+        hotGoodsList.addAll(list);
         page++;
       });
     });
   }
 
   void _bannersQueryListForMap() {
-    Map<String, Object> map  = Map();
+    Map<String, Object> map = Map();
     map["pageNo"] = page;
-    getHttpRes('banners/queryListForMap', MapUrlParamsUtils.getUrlParamsByMap(map)).then((val) {
-      if(val["success"]){
+    getHttpRes(
+            'banners/queryListForMap', MapUrlParamsUtils.getUrlParamsByMap(map))
+        .then((val) {
+      if (val["success"]) {
         setState(() {
-          swiperList = EntityListFactory.generateList<BannersEntity>(val['data']);
+          swiperList =
+              EntityListFactory.generateList<BannersEntity>(val['data']);
         });
       }
     });
   }
 
   void _navigatorQueryListForMap() {
-    Map<String, Object> map  = Map();
+    Map<String, Object> map = Map();
     map["pageNo"] = page;
-    getHttpRes('homeNavigator/queryListForMap', MapUrlParamsUtils.getUrlParamsByMap(map)).then((val) {
-      if(val["success"]){
+    getHttpRes('homeNavigator/queryListForMap',
+            MapUrlParamsUtils.getUrlParamsByMap(map))
+        .then((val) {
+      if (val["success"]) {
         setState(() {
-          navigatorList = EntityListFactory.generateList<NavigatorEntity>(val['data']);
+          navigatorList =
+              EntityListFactory.generateList<NavigatorEntity>(val['data']);
         });
       }
     });
@@ -186,7 +200,8 @@ class SwiperDiy extends StatelessWidget {
   final List<BannersEntity> swiperDataList;
   final SwiperController swiperController;
 
-  SwiperDiy({Key key, this.swiperDataList,this.swiperController}) : super(key: key);
+  SwiperDiy({Key key, this.swiperDataList, this.swiperController})
+      : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -199,7 +214,6 @@ class SwiperDiy extends StatelessWidget {
           return Image.network("${swiperDataList[index].imageUrl}",
               fit: BoxFit.fill);
         },
-
         itemCount: swiperDataList.length,
         pagination: new SwiperPagination(),
         loop: false,
@@ -215,10 +229,30 @@ class TopNavigator extends StatelessWidget {
 
   TopNavigator({Key key, this.navigatorList}) : super(key: key);
 
-  Widget _gridViewItemUI(BuildContext context,NavigatorEntity navigatorEntity) {
+  Widget _gridViewItemUI(
+      BuildContext context, NavigatorEntity navigatorEntity) {
     return InkWell(
       onTap: () {
         print(navigatorEntity.url);
+
+        if (navigatorEntity.isNative == 1) {
+          NavigatorUtil.gotransitionPage(
+              context,
+              Routers.navigatorWebViewPage +
+                  "?url=" +
+                  navigatorEntity.url +
+                  "&title=" +
+                  FluroConvertUtils.fluroCnParamsEncode(navigatorEntity.title));
+        } else if (navigatorEntity.isNative == 2) {
+          NavigatorUtil.gotransitionPage(
+            context,
+            Routers.navigatorRouterPage +
+                "?url=" +
+                navigatorEntity.url +
+                "&title=" +
+                FluroConvertUtils.fluroCnParamsEncode(navigatorEntity.title),
+          );
+        }
       },
       child: Column(
         children: <Widget>[
@@ -242,7 +276,6 @@ class TopNavigator extends StatelessWidget {
         physics: NeverScrollableScrollPhysics(),
         crossAxisCount: 5,
         padding: EdgeInsets.all(4.0),
-//          scrollDirection: Axis.horizontal,
         children: navigatorList.map((item) {
           return _gridViewItemUI(context, item);
         }).toList(),
