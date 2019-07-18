@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:tbk_app/util/colors_util.dart';
 
 class MyInfoPage extends StatefulWidget {
   @override
@@ -68,7 +69,7 @@ class _MyInfoPageState extends State<MyInfoPage> {
         automaticallyImplyLeading: true,
         elevation: 4,
         //APP bar 的颜色，默认值为 ThemeData.primaryColor。改值通常和下面的三个属性一起使用
-        backgroundColor: Colors.pink,
+        backgroundColor: ColorsUtil.hexToColor(ColorsUtil.appBarColor),
         //App bar 的亮度，有白色和黑色两种主题，默认值为 ThemeData.primaryColorBrightness
         brightness: Brightness.light,
         //App bar 上图标的颜色、透明度、和尺寸信息。默认值为 ThemeData().primaryIconTheme

@@ -21,4 +21,8 @@ class NavigatorUtil {
       transition: TransitionType.fadeIn,
     );
   }
+
+  static void gotransitionPop(BuildContext context) {
+     Application.router.pop(context);
+  }
 }

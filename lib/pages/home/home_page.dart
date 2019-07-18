@@ -60,74 +60,81 @@ class _BookAudioVideoPageState extends State<HomePage>
     return DefaultTabController(
         length: tabsLength,
         child: Scaffold(
-          appBar: AppBar(
-            backgroundColor: ColorsUtil.hexToColor(ColorsUtil.appBarColor),
-            //导航栏和状态栏的的颜色
-            elevation: 0,
-            //阴影的高度
-            brightness: Brightness.light,
-            //控制状态栏的颜色，lignt 文字是灰色的，dark是白色的
-            //        iconTheme: IconThemeData(
-            //            color: Colors.yellow,
-            //            opacity: 0.5,
-            //            size: 30), //icon的主题样式,默认的颜色是黑色的，不透明为1，size是24
-            //        textTheme: TextTheme(), //这个主题的参数比较多,flutter定义了13种不同的字体样式
-            centerTitle: true,
-            //标题是否居中，默认为false
-            //        toolbarOpacity: 0.5, //整个导航栏的不透明度
-            bottomOpacity: 0.8,
-            //bottom的不透明度
-            titleSpacing: 0,
-            //标题两边的空白区域,
-
-            // 左侧返回按钮，可以有按钮，可以有文字
-            leading: Builder(
-              builder: (BuildContext context) {
-                return Align(
-                  widthFactor: 10,
-                  alignment: Alignment.center,
-                  child: Text(
-                    '咸鱼',
-                    style: TextStyle(color: Colors.white),
-                  ),
-                );
-              },
-            ),
-            title: SearchTextFieldWidget(
-              hintText: "搜索什么",
-              onTab: () {
-                NavigatorUtil.gotransitionPage(context, Routers.searchPage);
-              },
-            ),
-
-            actions: <Widget>[
-              IconButton(
-                color: Colors.black54,
-                icon: Icon(Icons.border_horizontal),
-                // tooltip: 'Restitch it',
-                onPressed: () {},
-              ),
-            ],
-            bottom: PreferredSize(
-              child: Container(
-                //color: Colors.white,
-                height: 30,
-                child: TabBar(
-                  tabs: tabList,
-                  isScrollable: true,
-                  controller: tabController,
-                  indicatorColor: Colors.yellowAccent,
-                  labelColor: Colors.yellowAccent,
-                  labelStyle: TextStyle(fontSize: 18, color: Colors.white),
-                  unselectedLabelColor: Colors.white,
-                  unselectedLabelStyle:
-                      TextStyle(fontSize: 18, color: Colors.white),
-                  indicatorSize: TabBarIndicatorSize.label,
+          appBar: PreferredSize(
+              preferredSize: Size.fromHeight(ScreenUtil.screenHeight * 0.06),
+              child: AppBar(
+                backgroundColor: Colors.white,
+                //导航栏和状态栏的的颜色
+                elevation: 0,
+                //阴影的高度
+                brightness: Brightness.light,
+                //控制状态栏的颜色，lignt 文字是灰色的，dark是白色的
+                iconTheme: IconThemeData(
+                  color: Colors.black45,
+                  opacity: 0.5,
+                  size: 30,
                 ),
-              ),
-              preferredSize: Size(10, 10),
-            ),
-          ),
+                //icon的主题样式,默认的颜色是黑色的，不透明为1，size是24
+                textTheme: TextTheme(),
+                //这个主题的参数比较多,flutter定义了13种不同的字体样式
+                centerTitle: true,
+                //标题是否居中，默认为false
+                //        toolbarOpacity: 0.5, //整个导航栏的不透明度
+                bottomOpacity: 0.8,
+                //bottom的不透明度
+                titleSpacing: 0,
+                //标题两边的空白区域,
+
+                // 左侧返回按钮，可以有按钮，可以有文字
+                leading: Builder(
+                  builder: (BuildContext context) {
+                    return Align(
+                      widthFactor: 10,
+                      alignment: Alignment.center,
+                      child: Text(
+                        '咸鱼',
+                        style: TextStyle(color: Colors.black45),
+                      ),
+                    );
+                  },
+                ),
+                title: SearchTextFieldWidget(
+                  hintText: "搜索什么",
+                  onTab: () {
+                    NavigatorUtil.gotransitionPage(context, Routers.searchPage);
+                  },
+                ),
+
+                actions: <Widget>[
+                  IconButton(
+                    color: Colors.black45,
+                    icon: Icon(Icons.border_horizontal),
+                    // tooltip: 'Restitch it',
+                    onPressed: () {},
+                  ),
+                ],
+                bottom: PreferredSize(
+                  child: Container(
+                    //color: Colors.white,
+                    height: 35,
+                    child: TabBar(
+                      tabs: tabList,
+                      isScrollable: true,
+                      controller: tabController,
+                      indicatorColor:
+                          ColorsUtil.hexToColor(ColorsUtil.appBarColor),
+                      labelColor: ColorsUtil.hexToColor(ColorsUtil.appBarColor),
+                      labelStyle:
+                          TextStyle(fontSize: 18, color: Colors.black45),
+                      unselectedLabelColor: Colors.black45,
+                      unselectedLabelStyle:
+                          TextStyle(fontSize: 18, color: Colors.black45),
+                      indicatorSize: TabBarIndicatorSize.label,
+                    ),
+                  ),
+                  preferredSize: Size(10, 10),
+                ),
+              )),
           body: new Container(
             color: Colors.white,
             child: new SafeArea(
@@ -141,8 +148,8 @@ class _BookAudioVideoPageState extends State<HomePage>
   void getTabList() {
     tabList = titleList
         .map((tabItem) => tabItem.isName
-        ? Text(tabItem.name, style: TextStyle(fontSize: 15))
-        : Image.network(tabItem.img))
+            ? Text(tabItem.name, style: TextStyle(fontSize: 15))
+            : Image.network(tabItem.img))
         .toList();
   }
 }

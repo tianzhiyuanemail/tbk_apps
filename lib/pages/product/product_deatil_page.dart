@@ -19,13 +19,15 @@ import 'package:tbk_app/router/application.dart';
 import 'package:tbk_app/router/routers.dart';
 import 'package:tbk_app/util/easy_refresh_util.dart';
 import 'package:tbk_app/util/fluro_navigator_util.dart';
+import 'package:tbk_app/util/http_util.dart';
 import 'package:tbk_app/widgets/back_top_widget.dart';
 import 'package:tbk_app/widgets/product_list_view_widget.dart';
 import 'package:nautilus/nautilus.dart' as nautilus;
-import 'package:nautilus/nautilus.dart' ;
+import 'package:nautilus/nautilus.dart';
 
 import '../../entity_factory.dart';
 import '../../entity_list_factory.dart';
+
 // ignore: must_be_immutable
 class ProductDetail extends StatefulWidget {
   String productId;
@@ -86,7 +88,8 @@ class _ProductDetailState extends State<ProductDetail> {
 
     /// todo 商品推荐接口 暂时调用首页商品接口
     getHomePageGoods(1).then((val) {
-      List<ProductListEntity> list = EntityListFactory.generateList<ProductListEntity>(val['data']);
+      List<ProductListEntity> list =
+          EntityListFactory.generateList<ProductListEntity>(val['data']);
 
       setState(() {
         productList.addAll(list);
@@ -107,7 +110,7 @@ class _ProductDetailState extends State<ProductDetail> {
       floatingActionButton:
           BackTopButton(controller: _controller, showToTopBtn: showToTopBtn),
       body: productEntity == null
-          ? Text("")
+          ? CupertinoActivityIndicator()
           : Stack(
               children: <Widget>[
                 EasyRefresh(
@@ -136,9 +139,12 @@ class _ProductDetailState extends State<ProductDetail> {
 
   /// 调用后台商品接口
   void _getProductInfo() {
-    getHttpRes('getProductInfo', 'productId=' + widget.productId).then((val) {
+    HttpUtil()
+        .get('getProductInfo', parms: 'productId=' + widget.productId)
+        .then((val) {
       setState(() {
-        productEntity = EntityFactory.generateOBJ<ProductEntity>(val['data']['product']);
+        productEntity =
+            EntityFactory.generateOBJ<ProductEntity>(val['data']['product']);
       });
     });
   }
@@ -275,17 +281,21 @@ class ProductInfomation extends StatelessWidget {
               child: Text.rich(
             TextSpan(
               style: TextStyle(
-                color: Colors.red,
+                color: Colors.pink.shade300,
                 wordSpacing: 4,
                 fontSize: 16,
                 fontWeight: FontWeight.bold,
               ),
               children: [
-                TextSpan(text: "券后价 ¥ ", style: TextStyle()),
+                TextSpan(text: "券后  ", style: TextStyle(
+                  fontSize: 14,
+                )),
                 TextSpan(
-                  text: '${productEntity.afterCouponPrice}',
+                  text: '¥${productEntity.afterCouponPrice}',
                   style: TextStyle(
                     fontSize: 20,
+                    color: Colors.pink,
+
                   ),
                 ),
               ],
@@ -373,7 +383,7 @@ class ProductInfomation extends StatelessWidget {
                 border: Border.all(width: 0.70, color: Colors.red),
                 borderRadius: BorderRadius.circular(2)),
             child: Text(
-              productEntity.userType==1 ? "天猫" : "淘宝",
+              productEntity.userType == 1 ? "天猫" : "淘宝",
               style: TextStyle(fontSize: 8),
             ),
           ),
@@ -627,8 +637,9 @@ class _ItemDetailsState extends State<ItemDetails> {
 
   void _getItemDeatilRichText() {
     if (richText == '' || richText == null) {
-      getHttpRes('getProductDetail',
-              'data=%7B"id":"${widget.productEntity.itemId}"%7D')
+      HttpUtil()
+          .get('getProductDetail',
+              parms: 'data=%7B"id":"${widget.productEntity.itemId}"%7D')
           .then((val) {
         setState(() {
           hidden = !hidden;
@@ -738,7 +749,10 @@ class ProductRecommend extends StatelessWidget {
       child: Column(
         children: <Widget>[
           _recommendText(),
-          ProductList(list: list,crossAxisCount: 2,),
+          ProductList(
+            list: list,
+            crossAxisCount: 2,
+          ),
         ],
       ),
     );
@@ -746,7 +760,6 @@ class ProductRecommend extends StatelessWidget {
 }
 
 class DetailsBottom extends StatelessWidget {
-
   ProductEntity productEntity;
 
   DetailsBottom({this.productEntity});
@@ -799,7 +812,6 @@ class DetailsBottom extends StatelessWidget {
             children: <Widget>[
               InkWell(
                 onTap: () async {
-
                   Map<String, String> taoKeParamsextraParams = new Map();
                   taoKeParamsextraParams['taokeAppkey'] = '24900413';
 
@@ -808,11 +820,9 @@ class DetailsBottom extends StatelessWidget {
 
                   nautilus.openUrl(
                       pageUrl: productEntity.couponShareUrl,
-                      openType:nautilus.OpenType.NATIVE,
-                      schemeType:"taobao_oscheme",
-                      extParams:extraParams
-                  );
-
+                      openType: nautilus.OpenType.NATIVE,
+                      schemeType: "taobao_oscheme",
+                      extParams: extraParams);
                 },
                 child: Container(
                   alignment: Alignment.center,
@@ -840,7 +850,6 @@ class DetailsBottom extends StatelessWidget {
               ),
               InkWell(
                 onTap: () async {
-
                   Map<String, String> taoKeParamsextraParams = new Map();
                   taoKeParamsextraParams['taokeAppkey'] = '24900413';
 
@@ -854,12 +863,10 @@ class DetailsBottom extends StatelessWidget {
                           subPid: "mm_114747138_45538443_624654015",
                           pid: "mm_114747138_45538443_624654015",
                           adzoneId: "624654015",
-                          extParams:taoKeParamsextraParams
-                      ),
-                      openType:nautilus.OpenType.NATIVE,
-                      schemeType:"taobao_oscheme",
-                      extParams:extraParams
-                  );
+                          extParams: taoKeParamsextraParams),
+                      openType: nautilus.OpenType.NATIVE,
+                      schemeType: "taobao_oscheme",
+                      extParams: extraParams);
                 },
                 child: Container(
                   alignment: Alignment.center,

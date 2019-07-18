@@ -5,6 +5,7 @@ import 'package:rxdart/rxdart.dart';
 
 
 import 'package:flukit/flukit.dart';
+import 'package:tbk_app/config/loading.dart';
 import 'package:tbk_app/constant/constant.dart';
 import 'package:tbk_app/modle/splashModel.dart';
 import 'package:tbk_app/router/application.dart';

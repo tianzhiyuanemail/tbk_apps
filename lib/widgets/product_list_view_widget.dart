@@ -9,6 +9,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:tbk_app/modle/product_list_entity.dart';
 import 'package:tbk_app/router/application.dart';
 import 'package:tbk_app/router/routers.dart';
+import 'package:tbk_app/util/colors_util.dart';
 import 'package:tbk_app/util/fluro_navigator_util.dart';
 
 /// Sliver 商品列表  SliverList
@@ -109,8 +110,8 @@ class SliverProductList extends StatelessWidget {
                               width: ScreenUtil().setWidth(150),
                               height: ScreenUtil().setHeight(50),
                               decoration: BoxDecoration(
-                                color: Colors.pink.shade100,
-                                border: Border.all(color: Colors.pink),
+                                color: Colors.pink.shade50,
+                                border: Border.all(color:  ColorsUtil.hexToColor(ColorsUtil.appBarColor),),
                                 borderRadius: BorderRadius.only(
                                   topLeft: Radius.circular(20),
                                   bottomLeft: Radius.circular(20),
@@ -119,7 +120,7 @@ class SliverProductList extends StatelessWidget {
                               child: Text(
                                 obj.couponAmount+'元券',
                                 style: TextStyle(
-                                    color: Colors.pink,
+                                    color:  ColorsUtil.hexToColor(ColorsUtil.appBarColor),
                                     fontSize: ScreenUtil().setSp(20)),
                               ),
                             ),
@@ -131,7 +132,7 @@ class SliverProductList extends StatelessWidget {
                               width: ScreenUtil().setWidth(150),
                               height: ScreenUtil().setHeight(50),
                               decoration: BoxDecoration(
-                                color: Colors.pink,
+                                color:  ColorsUtil.hexToColor(ColorsUtil.appBarColor),
                                 borderRadius: BorderRadius.only(
                                   topRight: Radius.circular(20),
                                   bottomRight: Radius.circular(20),
@@ -329,7 +330,7 @@ class ProductList extends StatelessWidget {
                           Text(
                             "券后  ￥",
                             style: TextStyle(
-                              color: Colors.pink,
+                              color:  ColorsUtil.hexToColor(ColorsUtil.appBarColor),
                               fontSize: ScreenUtil().setSp(20),
                             ),
                           ),
@@ -338,7 +339,7 @@ class ProductList extends StatelessWidget {
                             child: Text(
                               obj.afterCouponPrice+"  ",
                               style: TextStyle(
-                                color: Colors.pink,
+                                color: ColorsUtil.hexToColor(ColorsUtil.appBarColor),
                                 fontSize: ScreenUtil().setSp(35),
                               ),
                             ),
@@ -374,8 +375,8 @@ class ProductList extends StatelessWidget {
                               width: ScreenUtil().setWidth(150),
                               height: ScreenUtil().setHeight(50),
                               decoration: BoxDecoration(
-                                color: Colors.pink.shade100,
-                                border: Border.all(color: Colors.pink),
+                                color: Colors.pink.shade50,
+                                border: Border.all(color:  ColorsUtil.hexToColor(ColorsUtil.appBarColor),),
                                 borderRadius: BorderRadius.only(
                                   topLeft: Radius.circular(20),
                                   bottomLeft: Radius.circular(20),
@@ -384,7 +385,7 @@ class ProductList extends StatelessWidget {
                               child: Text(
                                 obj.couponAmount+'元券',
                                 style: TextStyle(
-                                    color: Colors.pink,
+                                    color:  ColorsUtil.hexToColor(ColorsUtil.appBarColor),
                                     fontSize: ScreenUtil().setSp(20)),
                               ),
                             ),
@@ -396,7 +397,7 @@ class ProductList extends StatelessWidget {
                               width: ScreenUtil().setWidth(150),
                               height: ScreenUtil().setHeight(50),
                               decoration: BoxDecoration(
-                                color: Colors.pink,
+                                color:  ColorsUtil.hexToColor(ColorsUtil.appBarColor),
                                 borderRadius: BorderRadius.only(
                                   topRight: Radius.circular(20),
                                   bottomRight: Radius.circular(20),

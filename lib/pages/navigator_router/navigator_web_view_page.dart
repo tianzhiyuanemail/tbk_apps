@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_webview_plugin/flutter_webview_plugin.dart';
 import 'package:tbk_app/util/colors_util.dart';
+import 'package:tbk_app/util/fluro_navigator_util.dart';
 
 // ignore: must_be_immutable
 class NavigatorWebViewPage extends StatefulWidget {
@@ -87,7 +88,7 @@ class _WebViewExampleState extends State<NavigatorWebViewPage> {
       margin: EdgeInsets.only(right: 20),
       child: new Text(
         widget.title,
-        style: new TextStyle(color: Colors.white),
+        style: new TextStyle(color: Colors.white,fontSize: 15),
       ),
     ));
     if (loading) {
@@ -106,7 +107,7 @@ class _WebViewExampleState extends State<NavigatorWebViewPage> {
               reload();
             },
             color: Colors.white,
-            iconSize: 25,
+            iconSize: 20,
           ),
         ),
       );
@@ -121,9 +122,17 @@ class _WebViewExampleState extends State<NavigatorWebViewPage> {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: titleContent,
           ),
-          iconTheme: new IconThemeData(color: Colors.white),
+          leading: IconButton(
+            icon: Icon(
+              Icons.arrow_back_ios,
+              size: 20,
+            ),
+            onPressed: () {
+              NavigatorUtil.gotransitionPop(context);
+            },
+          ),
         ),
-        preferredSize: Size.fromHeight(ScreenUtil.screenHeight * 0.03),
+        preferredSize: Size.fromHeight(ScreenUtil.screenHeight * 0.025),
       ),
       key: scaffoldKey,
       // 登录的URL

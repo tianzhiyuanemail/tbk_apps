@@ -9,6 +9,7 @@ import 'package:tbk_app/router/routers.dart';
 import 'package:tbk_app/router/application.dart';
 import 'package:nautilus/nautilus.dart' as nautilus;
 
+import 'config/loading.dart';
 import 'pages/splash/splash_page.dart';
 import 'util/colors_util.dart';
 
@@ -50,6 +51,10 @@ class MyApp extends StatelessWidget {
     final router = Router();
     Routers.configureRouters(router);
     Application.router = router;
+
+    print('home  $context');
+//    print('home  ${Navigator.of(context)}');
+    Loading.ctx = context; // 注入context
 
     return new RestartWidget(
       child: MaterialApp(

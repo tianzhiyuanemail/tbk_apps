@@ -11,6 +11,7 @@ import 'package:flutter/widgets.dart';
 import 'package:flutter_easyrefresh/easy_refresh.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_swiper/flutter_swiper.dart';
+import 'package:tbk_app/config/loading.dart';
 import 'package:tbk_app/config/service_method.dart';
 import 'package:tbk_app/modle/banners_entity.dart';
 import 'package:tbk_app/modle/navigator_entity.dart';
@@ -20,6 +21,7 @@ import 'package:tbk_app/router/routers.dart';
 import 'package:tbk_app/util/easy_refresh_util.dart';
 import 'package:tbk_app/util/fluro_convert_util.dart';
 import 'package:tbk_app/util/fluro_navigator_util.dart';
+import 'package:tbk_app/util/http_util.dart';
 import 'package:tbk_app/util/map_url_params_utils.dart';
 import 'package:tbk_app/widgets/back_top_widget.dart';
 import 'package:tbk_app/widgets/product_list_view_widget.dart';
@@ -102,6 +104,7 @@ class _HomePageFirstState extends State<HomePageFirst>
 
   @override
   Widget build(BuildContext context) {
+    Loading.ctx = context; // 注入context
     return Scaffold(
       floatingActionButton:
           BackTopButton(controller: _controller, showToTopBtn: showToTopBtn),
@@ -159,8 +162,8 @@ class _HomePageFirstState extends State<HomePageFirst>
   void _bannersQueryListForMap() {
     Map<String, Object> map = Map();
     map["pageNo"] = page;
-    getHttpRes(
-            'banners/queryListForMap', MapUrlParamsUtils.getUrlParamsByMap(map))
+    HttpUtil().get(
+            'banners/queryListForMap',parms: MapUrlParamsUtils.getUrlParamsByMap(map))
         .then((val) {
       if (val["success"]) {
         setState(() {
@@ -174,8 +177,8 @@ class _HomePageFirstState extends State<HomePageFirst>
   void _navigatorQueryListForMap() {
     Map<String, Object> map = Map();
     map["pageNo"] = page;
-    getHttpRes('homeNavigator/queryListForMap',
-            MapUrlParamsUtils.getUrlParamsByMap(map))
+    HttpUtil().get('homeNavigator/queryListForMap',
+           parms: MapUrlParamsUtils.getUrlParamsByMap(map))
         .then((val) {
       if (val["success"]) {
         setState(() {

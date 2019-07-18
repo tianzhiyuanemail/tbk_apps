@@ -6,11 +6,14 @@ import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_easyrefresh/easy_refresh.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:tbk_app/config/service_method.dart';
 import 'package:tbk_app/modle/product_list_entity.dart';
 import 'package:tbk_app/modle/sort_modle.dart';
-import 'package:tbk_app/router/application.dart';
+import 'package:tbk_app/util/colors_util.dart';
 import 'package:tbk_app/util/easy_refresh_util.dart';
+import 'package:tbk_app/util/fluro_navigator_util.dart';
+import 'package:tbk_app/util/http_util.dart';
 import 'package:tbk_app/util/map_url_params_utils.dart';
 import 'package:tbk_app/widgets/back_top_widget.dart';
 import 'package:tbk_app/widgets/product_list_view_widget.dart';
@@ -71,7 +74,7 @@ class _ProductListPage extends State<ProductListPage>
     map["pageNo"] = page;
     map["sort"] = _sortModle.s1+_sortModle.s2;
 
-    getHttpRes('getProductList', MapUrlParamsUtils.getUrlParamsByMap(map)).then((val) {
+    HttpUtil().get('getProductList',parms: MapUrlParamsUtils.getUrlParamsByMap(map)).then((val) {
       if(val["success"]){
         List<ProductListEntity> list = EntityListFactory.generateList<ProductListEntity>(val['data']);
         setState(() {
@@ -90,37 +93,78 @@ class _ProductListPage extends State<ProductListPage>
           page  = 1;
         });
       }
-
     });
+
+
+
+
+//    getHttpRes('getProductList', MapUrlParamsUtils.getUrlParamsByMap(map)).then((val) {
+//      if (val["success"]) {
+//        List<ProductListEntity> list = EntityListFactory.generateList<
+//            ProductListEntity>(val['data']);
+//        setState(() {
+//          if (page == 1) {
+//            goodsList = list;
+//          } else {
+//            goodsList.addAll(list);
+//          }
+//          page++;
+//        });
+//      } else {
+//        setState(() {
+//          print(val["message"]);
+//          goodsList = List();
+//          page = 1;
+//        });
+//      }
+//    }
+//      );
 
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        backgroundColor: Colors.pink,
-        leading: IconButton(
-          icon: Icon(
-            Icons.arrow_back_ios,
-            color: Colors.white,
+//      appBar: AppBar(
+//        backgroundColor: Colors.pink,
+//        leading: IconButton(
+//          icon: Icon(
+//            Icons.arrow_back_ios,
+//            color: Colors.white,
+//          ),
+//          onPressed: () {
+//            Application.router.pop(context);
+//          },
+//        ),
+//        //导航栏和状态栏的的颜色
+//        elevation: 0,
+//        //阴影的高度
+//        brightness: Brightness.light,
+//        centerTitle: true,
+//        //标题是否居中，默认为false
+//        //        toolbarOpacity: 0.5, //整个导航栏的不透明度
+//        bottomOpacity: 1,
+//        //bottom的不透明度
+//        titleSpacing: 5,
+//        //标题两边的空白区域,
+//        title: Text(widget.cateName)
+//      ),
+      appBar: PreferredSize(
+        child: AppBar(
+          backgroundColor: ColorsUtil.hexToColor(ColorsUtil.appBarColor),
+          title: Text(widget.cateName,style: TextStyle(fontSize: 15),),
+
+          leading: IconButton(
+            icon: Icon(
+              Icons.arrow_back_ios,
+              size: 20,
+            ),
+            onPressed: () {
+              NavigatorUtil.gotransitionPop(context);
+            },
           ),
-          onPressed: () {
-            Application.router.pop(context);
-          },
         ),
-        //导航栏和状态栏的的颜色
-        elevation: 0,
-        //阴影的高度
-        brightness: Brightness.light,
-        centerTitle: true,
-        //标题是否居中，默认为false
-        //        toolbarOpacity: 0.5, //整个导航栏的不透明度
-        bottomOpacity: 1,
-        //bottom的不透明度
-        titleSpacing: 5,
-        //标题两边的空白区域,
-        title: Text(widget.cateName)
+        preferredSize: Size.fromHeight(ScreenUtil.screenHeight*0.025),
       ),
       floatingActionButton: BackTopButton(controller: _controller, showToTopBtn: showToTopBtn),
       body: EasyRefresh(

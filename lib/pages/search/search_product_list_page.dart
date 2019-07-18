@@ -11,6 +11,7 @@ import 'package:tbk_app/modle/product_list_entity.dart';
 import 'package:tbk_app/modle/sort_modle.dart';
 import 'package:tbk_app/router/application.dart';
 import 'package:tbk_app/util/easy_refresh_util.dart';
+import 'package:tbk_app/util/http_util.dart';
 import 'package:tbk_app/util/map_url_params_utils.dart';
 import 'package:tbk_app/widgets/back_top_widget.dart';
 import 'package:tbk_app/widgets/product_list_view_widget.dart';
@@ -72,7 +73,7 @@ class _SearchProductListPage extends State<SearchProductListPage>
     map["pageNo"] = page;
     map["sort"] = _sortModle.s1+_sortModle.s2;
 
-    getHttpRes('getProductList', MapUrlParamsUtils.getUrlParamsByMap(map)).then((val) {
+    HttpUtil().get('getProductList',parms: MapUrlParamsUtils.getUrlParamsByMap(map)).then((val) {
       if(val["success"]){
         List<ProductListEntity> list = EntityListFactory.generateList<ProductListEntity>(val['data']);
         setState(() {
