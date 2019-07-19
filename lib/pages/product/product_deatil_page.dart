@@ -17,6 +17,7 @@ import 'package:tbk_app/modle/product_entity.dart';
 import 'package:tbk_app/modle/product_list_entity.dart';
 import 'package:tbk_app/router/application.dart';
 import 'package:tbk_app/router/routers.dart';
+import 'package:tbk_app/util/colors_util.dart';
 import 'package:tbk_app/util/easy_refresh_util.dart';
 import 'package:tbk_app/util/fluro_navigator_util.dart';
 import 'package:tbk_app/util/http_util.dart';
@@ -287,15 +288,16 @@ class ProductInfomation extends StatelessWidget {
                 fontWeight: FontWeight.bold,
               ),
               children: [
-                TextSpan(text: "券后  ", style: TextStyle(
-                  fontSize: 14,
-                )),
+                TextSpan(
+                    text: "券后 ",
+                    style: TextStyle(
+                      fontSize: 14,
+                    )),
                 TextSpan(
                   text: '¥${productEntity.afterCouponPrice}',
                   style: TextStyle(
                     fontSize: 20,
-                    color: Colors.pink,
-
+                    color: ColorsUtil.hexToColor(ColorsUtil.appBarColor),
                   ),
                 ),
               ],
@@ -359,8 +361,7 @@ class ProductInfomation extends StatelessWidget {
                 ),
                 children: [
                   TextSpan(
-                      text: "已售${productEntity.tkTotalSales}",
-                      style: TextStyle()),
+                      text: "已售${productEntity.volume}", style: TextStyle()),
                 ],
               ),
             ),
@@ -373,12 +374,13 @@ class ProductInfomation extends StatelessWidget {
   Widget _row3() {
     return Container(
       margin: EdgeInsets.only(top: 10),
-      child: Stack(
+      child: Row(
         children: <Widget>[
           Container(
             alignment: Alignment.topLeft,
             width: 25,
-            padding: EdgeInsets.only(left: 3, right: 3, bottom: 0, top: 0.5),
+            margin: EdgeInsets.only( right: 10),
+            padding: EdgeInsets.only(left: 3, right: 3, bottom: 0, top: 0),
             decoration: BoxDecoration(
                 border: Border.all(width: 0.70, color: Colors.red),
                 borderRadius: BorderRadius.circular(2)),
@@ -387,14 +389,55 @@ class ProductInfomation extends StatelessWidget {
               style: TextStyle(fontSize: 8),
             ),
           ),
-          Text(
-            "          ${productEntity.title}",
-            style: TextStyle(
-              color: Colors.black,
-              fontSize: 11,
-              fontWeight: FontWeight.w400,
+          Container(
+            width: ScreenUtil().setWidth(640),
+            child: Text(
+              "${productEntity.title}",
+              style: TextStyle(
+                color: Colors.black54,
+                fontSize: 11,
+                fontWeight: FontWeight.w400,
+              ),
+            ),
+          )
+        ],
+      ),
+    );
+  }
+
+  Widget _row31() {
+    return Container(
+      margin: EdgeInsets.only(top: 10),
+      child: Row(
+        children: <Widget>[
+          Container(
+            alignment: Alignment.topLeft,
+//            width: 40,
+            margin: EdgeInsets.only(left: 0, right: 10, bottom: 0, top:0),
+            padding: EdgeInsets.only(left: 3, right: 3, bottom: 0, top: 0),
+            decoration: BoxDecoration(
+              color: ColorsUtil.hexToColor(ColorsUtil.appBarColor),
+              border: Border.all(width: 0.70, color: ColorsUtil.hexToColor(ColorsUtil.appBarColor)),
+              borderRadius: BorderRadius.circular(2),
+            ),
+            child: Text(
+              "推荐语",
+              style: TextStyle(fontSize: 8,color: Colors.white,letterSpacing: 2),
             ),
           ),
+          Container(
+            width: ScreenUtil().setWidth(610),
+            child: Text(
+              "${productEntity.itemDescription}",
+              maxLines: 2,
+              overflow: TextOverflow.ellipsis,
+              style: TextStyle(
+                color: Colors.black,
+                fontSize: 11,
+                fontWeight: FontWeight.w400,
+              ),
+            ),
+          )
         ],
       ),
     );
@@ -464,6 +507,7 @@ class ProductInfomation extends StatelessWidget {
           _row1(),
           _row2(),
           _row3(),
+          productEntity.itemDescription.isEmpty?Container() :_row31(),
           _row4(),
         ],
       ),
@@ -500,7 +544,7 @@ class ShopInfomation extends StatelessWidget {
                 alignment: Alignment.center,
                 margin: EdgeInsets.only(left: 40, top: 7),
                 child: Text(
-                  "七公主旗舰店",
+                  productEntity.shopTitle,
                   style: TextStyle(
                     color: Colors.black,
                     fontSize: 11,

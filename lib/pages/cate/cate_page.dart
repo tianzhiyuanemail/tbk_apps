@@ -6,12 +6,15 @@ import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:provide/provide.dart';
-import 'package:tbk_app/config/service_method.dart';
+import 'package:tbk_app/modle/cate_entity.dart';
 import 'package:tbk_app/provide/child_cate.dart';
-import 'package:tbk_app/router/application.dart';
 import 'package:tbk_app/router/routers.dart';
+import 'package:tbk_app/util/colors_util.dart';
 import 'package:tbk_app/util/fluro_convert_util.dart';
 import 'package:tbk_app/util/fluro_navigator_util.dart';
+import 'package:tbk_app/util/http_util.dart';
+
+import '../../entity_list_factory.dart';
 
 class CatePage extends StatefulWidget {
   @override
@@ -20,7 +23,7 @@ class CatePage extends StatefulWidget {
 
 class _CatePageState extends State<CatePage>
     with SingleTickerProviderStateMixin {
-  List list = [];
+  List<CateEntity> list = [];
   Animation<double> numberAnimation;
   AnimationController controller;
   double selectIndex = 0;
@@ -34,13 +37,27 @@ class _CatePageState extends State<CatePage>
     controller = new AnimationController(
         duration: const Duration(milliseconds: 300), vsync: this);
     _changeSelected(selectIndex, 0);
+    _cateGetList();
+  }
 
-    getCatePage().then((val) {
-      setState(() {
-        list = val['data'] as List;
-        _updateCateChild(0);
-      });
+
+  void _cateGetList() {
+
+    HttpUtil().get('cateGetList').then((val) {
+      if(val["success"]){
+        setState(() {
+          list  = EntityListFactory.generateList<CateEntity>(val['data']);
+          _updateCateChild(0);
+        });
+
+      }else{
+        setState(() {
+          print(val["message"]);
+          list = List();
+        });
+      }
     });
+
   }
 
   @override
@@ -85,7 +102,7 @@ class _CatePageState extends State<CatePage>
 
   /// 初始化二级类目
   _updateCateChild(int index) {
-    List childCate = list[index.toInt()]['data'] as List;
+    List<CateEntity> childCate = list[index.toInt()].data;
     Provide.value<ChildCate>(context).getChildCate(childCate);
   }
 
@@ -95,24 +112,25 @@ class _CatePageState extends State<CatePage>
     return InkWell(
       onTap: () {
         _changeSelected(selectIndex, index);
-        _animateTo(index);
+        //_animateTo(index);
         _updateCateChild(index.toInt());
       },
       child: Container(
         margin: EdgeInsets.only(top: 10, bottom: 10, left: 10, right: 10),
-        padding: EdgeInsets.only(top: 3, bottom: 3),
+//        padding: EdgeInsets.only(top: 3, bottom: 3),
         height: ScreenUtil().setWidth(50),
+        alignment: Alignment.center,
         decoration: _selected
             ? BoxDecoration(
-                color: Colors.redAccent,
-                border: Border.all(width: 2.0, color: Colors.red),
+                color: ColorsUtil.hexToColor(ColorsUtil.appBarColor),
+                border: Border.all(width: 2.0, color: ColorsUtil.hexToColor(ColorsUtil.appBarColor),),
                 borderRadius: BorderRadius.all(Radius.circular(15)),
               )
             : BoxDecoration(
                 border: Border.all(width: 2.0, color: Colors.transparent),
               ),
         child: Text(
-          list[index.toInt()]['tbkName'].toString(),
+          list[index.toInt()].cateName.toString(),
           style: TextStyle(
             color: _selected ? Colors.white : Colors.black,
             letterSpacing: 15,
@@ -135,7 +153,7 @@ class _CatePageState extends State<CatePage>
             right: BorderSide(width: 2, color: Colors.black12),
           )),
       child: ListView(
-        controller: _scrollController,
+        //controller: _scrollController,
         children: list.asMap().keys.map((v) {
           return _item(v.toDouble());
         }).toList(),
@@ -163,37 +181,30 @@ class _CatePageState extends State<CatePage>
         ));
   }
 
-  Widget rightList(List cateChild) {
+  Widget rightList(List<CateEntity> cateChild) {
     return GridView.count(
       crossAxisCount: 3,
       crossAxisSpacing: 5,
       mainAxisSpacing: 5.0,
-      childAspectRatio: 0.8,
+      childAspectRatio: 0.7,
       children: cateChild.map((cate) {
         return InkWell(
           onTap: () {
-            NavigatorUtil.gotransitionPage(context, Routers.productListPage +
-                "?cateId=" +
-                cate["cateId"].toString() +
-                "&cateName="+
-                FluroConvertUtils.fluroCnParamsEncode(cate["tbkName"])
-            );
+            NavigatorUtil.gotransitionPage(context, Routers.productListPage + "?cateId=${cate.cateId}&cateName=${FluroConvertUtils.fluroCnParamsEncode(cate.cateName)}");
           },
           child: Container(
             //width: 20,
-            padding: EdgeInsets.all(30),
+            padding: EdgeInsets.all(23),
             child: Column(
               children: <Widget>[
                 Image.network(
-                  cate['tbkImg'],
+                  cate.cateIcon,
                   width: ScreenUtil().setWidth(150),
                 ),
                 Container(
                   margin: EdgeInsets.only(top: 4),
                   child: Text(
-                    cate['tbkName'].toString().length > 2
-                        ? cate['tbkName'].toString().substring(0, 2)
-                        : cate['tbkName'].toString(),
+                    cate.cateName,
                     style: TextStyle(fontSize: ScreenUtil().setSp(20)),
                   ),
                 )

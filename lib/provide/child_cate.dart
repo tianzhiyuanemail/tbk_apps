@@ -1,8 +1,9 @@
 
 import 'package:flutter/material.dart';
+import 'package:tbk_app/modle/cate_entity.dart';
 
 class ChildCate with ChangeNotifier {
-  List chileCate = [];
+  List<CateEntity> chileCate = [];
 
 
   //点击大类时更换

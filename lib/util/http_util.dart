@@ -73,11 +73,11 @@ class HttpUtil {
    * get请求
    */
  Future get( path, { parms,data, options, cancelToken}) async {
-   print("传入参数"+servicePath[path]+'?'+parms);
+   print("传入参数${servicePath[path]}?${parms}");
 
    Response response;
     try {
-      response = await dio.get(servicePath[path]+"?"+parms, queryParameters: data, options: options, cancelToken: cancelToken);
+      response = await dio.get("${servicePath[path]}?${parms}", queryParameters: data, options: options, cancelToken: cancelToken);
       print('get success---------${response.statusCode}');
 
       //      response.data; 响应体
