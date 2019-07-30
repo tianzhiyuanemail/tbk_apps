@@ -9,7 +9,6 @@ import 'package:flutter/rendering.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_easyrefresh/easy_refresh.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:tbk_app/config/service_method.dart';
 import 'package:tbk_app/modle/product_list_entity.dart';
 import 'package:tbk_app/modle/sort_modle.dart';
 import 'package:tbk_app/util/easy_refresh_util.dart';

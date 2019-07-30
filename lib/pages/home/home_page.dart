@@ -4,16 +4,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:tbk_app/config/service_method.dart';
-import 'package:tbk_app/config/service_url.dart';
 import 'package:tbk_app/modle/tab_item_modle.dart';
 import 'package:tbk_app/pages/home/tab_bar_view.dart';
-import 'package:tbk_app/router/application.dart';
 import 'package:tbk_app/router/routers.dart';
 import 'package:tbk_app/util/colors_util.dart';
 import 'package:tbk_app/util/fluro_navigator_util.dart';
 import 'package:tbk_app/widgets/search_text_field_widget.dart';
-import 'dart:math' as math;
 
 /// 首页
 class HomePage extends StatefulWidget {

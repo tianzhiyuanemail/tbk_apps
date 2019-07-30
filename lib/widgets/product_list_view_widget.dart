@@ -2,12 +2,10 @@
  * Copyright (C) 2019 Baidu, Inc. All Rights Reserved.
  */
 
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:tbk_app/modle/product_list_entity.dart';
-import 'package:tbk_app/router/application.dart';
 import 'package:tbk_app/router/routers.dart';
 import 'package:tbk_app/util/colors_util.dart';
 import 'package:tbk_app/util/fluro_navigator_util.dart';
@@ -25,7 +23,7 @@ class SliverProductList extends StatelessWidget {
     return list.map((obj) {
       return InkWell(
         onTap: () {
-          NavigatorUtil.gotransitionPage(context, Routers.detailsPage + "?id=" + obj.itemId.toString());
+          NavigatorUtil.gotransitionPage(context,  "${Routers.detailsPage}?id=${ obj.itemId}");
         },
         child: Container(
           color: Colors.white,
@@ -72,7 +70,7 @@ class SliverProductList extends StatelessWidget {
                           Container(
                             margin: EdgeInsets.only(bottom: 5),
                             child: Text(
-                              obj.afterCouponPrice+"  ",
+                              "${obj.afterCouponPrice}  ",
                               style: TextStyle(
                                 color: Colors.pink,
                                 fontSize: ScreenUtil().setSp(35),
@@ -80,7 +78,7 @@ class SliverProductList extends StatelessWidget {
                             ),
                           ),
                           Text(
-                            "￥"+obj.zkFinalPrice,
+                            "￥${obj.zkFinalPrice}",
                             style: TextStyle(
                                 color: Colors.black54,
                                 fontSize: ScreenUtil().setSp(20),
@@ -92,7 +90,7 @@ class SliverProductList extends StatelessWidget {
                     ),
                     Container(
                       child: Text(
-                        "月销售"+obj.volume.toString()+"笔",
+                        "月销售${obj.volume}笔",
                         style: TextStyle(
                           color: Colors.black54,
                           fontSize: ScreenUtil().setSp(20),
@@ -118,7 +116,7 @@ class SliverProductList extends StatelessWidget {
                                 ),
                               ),
                               child: Text(
-                                obj.couponAmount+'元券',
+                                '${obj.couponAmount}元券',
                                 style: TextStyle(
                                     color:  ColorsUtil.hexToColor(ColorsUtil.appBarColor),
                                     fontSize: ScreenUtil().setSp(20)),
@@ -290,7 +288,7 @@ class ProductList extends StatelessWidget {
     return list.map((obj) {
       return InkWell(
         onTap: () {
-          NavigatorUtil.gotransitionPage(context, Routers.detailsPage + "?id=" + obj.itemId.toString());
+          NavigatorUtil.gotransitionPage(context, "${Routers.detailsPage}?id=${obj.itemId}");
         },
         child: Container(
           color: Colors.white,
@@ -337,7 +335,7 @@ class ProductList extends StatelessWidget {
                           Container(
                             margin: EdgeInsets.only(bottom: 5),
                             child: Text(
-                              obj.afterCouponPrice+"  ",
+                              "${obj.afterCouponPrice}  ",
                               style: TextStyle(
                                 color: ColorsUtil.hexToColor(ColorsUtil.appBarColor),
                                 fontSize: ScreenUtil().setSp(35),
@@ -345,7 +343,7 @@ class ProductList extends StatelessWidget {
                             ),
                           ),
                           Text(
-                            "￥"+obj.zkFinalPrice,
+                            "￥${obj.zkFinalPrice}",
                             style: TextStyle(
                                 color: Colors.black54,
                                 fontSize: ScreenUtil().setSp(20),
@@ -357,7 +355,7 @@ class ProductList extends StatelessWidget {
                     ),
                     Container(
                       child: Text(
-                        "月销售"+obj.volume.toString()+"笔",
+                        "月销售${obj.volume}笔",
                         style: TextStyle(
                           color: Colors.black54,
                           fontSize: ScreenUtil().setSp(20),
@@ -383,7 +381,7 @@ class ProductList extends StatelessWidget {
                                 ),
                               ),
                               child: Text(
-                                obj.couponAmount+'元券',
+                                '${obj.couponAmount}元券',
                                 style: TextStyle(
                                     color:  ColorsUtil.hexToColor(ColorsUtil.appBarColor),
                                     fontSize: ScreenUtil().setSp(20)),
@@ -429,7 +427,7 @@ class ProductList extends StatelessWidget {
     return list.map((obj) {
       return InkWell(
         onTap: () {
-          NavigatorUtil.gotransitionPage(context, Routers.detailsPage + "?id=" + obj.itemId.toString());
+          NavigatorUtil.gotransitionPage(context, "${Routers.detailsPage}?id=${obj.itemId}");
         },
         child: Container(
           color: Colors.white,
@@ -486,7 +484,7 @@ class ProductList extends StatelessWidget {
                     ),
                   ),
                   Text(
-                    "￥"+obj.zkFinalPrice,
+                    "￥${obj.zkFinalPrice}",
                     style: TextStyle(
                         color: Colors.black54,
                         fontSize: ScreenUtil().setSp(20),

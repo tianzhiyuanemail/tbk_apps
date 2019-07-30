@@ -1,6 +1,7 @@
 import 'package:tbk_app/modle/product_list_entity.dart';
 import 'package:tbk_app/modle/navigator_entity.dart';
 import 'package:tbk_app/modle/product_entity.dart';
+import 'package:tbk_app/modle/product_recommend_entity.dart';
 import 'package:tbk_app/modle/banners_entity.dart';
 import 'package:tbk_app/modle/cate_entity.dart';
 
@@ -14,6 +15,8 @@ class EntityFactory {
       return NavigatorEntity.fromJson(json) as T;
     } else if (T.toString() == "ProductEntity") {
       return ProductEntity.fromJson(json) as T;
+    } else if (T.toString() == "ProductRecommendEntity") {
+      return ProductRecommendEntity.fromJson(json) as T;
     } else if (T.toString() == "BannersEntity") {
       return BannersEntity.fromJson(json) as T;
     } else if (T.toString() == "CateEntity") {

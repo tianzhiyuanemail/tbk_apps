@@ -6,17 +6,15 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/painting.dart';
 import 'package:flutter/rendering.dart';
-import 'dart:math';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_easyrefresh/easy_refresh.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_swiper/flutter_swiper.dart';
 import 'package:tbk_app/config/loading.dart';
-import 'package:tbk_app/config/service_method.dart';
 import 'package:tbk_app/modle/banners_entity.dart';
 import 'package:tbk_app/modle/navigator_entity.dart';
 import 'package:tbk_app/modle/product_list_entity.dart';
-import 'package:tbk_app/router/application.dart';
+import 'package:tbk_app/modle/product_recommend_entity.dart';
 import 'package:tbk_app/router/routers.dart';
 import 'package:tbk_app/util/easy_refresh_util.dart';
 import 'package:tbk_app/util/fluro_convert_util.dart';
@@ -27,7 +25,6 @@ import 'package:tbk_app/widgets/back_top_widget.dart';
 import 'package:tbk_app/widgets/product_list_view_widget.dart';
 import 'package:url_launcher/url_launcher.dart';
 
-import '../../entity_factory.dart';
 import '../../entity_list_factory.dart';
 
 class HomePageFirst extends StatefulWidget {
@@ -50,28 +47,23 @@ class _HomePageFirstState extends State<HomePageFirst>
   List<ProductListEntity> hotGoodsList = [];
   List<BannersEntity> swiperList = [];
   List<NavigatorEntity> navigatorList = [];
-  List recommendList = List(6);
+  List<ProductRecommendEntity> recommendList = []; // 今日推荐商品
   List flootGoodsList = List(6);
   String adPicture =
       'http://kaze-sora.com/sozai/blog_haru/blog_mitubachi01.jpg';
   String leaderImage =
-      'http://kaze-sora.com/sozai/blog_haru/blog_mitubachi01.jpg';
-  String picture_address =
       'http://kaze-sora.com/sozai/blog_haru/blog_mitubachi01.jpg';
   String leaderPhone = '17610502953';
 
   @override
   bool get wantKeepAlive => true;
 
-  int add(int a, int b) {
-    return a + b;
-  }
-
   @override
   void initState() {
     _getHotGoods();
     _bannersQueryListForMap();
     _navigatorQueryListForMap();
+    _getRecommendList();
 
     //监听滚动事件，打印滚动位置
     _controller.addListener(() {
@@ -115,13 +107,13 @@ class _HomePageFirstState extends State<HomePageFirst>
           _getHotGoods();
         },
         onRefresh: () async {
-          getHomePageGoods(page).then((val) {
-            List swiper = val['data'];
-            setState(() {
-              hotGoodsList = swiper;
-              page = 1;
-            });
+          _bannersQueryListForMap();
+          _navigatorQueryListForMap();
+          _getRecommendList();
+          setState(() {
+            page = 1;
           });
+          _getHotGoods();
         },
         child: ListView(
           controller: _controller,
@@ -134,12 +126,11 @@ class _HomePageFirstState extends State<HomePageFirst>
             AdBanner(adPicture: adPicture),
             LeaderPhone(leaderImage: leaderImage, leaderPhone: leaderPhone),
             Recommend(recommendList: recommendList),
-            FlootTitle(picture_address: picture_address),
             FlootContent(flootGoodsList: flootGoodsList),
             hotTitle,
             ProductList(
               list: hotGoodsList,
-              crossAxisCount: 2,
+              crossAxisCount: 1,
             )
           ],
         ),
@@ -148,22 +139,42 @@ class _HomePageFirstState extends State<HomePageFirst>
   }
 
   void _getHotGoods() {
-    getHomePageGoods(page).then((val) {
-      List<ProductListEntity> list =
-          EntityListFactory.generateList<ProductListEntity>(val['data']);
+    Map<String, Object> map = Map();
+    map["pageNo"] = page;
 
-      setState(() {
-        hotGoodsList.addAll(list);
-        page++;
-      });
+    HttpUtil().get('homePageGoods',parms:MapUrlParamsUtils.getUrlParamsByMap(map) ).then((val) {
+      if (val["success"]) {
+        List<ProductListEntity> list =
+        EntityListFactory.generateList<ProductListEntity>(val['data']);
+
+        setState(() {
+          hotGoodsList.addAll(list);
+          page++;
+        });
+      }
+    });
+
+  }
+
+  // 首页大分类
+  void _getRecommendList() {
+    HttpUtil().get('productRecommends').then((val) {
+      if (val["success"]) {
+        setState(() {
+          recommendList =
+              EntityListFactory.generateList<ProductRecommendEntity>(
+                  val['data']);
+        });
+      }
     });
   }
 
   void _bannersQueryListForMap() {
     Map<String, Object> map = Map();
     map["pageNo"] = page;
-    HttpUtil().get(
-            'banners/queryListForMap',parms: MapUrlParamsUtils.getUrlParamsByMap(map))
+    HttpUtil()
+        .get('banners/queryListForMap',
+            parms: MapUrlParamsUtils.getUrlParamsByMap(map))
         .then((val) {
       if (val["success"]) {
         setState(() {
@@ -174,11 +185,13 @@ class _HomePageFirstState extends State<HomePageFirst>
     });
   }
 
+  // 今日商品推荐
   void _navigatorQueryListForMap() {
     Map<String, Object> map = Map();
     map["pageNo"] = page;
-    HttpUtil().get('homeNavigator/queryListForMap',
-           parms: MapUrlParamsUtils.getUrlParamsByMap(map))
+    HttpUtil()
+        .get('homeNavigator/queryListForMap',
+            parms: MapUrlParamsUtils.getUrlParamsByMap(map))
         .then((val) {
       if (val["success"]) {
         setState(() {
@@ -190,11 +203,19 @@ class _HomePageFirstState extends State<HomePageFirst>
   }
 
   Widget hotTitle = Container(
-    margin: EdgeInsets.only(top: 10),
-    padding: EdgeInsets.all(1),
+
+    margin: EdgeInsets.only(top: 10,bottom: 0),
+    padding: EdgeInsets.only(top: 5,bottom: 5),
     alignment: Alignment.center,
-    color: Colors.transparent,
-    child: Text("火爆专区"),
+    color: Colors.white,
+    child: Row(
+      mainAxisAlignment: MainAxisAlignment.spaceAround,
+       children: <Widget>[
+         Text("————",style: TextStyle(color: Colors.pink),),
+         Text("为你推荐",style: TextStyle(color: Colors.pink),),
+         Text("————",style: TextStyle(color: Colors.pink),),
+       ],
+    ),
   );
 }
 
@@ -334,7 +355,7 @@ class LeaderPhone extends StatelessWidget {
 }
 
 class Recommend extends StatelessWidget {
-  final List recommendList;
+  final List<ProductRecommendEntity> recommendList;
 
   Recommend({Key key, this.recommendList}) : super(key: key);
 
@@ -343,54 +364,95 @@ class Recommend extends StatelessWidget {
       alignment: Alignment.centerLeft,
       padding: EdgeInsets.fromLTRB(10, 2, 0, 0),
       decoration: BoxDecoration(
-          color: Colors.white,
-          border:
-              Border(bottom: BorderSide(width: 0.5, color: Colors.black12))),
-      child: Text(
-        "商品推荐",
-        style: TextStyle(color: Colors.pink),
+        color: Colors.white,
+      ),
+      child: Row(
+        children: <Widget>[
+          Image.asset(
+            "assets/images/home_page_first/juzi.png",
+            fit: BoxFit.fill,
+            width: 20,
+          ),
+          Text(
+            "  商品推荐",
+            style: TextStyle(color: Colors.black54),
+          )
+        ],
       ),
     );
   }
 
-  Widget _item(index) {
+  Widget _item(int index,BuildContext context) {
     return InkWell(
-      onTap: () {},
+      onTap: () {
+        NavigatorUtil.gotransitionPage(context,"${Routers.detailsPage}?id=${recommendList[index].productId}");
+      },
       child: Container(
         height: ScreenUtil().setHeight(330),
         width: ScreenUtil().setWidth(250),
         padding: EdgeInsets.all(8),
         decoration: BoxDecoration(
           color: Colors.white,
-          border: Border(left: BorderSide(width: 0.5, color: Colors.black12)),
         ),
         child: Column(
           children: <Widget>[
-//            Image.network(recommendList[index]['image']),
-//            Text('${recommendList[index]['mallPrice']}'),
-            Image.network(
-                'http://e.hiphotos.baidu.com/image/pic/item/359b033b5bb5c9eac1754f45df39b6003bf3b396.jpg'),
-            Text('￥222'),
-            Text(
-              '￥222',
-              style: TextStyle(
-                  decoration: TextDecoration.lineThrough, color: Colors.grey),
+            Image.network(recommendList[index].imageUrl),
+            Row(
+              children: <Widget>[
+                Container(
+                  margin: EdgeInsets.only(top: 2, bottom: 2,left: 2,right: 5),
+                  padding: EdgeInsets.only(left: 2, right: 2),
+                  color: Colors.pink,
+                  child: Text(
+                    '${recommendList[index].hotType}',
+                    style: TextStyle(fontSize: 10,color: Colors.white),
+                  ),
+                ),
+                Container(
+                  margin: EdgeInsets.only(top: 2, bottom: 2),
+                  padding: EdgeInsets.only(left: 10, right: 10),
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    border: Border.all(width: 0.5, color: Colors.pink),
+                  ),
+                  child: Text(
+                    '${recommendList[index].couponPrice}元券',
+                    style: TextStyle(fontSize: 10),
+                  ),
+                ),
+              ],
             ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.start,
+              children: <Widget>[
+                Text(
+                  '￥${recommendList[index].afterCouponPrice}',
+                  style: TextStyle(fontSize: 12, color: Colors.pink),
+                ),
+                Text(
+                  '￥${recommendList[index].zkFinalPrice}',
+                  style: TextStyle(
+                      fontSize: 12,
+                      decoration: TextDecoration.lineThrough,
+                      color: Colors.grey),
+                ),
+              ],
+            )
           ],
         ),
       ),
     );
   }
 
-  Widget _recommendList() {
+  Widget _recommendList(BuildContext context) {
     return Container(
         height: ScreenUtil().setHeight(333),
-        margin: EdgeInsets.only(top: 10),
+        margin: EdgeInsets.only(top: 0),
         child: ListView.builder(
           scrollDirection: Axis.horizontal,
           itemCount: recommendList.length,
           itemBuilder: (context, index) {
-            return _item(index);
+            return _item(index,context);
           },
         ));
   }
@@ -401,25 +463,12 @@ class Recommend extends StatelessWidget {
 //      height: ScreenUtil().setHeight(380),
       margin: EdgeInsets.only(top: 10),
       child: Column(
-        children: <Widget>[_titleWidget(), _recommendList()],
+        children: <Widget>[_titleWidget(), _recommendList(context)],
       ),
     );
   }
 }
 
-class FlootTitle extends StatelessWidget {
-  final String picture_address;
-
-  FlootTitle({Key key, this.picture_address}) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      padding: EdgeInsets.all(8),
-      child: Image.network(picture_address),
-    );
-  }
-}
 
 class FlootContent extends StatelessWidget {
   final List flootGoodsList;

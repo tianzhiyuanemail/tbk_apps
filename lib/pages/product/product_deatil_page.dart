@@ -12,7 +12,6 @@ import 'package:flutter_easyrefresh/easy_refresh.dart';
 import 'package:flutter_html_widget/flutter_html_widget.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_swiper/flutter_swiper.dart';
-import 'package:tbk_app/config/service_method.dart';
 import 'package:tbk_app/modle/product_entity.dart';
 import 'package:tbk_app/modle/product_list_entity.dart';
 import 'package:tbk_app/router/application.dart';
@@ -24,8 +23,6 @@ import 'package:tbk_app/util/http_util.dart';
 import 'package:tbk_app/util/nautilus_util.dart';
 import 'package:tbk_app/widgets/back_top_widget.dart';
 import 'package:tbk_app/widgets/product_list_view_widget.dart';
-import 'package:nautilus/nautilus.dart' as nautilus;
-import 'package:nautilus/nautilus.dart';
 
 import '../../entity_factory.dart';
 import '../../entity_list_factory.dart';
@@ -60,7 +57,7 @@ class _ProductDetailState extends State<ProductDetail> {
   @override
   void initState() {
     super.initState();
-
+    _getHotGoods();
     _getProductInfo();
 
     ///监听滚动事件
@@ -88,17 +85,23 @@ class _ProductDetailState extends State<ProductDetail> {
       }
     });
 
-    /// todo 商品推荐接口 暂时调用首页商品接口
-    getHomePageGoods(1).then((val) {
-      List<ProductListEntity> list =
-          EntityListFactory.generateList<ProductListEntity>(val['data']);
 
-      setState(() {
-        productList.addAll(list);
-      });
-    });
+
+
   }
+  void _getHotGoods() {
+    HttpUtil().get('homePageGoods' ).then((val) {
+      if (val["success"]) {
+        List<ProductListEntity> list =
+        EntityListFactory.generateList<ProductListEntity>(val['data']);
 
+        setState(() {
+          productList.addAll(list);
+        });
+      }
+    });
+
+  }
   @override
   void dispose() {
     ///为了避免内存泄露，需要调用_controller.dispose
@@ -860,8 +863,6 @@ class DetailsBottom extends StatelessWidget {
           Row(
             children: <Widget>[
               InkWell(
-
-
                 onTap: () async {
                   NautilusUtil.openUrl('https:'+productEntity.couponShareUrl);
                 },
@@ -885,7 +886,8 @@ class DetailsBottom extends StatelessWidget {
               ),
               InkWell(
                 onTap: () async {
-                  NautilusUtil.openItemDetail(productEntity.itemId.toString());
+//                  NautilusUtil.openItemDetail(productEntity.itemId.toString());
+                  NautilusUtil.openUrl('https:'+productEntity.couponShareUrl);
                 },
                 child: Container(
                   alignment: Alignment.center,
