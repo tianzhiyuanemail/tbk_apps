@@ -21,6 +21,7 @@ import 'package:tbk_app/util/colors_util.dart';
 import 'package:tbk_app/util/easy_refresh_util.dart';
 import 'package:tbk_app/util/fluro_navigator_util.dart';
 import 'package:tbk_app/util/http_util.dart';
+import 'package:tbk_app/util/nautilus_util.dart';
 import 'package:tbk_app/widgets/back_top_widget.dart';
 import 'package:tbk_app/widgets/product_list_view_widget.dart';
 import 'package:nautilus/nautilus.dart' as nautilus;
@@ -379,7 +380,7 @@ class ProductInfomation extends StatelessWidget {
           Container(
             alignment: Alignment.topLeft,
             width: 25,
-            margin: EdgeInsets.only( right: 10),
+            margin: EdgeInsets.only(right: 10),
             padding: EdgeInsets.only(left: 3, right: 3, bottom: 0, top: 0),
             decoration: BoxDecoration(
                 border: Border.all(width: 0.70, color: Colors.red),
@@ -413,16 +414,19 @@ class ProductInfomation extends StatelessWidget {
           Container(
             alignment: Alignment.topLeft,
 //            width: 40,
-            margin: EdgeInsets.only(left: 0, right: 10, bottom: 0, top:0),
+            margin: EdgeInsets.only(left: 0, right: 10, bottom: 0, top: 0),
             padding: EdgeInsets.only(left: 3, right: 3, bottom: 0, top: 0),
             decoration: BoxDecoration(
               color: ColorsUtil.hexToColor(ColorsUtil.appBarColor),
-              border: Border.all(width: 0.70, color: ColorsUtil.hexToColor(ColorsUtil.appBarColor)),
+              border: Border.all(
+                  width: 0.70,
+                  color: ColorsUtil.hexToColor(ColorsUtil.appBarColor)),
               borderRadius: BorderRadius.circular(2),
             ),
             child: Text(
               "推荐语",
-              style: TextStyle(fontSize: 8,color: Colors.white,letterSpacing: 2),
+              style:
+                  TextStyle(fontSize: 8, color: Colors.white, letterSpacing: 2),
             ),
           ),
           Container(
@@ -507,7 +511,7 @@ class ProductInfomation extends StatelessWidget {
           _row1(),
           _row2(),
           _row3(),
-          productEntity.itemDescription.isEmpty?Container() :_row31(),
+          productEntity.itemDescription.isEmpty ? Container() : _row31(),
           _row4(),
         ],
       ),
@@ -528,32 +532,33 @@ class ShopInfomation extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: <Widget>[
           Container(
-              child: Stack(
-            children: <Widget>[
-              Container(
-                width: 30,
-                height: 30,
-                decoration: BoxDecoration(
-                    image: DecorationImage(
-                      image: NetworkImage(
-                          "https://b-ssl.duitang.com/uploads/item/201601/08/20160108194244_JxGRy.thumb.700_0.jpeg"),
+            child: Stack(
+              children: <Widget>[
+                Container(
+                  width: 30,
+                  height: 30,
+                  decoration: BoxDecoration(
+                      image: DecorationImage(
+                        image: NetworkImage(
+                            "https://b-ssl.duitang.com/uploads/item/201601/08/20160108194244_JxGRy.thumb.700_0.jpeg"),
+                      ),
+                      borderRadius: BorderRadius.circular(7)),
+                ),
+                Container(
+                  alignment: Alignment.center,
+                  margin: EdgeInsets.only(left: 40, top: 7),
+                  child: Text(
+                    productEntity.shopTitle,
+                    style: TextStyle(
+                      color: Colors.black,
+                      fontSize: 11,
+                      fontWeight: FontWeight.bold,
                     ),
-                    borderRadius: BorderRadius.circular(7)),
-              ),
-              Container(
-                alignment: Alignment.center,
-                margin: EdgeInsets.only(left: 40, top: 7),
-                child: Text(
-                  productEntity.shopTitle,
-                  style: TextStyle(
-                    color: Colors.black,
-                    fontSize: 11,
-                    fontWeight: FontWeight.bold,
                   ),
                 ),
-              ),
-            ],
-          )),
+              ],
+            ),
+          ),
           Container(
             child: Text.rich(
               TextSpan(
@@ -632,9 +637,9 @@ class ShopInfomation extends StatelessWidget {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: <Widget>[
-          _row2Child("宝贝描述", "4.8", "低"),
-          _row2Child("卖家服务", "4.8", "低"),
-          _row2Child("物流服务", "4.8", "低"),
+          _row2Child("宝贝描述", "4.8", "高"),
+          _row2Child("卖家服务", "4.8", "高"),
+          _row2Child("物流服务", "4.8", "高"),
         ],
       ),
     );
@@ -815,7 +820,7 @@ class DetailsBottom extends StatelessWidget {
       color: Colors.white,
       height: ScreenUtil().setHeight(100),
       child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceAround,
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: <Widget>[
           InkWell(
             onTap: () {
@@ -823,6 +828,7 @@ class DetailsBottom extends StatelessWidget {
             },
             child: Container(
               alignment: Alignment.center,
+              margin: EdgeInsets.only(left: 10),
               child: Column(
                 children: <Widget>[
                   Image.asset('assets/images/ic_tab_home_normal.png',
@@ -844,7 +850,7 @@ class DetailsBottom extends StatelessWidget {
                   Image.asset('assets/images/ic_tab_home_normal.png',
                       width: 30.0, height: 30.0),
                   Text(
-                    "收藏",
+                    "喜欢",
                     style: TextStyle(color: Colors.black, fontSize: 12),
                   )
                 ],
@@ -852,41 +858,26 @@ class DetailsBottom extends StatelessWidget {
             ),
           ),
           Row(
-            mainAxisAlignment: MainAxisAlignment.center,
             children: <Widget>[
               InkWell(
+
+
                 onTap: () async {
-                  Map<String, String> taoKeParamsextraParams = new Map();
-                  taoKeParamsextraParams['taokeAppkey'] = '24900413';
-
-                  Map<String, String> extraParams = new Map();
-                  extraParams['isv_code'] = 'appisvcode';
-
-                  nautilus.openUrl(
-                      pageUrl: productEntity.couponShareUrl,
-                      openType: nautilus.OpenType.NATIVE,
-                      schemeType: "taobao_oscheme",
-                      extParams: extraParams);
+                  NautilusUtil.openUrl('https:'+productEntity.couponShareUrl);
                 },
                 child: Container(
                   alignment: Alignment.center,
-                  width: ScreenUtil().setWidth(220),
-                  height: ScreenUtil().setHeight(70),
+                  width: ScreenUtil().setWidth(230),
+                  color: Colors.pink.shade100,
                   padding: EdgeInsets.only(left: 20),
-                  decoration: BoxDecoration(
-                      color: Colors.yellow,
-                      borderRadius: BorderRadius.only(
-                          topLeft: Radius.circular(20),
-                          bottomLeft: Radius.circular(20))),
                   child: Row(
                     children: <Widget>[
-                      Image.asset('assets/images/ic_tab_home_normal.png',
-                          width: 30.0, height: 30.0),
                       Text(
-                        '  分享',
+                        '    分享',
                         style: TextStyle(
-                            color: Colors.white,
-                            fontSize: ScreenUtil().setSp(28)),
+                          color: Colors.pink,
+                          fontSize: ScreenUtil().setSp(28),
+                        ),
                       )
                     ],
                   ),
@@ -894,48 +885,20 @@ class DetailsBottom extends StatelessWidget {
               ),
               InkWell(
                 onTap: () async {
-                  Map<String, String> taoKeParamsextraParams = new Map();
-                  taoKeParamsextraParams['taokeAppkey'] = '24900413';
-
-                  Map<String, String> extraParams = new Map();
-                  extraParams['isv_code'] = 'appisvcode';
-
-                  nautilus.openItemDetail(
-                      itemID: productEntity.itemId.toString(),
-                      taoKeParams: nautilus.TaoKeParams(
-                          unionId: "",
-                          subPid: "mm_114747138_45538443_624654015",
-                          pid: "mm_114747138_45538443_624654015",
-                          adzoneId: "624654015",
-                          extParams: taoKeParamsextraParams),
-                      openType: nautilus.OpenType.NATIVE,
-                      schemeType: "taobao_oscheme",
-                      extParams: extraParams);
+                  NautilusUtil.openItemDetail(productEntity.itemId.toString());
                 },
                 child: Container(
                   alignment: Alignment.center,
-                  width: ScreenUtil().setWidth(250),
-                  height: ScreenUtil().setHeight(70),
+                  width: ScreenUtil().setWidth(230),
+                  color: ColorsUtil.hexToColor(ColorsUtil.appBarColor),
                   padding: EdgeInsets.only(left: 20),
-                  decoration: BoxDecoration(
-                      color: Colors.red,
-                      borderRadius: BorderRadius.only(
-                          topRight: Radius.circular(20),
-                          bottomRight: Radius.circular(20))),
                   child: Row(
                     children: <Widget>[
-                      Image.asset('assets/images/ic_tab_home_normal.png',
-                          width: 30.0, height: 30.0),
-                      Text.rich(
-                        TextSpan(
-                          children: [
-                            TextSpan(
-                              text: '  领券',
-                              style: TextStyle(
-                                  color: Colors.white,
-                                  fontSize: ScreenUtil().setSp(28)),
-                            )
-                          ],
+                      Text(
+                        '  领券购买',
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: ScreenUtil().setSp(28),
                         ),
                       )
                     ],

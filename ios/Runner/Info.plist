@@ -23,6 +23,18 @@
 		<dict>
 			<key>CFBundleTypeRole</key>
 			<string>Editor</string>
+			<key>CFBundleURLName</key>
+			<string>test</string>
+			<key>CFBundleURLSchemes</key>
+			<array>
+				<string>tbopen25020263</string>
+			</array>
+		</dict>
+		<dict>
+			<key>CFBundleTypeRole</key>
+			<string>Editor</string>
+			<key>CFBundleURLName</key>
+			<string>taobao</string>
 			<key>CFBundleURLSchemes</key>
 			<array>
 				<string>tbopen24900413</string>

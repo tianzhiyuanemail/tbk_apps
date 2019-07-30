@@ -7,7 +7,7 @@ import 'package:flutter/rendering.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:tbk_app/util/colors_util.dart';
-
+import 'package:nautilus/nautilus.dart' as nautilus;
 class MyInfoPage extends StatefulWidget {
   @override
   _MyInfoPageState createState() => _MyInfoPageState();
@@ -16,6 +16,7 @@ class MyInfoPage extends StatefulWidget {
 class _MyInfoPageState extends State<MyInfoPage> {
   var userAvatar = "http://kaze-sora.com/sozai/blog_haru/blog_mitubachi01.jpg";
   var userName = 'rre';
+  var _result = '';
 
   ScrollController _scrollController = ScrollController();
 
@@ -49,6 +50,24 @@ class _MyInfoPageState extends State<MyInfoPage> {
           color: Colors.greenAccent,
           child: new ListView(
             children: <Widget>[
+              InkWell(
+                onTap: (){
+                  nautilus.login().then((data){
+                    setState(() {
+                      if(data.isSuccessful){
+                        _result ="nick->${data?.user?.nick}";
+                      }else{
+                        _result = "error->${data.errorMessage}";
+                      }
+
+                    });
+                  });
+                },
+                child:  Container(
+
+                  child: Text(_result+"uuuuuuuuuuu"),
+                ),// 头像
+              ),
               UserRevenue(),
               AdBanner(),
               UserButtons(),
