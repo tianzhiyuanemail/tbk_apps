@@ -7,6 +7,8 @@ const servicePath={
   'banners/queryListForMap': serviceUrl+'tbk/tbk/banners/queryListForMap.json', // 首页banner
   'productRecommends': serviceUrl+'tbk/product/productRecommend/getList.json', // 商品推荐
   'homeNavigator/queryListForMap': serviceUrl+'tbk/tbk/homeNavigator/queryListForMap.json', // 首页homeNavigator
+  'choiceMaterial': serviceUrl+'/tbk/choiceMaterial.json', // 精选物料
+  'advertisements': serviceUrl+'/tbk/advertisement/getList.json', // 广告
 
 
   /// cate

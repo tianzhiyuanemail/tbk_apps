@@ -8,17 +8,17 @@ import 'package:tbk_app/util/colors_util.dart';
 import 'package:tbk_app/util/fluro_navigator_util.dart';
 
 // ignore: must_be_immutable
-class NavigatorWebViewPage extends StatefulWidget {
+class WebViewPageWidget extends StatefulWidget {
   String url;
   String title;
 
-  NavigatorWebViewPage(this.url,this.title);
+  WebViewPageWidget(this.url,this.title);
 
   @override
-  _WebViewExampleState createState() => _WebViewExampleState();
+  _WebViewPageWidgetState createState() => _WebViewPageWidgetState();
 }
 
-class _WebViewExampleState extends State<NavigatorWebViewPage> {
+class _WebViewPageWidgetState extends State<WebViewPageWidget> {
   // 标记是否是加载中
   bool loading = true;
 

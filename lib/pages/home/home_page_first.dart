@@ -11,6 +11,7 @@ import 'package:flutter_easyrefresh/easy_refresh.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_swiper/flutter_swiper.dart';
 import 'package:tbk_app/config/loading.dart';
+import 'package:tbk_app/modle/advertisement_entity.dart';
 import 'package:tbk_app/modle/banners_entity.dart';
 import 'package:tbk_app/modle/navigator_entity.dart';
 import 'package:tbk_app/modle/product_list_entity.dart';
@@ -46,14 +47,10 @@ class _HomePageFirstState extends State<HomePageFirst>
   int page = 1;
   List<ProductListEntity> hotGoodsList = [];
   List<BannersEntity> swiperList = [];
+  List<AdvertisementEntity> adList = [];
   List<NavigatorEntity> navigatorList = [];
   List<ProductRecommendEntity> recommendList = []; // 今日推荐商品
-  List flootGoodsList = List(6);
-  String adPicture =
-      'http://kaze-sora.com/sozai/blog_haru/blog_mitubachi01.jpg';
-  String leaderImage =
-      'http://kaze-sora.com/sozai/blog_haru/blog_mitubachi01.jpg';
-  String leaderPhone = '17610502953';
+
 
   @override
   bool get wantKeepAlive => true;
@@ -64,6 +61,7 @@ class _HomePageFirstState extends State<HomePageFirst>
     _bannersQueryListForMap();
     _navigatorQueryListForMap();
     _getRecommendList();
+    _getAdvertisements();
 
     //监听滚动事件，打印滚动位置
     _controller.addListener(() {
@@ -110,6 +108,8 @@ class _HomePageFirstState extends State<HomePageFirst>
           _bannersQueryListForMap();
           _navigatorQueryListForMap();
           _getRecommendList();
+          _getAdvertisements();
+
           setState(() {
             page = 1;
           });
@@ -123,10 +123,9 @@ class _HomePageFirstState extends State<HomePageFirst>
               swiperController: _swiperController,
             ),
             TopNavigator(navigatorList: navigatorList),
-            AdBanner(adPicture: adPicture),
-            LeaderPhone(leaderImage: leaderImage, leaderPhone: leaderPhone),
+            AdBanner(adList: adList,swiperController: _swiperController,),
+            FlootContent(),
             Recommend(recommendList: recommendList),
-            FlootContent(flootGoodsList: flootGoodsList),
             hotTitle,
             ProductList(
               list: hotGoodsList,
@@ -138,14 +137,18 @@ class _HomePageFirstState extends State<HomePageFirst>
     );
   }
 
+  /// 特惠
   void _getHotGoods() {
     Map<String, Object> map = Map();
+    map["materialId"] = 4094;
     map["pageNo"] = page;
 
-    HttpUtil().get('homePageGoods',parms:MapUrlParamsUtils.getUrlParamsByMap(map) ).then((val) {
+    HttpUtil()
+        .get('choiceMaterial', parms: MapUrlParamsUtils.getUrlParamsByMap(map))
+        .then((val) {
       if (val["success"]) {
         List<ProductListEntity> list =
-        EntityListFactory.generateList<ProductListEntity>(val['data']);
+            EntityListFactory.generateList<ProductListEntity>(val['data']);
 
         setState(() {
           hotGoodsList.addAll(list);
@@ -153,10 +156,21 @@ class _HomePageFirstState extends State<HomePageFirst>
         });
       }
     });
-
   }
 
-  // 首页大分类
+  /// 广告
+  void _getAdvertisements() {
+    HttpUtil().get('advertisements').then((val) {
+      if (val["success"]) {
+        setState(() {
+          adList =
+              EntityListFactory.generateList<AdvertisementEntity>(val['data']);
+        });
+      }
+    });
+  }
+
+  /// 首页大分类
   void _getRecommendList() {
     HttpUtil().get('productRecommends').then((val) {
       if (val["success"]) {
@@ -169,6 +183,7 @@ class _HomePageFirstState extends State<HomePageFirst>
     });
   }
 
+  /// 轮播图
   void _bannersQueryListForMap() {
     Map<String, Object> map = Map();
     map["pageNo"] = page;
@@ -203,18 +218,26 @@ class _HomePageFirstState extends State<HomePageFirst>
   }
 
   Widget hotTitle = Container(
-
-    margin: EdgeInsets.only(top: 10,bottom: 0),
-    padding: EdgeInsets.only(top: 5,bottom: 5),
+    margin: EdgeInsets.only(top: 10, bottom: 0),
+    padding: EdgeInsets.only(top: 5, bottom: 5),
     alignment: Alignment.center,
     color: Colors.white,
     child: Row(
       mainAxisAlignment: MainAxisAlignment.spaceAround,
-       children: <Widget>[
-         Text("————",style: TextStyle(color: Colors.pink),),
-         Text("为你推荐",style: TextStyle(color: Colors.pink),),
-         Text("————",style: TextStyle(color: Colors.pink),),
-       ],
+      children: <Widget>[
+        Text(
+          "————",
+          style: TextStyle(color: Colors.pink),
+        ),
+        Text(
+          "为你推荐",
+          style: TextStyle(color: Colors.pink),
+        ),
+        Text(
+          "————",
+          style: TextStyle(color: Colors.pink),
+        ),
+      ],
     ),
   );
 }
@@ -239,7 +262,16 @@ class SwiperDiy extends StatelessWidget {
               fit: BoxFit.fill);
         },
         itemCount: swiperDataList.length,
-        pagination: new SwiperPagination(),
+        pagination: SwiperPagination(
+            builder: DotSwiperPaginationBuilder(
+                color: Colors.white,              // 其他点的颜色
+                activeColor: Colors.pink,      // 当前点的颜色
+                space: 8,                           // 点与点之间的距离
+                activeSize: 8,                      // 当前点的大小
+                size: 8
+            )
+        ),
+
         loop: false,
         autoplay: false,
         controller: swiperController,
@@ -264,7 +296,7 @@ class TopNavigator extends StatelessWidget {
               context,
               Routers.navigatorWebViewPage +
                   "?url=" +
-                  navigatorEntity.url +
+                  Uri.encodeComponent(navigatorEntity.url) +
                   "&title=" +
                   FluroConvertUtils.fluroCnParamsEncode(navigatorEntity.title));
         } else if (navigatorEntity.isNative == 2) {
@@ -309,43 +341,56 @@ class TopNavigator extends StatelessWidget {
 }
 
 class AdBanner extends StatelessWidget {
-  final String adPicture;
+  final List<AdvertisementEntity> adList;
+  final SwiperController swiperController;
 
-  AdBanner({Key key, this.adPicture}) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      width: ScreenUtil.screenWidth,
-//      height: ScreenUtil().setHeight(20),
-      child: Image.network(
-        adPicture,
-        repeat: ImageRepeat.noRepeat,
-      ),
-    );
-  }
-}
-
-class LeaderPhone extends StatelessWidget {
-  final String leaderImage;
-
-  final String leaderPhone;
-
-  LeaderPhone({Key key, this.leaderImage, this.leaderPhone}) : super(key: key);
+  AdBanner({Key key, this.adList, this.swiperController}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return Container(
+      height: ScreenUtil().setHeight(200),
+      width: ScreenUtil().setWidth(750),
       child: InkWell(
-        onTap: _launchUrl,
-        child: Image.network(leaderImage),
+        onTap: () {
+          String s = Uri.encodeComponent(adList[0].url);
+          NavigatorUtil.gotransitionPage(
+              context,
+              Routers.navigatorWebViewPage + "?url=${s}&title="+
+                  FluroConvertUtils.fluroCnParamsEncode("测试用"));
+        },
+        child: Image.network("${adList[0].imageUrl}", fit: BoxFit.fill),
       ),
+//      child: Swiper(
+//        index: 0,
+//        itemBuilder: (BuildContext context, int index) {
+//          return InkWell(
+//            onTap: () {
+//              _launchUrl("${adList[index].url}");
+//            },
+//            child: Image.network("${adList[index].imageUrl}", fit: BoxFit.fill),
+//          );
+//        },
+//        itemCount: adList.length,
+//        loop: false,
+//        autoplay: false,
+//        duration: 300,
+//        autoplayDelay: 4000,
+//        controller: swiperController,
+//        pagination: SwiperPagination(
+//              builder: DotSwiperPaginationBuilder(
+//                  color: Colors.transparent,              // 其他点的颜色
+//                  activeColor: Colors.transparent,      // 当前点的颜色
+//                  space: 2,                           // 点与点之间的距离
+//                  activeSize: 20                      // 当前点的大小
+//              )
+//          )
+//
+//      ),
     );
   }
 
-  void _launchUrl() async {
-    String url = 'https://www.baidu.com/';
-//    String url = 'tel:' + leaderPhone;
+  void _launchUrl(String url) async {
     if (await canLaunch(url)) {
       await launch(url);
     } else {
@@ -382,10 +427,11 @@ class Recommend extends StatelessWidget {
     );
   }
 
-  Widget _item(int index,BuildContext context) {
+  Widget _item(int index, BuildContext context) {
     return InkWell(
       onTap: () {
-        NavigatorUtil.gotransitionPage(context,"${Routers.detailsPage}?id=${recommendList[index].productId}");
+        NavigatorUtil.gotransitionPage(context,
+            "${Routers.detailsPage}?id=${recommendList[index].productId}");
       },
       child: Container(
         height: ScreenUtil().setHeight(330),
@@ -400,12 +446,12 @@ class Recommend extends StatelessWidget {
             Row(
               children: <Widget>[
                 Container(
-                  margin: EdgeInsets.only(top: 2, bottom: 2,left: 2,right: 5),
+                  margin: EdgeInsets.only(top: 2, bottom: 2, left: 2, right: 5),
                   padding: EdgeInsets.only(left: 2, right: 2),
                   color: Colors.pink,
                   child: Text(
                     '${recommendList[index].hotType}',
-                    style: TextStyle(fontSize: 10,color: Colors.white),
+                    style: TextStyle(fontSize: 10, color: Colors.white),
                   ),
                 ),
                 Container(
@@ -452,7 +498,7 @@ class Recommend extends StatelessWidget {
           scrollDirection: Axis.horizontal,
           itemCount: recommendList.length,
           itemBuilder: (context, index) {
-            return _item(index,context);
+            return _item(index, context);
           },
         ));
   }
@@ -469,48 +515,27 @@ class Recommend extends StatelessWidget {
   }
 }
 
-
 class FlootContent extends StatelessWidget {
-  final List flootGoodsList;
 
-  FlootContent({Key key, this.flootGoodsList}) : super(key: key);
+  FlootContent({Key key,}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return Container(
       child: Column(
         children: <Widget>[
-          _firstRow(),
-          _otherGoods(),
+          Row(
+            children: <Widget>[
+              _goodsItem(),
+              _goodsItem(),
+            ],
+          )
         ],
       ),
     );
   }
 
-  Widget _firstRow() {
-    return Row(
-      children: <Widget>[
-        _goodsItem(flootGoodsList[0]),
-        Column(
-          children: <Widget>[
-            _goodsItem(flootGoodsList[1]),
-            _goodsItem(flootGoodsList[2]),
-          ],
-        )
-      ],
-    );
-  }
-
-  Widget _otherGoods() {
-    return Row(
-      children: <Widget>[
-        _goodsItem(flootGoodsList[3]),
-        _goodsItem(flootGoodsList[4]),
-      ],
-    );
-  }
-
-  Widget _goodsItem(Map m) {
+  Widget _goodsItem() {
     return Container(
       width: ScreenUtil().setWidth(375),
       padding: EdgeInsets.all(10),

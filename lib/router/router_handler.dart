@@ -2,10 +2,10 @@ import 'package:fluro/fluro.dart';
 import 'package:flutter/material.dart';
 import 'package:tbk_app/pages/container_page.dart';
 import 'package:tbk_app/pages/navigator_router/navigator_router_page.dart';
-import 'package:tbk_app/pages/navigator_router/navigator_web_view_page.dart';
 import 'package:tbk_app/pages/product/product_list_page.dart';
 import 'package:tbk_app/pages/search/search_product_list_page.dart';
 import 'package:tbk_app/util/fluro_convert_util.dart';
+import 'package:tbk_app/widgets/web_view_page_widget.dart';
 
 import '../pages/product/product_deatil_page.dart';
 import '../pages/search/search_page.dart';
@@ -57,11 +57,12 @@ Handler navigatorRouterPageHandler = Handler(
 /// NavigatorWebViewPage
 Handler navigatorWebViewPageHandler = Handler(
     handlerFunc: (BuildContext context, Map<String, List<String>> params) {
-      String url = params['url'].first;
+      String u = params['url'].first;
       String s = params['title'].first;
+      String url = Uri.decodeComponent(u);
       String title = FluroConvertUtils.fluroCnParamsDecode(s);
 
-      return NavigatorWebViewPage(url,title);
+      return WebViewPageWidget(url,title);
     }
 );
 
