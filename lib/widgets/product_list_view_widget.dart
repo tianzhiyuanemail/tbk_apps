@@ -264,7 +264,11 @@ class SliverProductList extends StatelessWidget {
       }
     } else {
       return SliverToBoxAdapter(
-        child: Text("正在加载"),
+        child: Container(
+          alignment: Alignment.center,
+          height: ScreenUtil().setHeight(750),
+          child: CupertinoActivityIndicator(),
+        )
       );
     }
   }
@@ -535,7 +539,11 @@ class ProductList extends StatelessWidget {
     }
 
     else {
-      return Text("正在加载");
+      return Container(
+        alignment: Alignment.center,
+        height: ScreenUtil().setHeight(750),
+        child: CupertinoActivityIndicator(),
+      );
     }
   }
 
