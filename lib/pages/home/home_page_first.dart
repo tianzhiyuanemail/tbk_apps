@@ -13,7 +13,7 @@ import 'package:flutter_swiper/flutter_swiper.dart';
 import 'package:tbk_app/config/loading.dart';
 import 'package:tbk_app/modle/advertisement_entity.dart';
 import 'package:tbk_app/modle/banners_entity.dart';
-import 'package:tbk_app/modle/navigator_entity.dart';
+import 'package:tbk_app/modle/home_navigator_entity.dart';
 import 'package:tbk_app/modle/product_list_entity.dart';
 import 'package:tbk_app/modle/product_recommend_entity.dart';
 import 'package:tbk_app/router/routers.dart';
@@ -48,9 +48,8 @@ class _HomePageFirstState extends State<HomePageFirst>
   List<ProductListEntity> hotGoodsList = [];
   List<BannersEntity> swiperList = [];
   List<AdvertisementEntity> adList = [];
-  List<NavigatorEntity> navigatorList = [];
+  List<HomeNavigatorEntity> navigatorList = [];
   List<ProductRecommendEntity> recommendList = []; // 今日推荐商品
-
 
   @override
   bool get wantKeepAlive => true;
@@ -123,7 +122,10 @@ class _HomePageFirstState extends State<HomePageFirst>
               swiperController: _swiperController,
             ),
             TopNavigator(navigatorList: navigatorList),
-            AdBanner(adList: adList,swiperController: _swiperController,),
+            AdBanner(
+              adList: adList,
+              swiperController: _swiperController,
+            ),
             FlootContent(),
             Recommend(recommendList: recommendList),
             hotTitle,
@@ -211,7 +213,7 @@ class _HomePageFirstState extends State<HomePageFirst>
       if (val["success"]) {
         setState(() {
           navigatorList =
-              EntityListFactory.generateList<NavigatorEntity>(val['data']);
+              EntityListFactory.generateList<HomeNavigatorEntity>(val['data']);
         });
       }
     });
@@ -264,14 +266,15 @@ class SwiperDiy extends StatelessWidget {
         itemCount: swiperDataList.length,
         pagination: SwiperPagination(
             builder: DotSwiperPaginationBuilder(
-                color: Colors.white,              // 其他点的颜色
-                activeColor: Colors.pink,      // 当前点的颜色
-                space: 8,                           // 点与点之间的距离
-                activeSize: 8,                      // 当前点的大小
-                size: 8
-            )
-        ),
-
+                color: Colors.white,
+                // 其他点的颜色
+                activeColor: Colors.pink,
+                // 当前点的颜色
+                space: 8,
+                // 点与点之间的距离
+                activeSize: 8,
+                // 当前点的大小
+                size: 8)),
         loop: false,
         autoplay: false,
         controller: swiperController,
@@ -281,12 +284,12 @@ class SwiperDiy extends StatelessWidget {
 }
 
 class TopNavigator extends StatelessWidget {
-  final List<NavigatorEntity> navigatorList;
+  final List<HomeNavigatorEntity> navigatorList;
 
   TopNavigator({Key key, this.navigatorList}) : super(key: key);
 
   Widget _gridViewItemUI(
-      BuildContext context, NavigatorEntity navigatorEntity) {
+      BuildContext context, HomeNavigatorEntity navigatorEntity) {
     return InkWell(
       onTap: () {
         print(navigatorEntity.url);
@@ -301,13 +304,14 @@ class TopNavigator extends StatelessWidget {
                   FluroConvertUtils.fluroCnParamsEncode(navigatorEntity.title));
         } else if (navigatorEntity.isNative == 2) {
           NavigatorUtil.gotransitionPage(
-            context,
-            Routers.navigatorRouterPage +
-                "?url=" +
-                navigatorEntity.url +
-                "&title=" +
-                FluroConvertUtils.fluroCnParamsEncode(navigatorEntity.title),
-          );
+              context,
+              Routers.navigatorRouterPage +
+                  "?url=" +
+                  navigatorEntity.url +
+                  "&title=" +
+                  FluroConvertUtils.fluroCnParamsEncode(navigatorEntity.title) +
+                  "&json=" +
+                  FluroConvertUtils.object2string(navigatorEntity.materialEntityList));
         }
       },
       child: Column(
@@ -356,7 +360,8 @@ class AdBanner extends StatelessWidget {
           String s = Uri.encodeComponent(adList[0].url);
           NavigatorUtil.gotransitionPage(
               context,
-              Routers.navigatorWebViewPage + "?url=${s}&title="+
+              Routers.navigatorWebViewPage +
+                  "?url=${s}&title=" +
                   FluroConvertUtils.fluroCnParamsEncode("测试用"));
         },
         child: Image.network("${adList[0].imageUrl}", fit: BoxFit.fill),
@@ -516,8 +521,9 @@ class Recommend extends StatelessWidget {
 }
 
 class FlootContent extends StatelessWidget {
-
-  FlootContent({Key key,}) : super(key: key);
+  FlootContent({
+    Key key,
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {

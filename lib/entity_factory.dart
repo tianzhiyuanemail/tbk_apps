@@ -5,6 +5,9 @@ import 'package:tbk_app/modle/product_entity.dart';
 import 'package:tbk_app/modle/product_recommend_entity.dart';
 import 'package:tbk_app/modle/banners_entity.dart';
 import 'package:tbk_app/modle/cate_entity.dart';
+import 'package:tbk_app/modle/home_navigator_entity.dart';
+
+import 'modle/material_entity.dart';
 
 class EntityFactory {
   static T generateOBJ<T>(json) {
@@ -24,6 +27,10 @@ class EntityFactory {
       return BannersEntity.fromJson(json) as T;
     } else if (T.toString() == "CateEntity") {
       return CateEntity.fromJson(json) as T;
+    } else if (T.toString() == "HomeNavigatorEntity") {
+      return HomeNavigatorEntity.fromJson(json) as T;
+    } else if (T.toString() == "Materialentity") {
+      return Materialentity.fromJson(json) as T;
     } else {
       return null;
     }

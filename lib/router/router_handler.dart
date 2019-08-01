@@ -1,5 +1,6 @@
 import 'package:fluro/fluro.dart';
 import 'package:flutter/material.dart';
+import 'package:tbk_app/modle/material_entity.dart';
 import 'package:tbk_app/pages/container_page.dart';
 import 'package:tbk_app/pages/navigator_router/navigator_router_page.dart';
 import 'package:tbk_app/pages/product/product_list_page.dart';
@@ -9,7 +10,7 @@ import 'package:tbk_app/widgets/web_view_page_widget.dart';
 
 import '../pages/product/product_deatil_page.dart';
 import '../pages/search/search_page.dart';
-
+import 'dart:convert';
 /// details
 Handler detailsHandler = Handler(
     handlerFunc: (BuildContext context, Map<String, List<String>> params) {
@@ -49,9 +50,10 @@ Handler navigatorRouterPageHandler = Handler(
     handlerFunc: (BuildContext context, Map<String, List<String>> params) {
       String url = params['url'].first;
       String s = params['title'].first;
+      String j = params['json'].first;
       String title = FluroConvertUtils.fluroCnParamsDecode(s);
-
-      return NavigatorRouterPage(url,title);
+      List<Materialentity> materialentityList = FluroConvertUtils.string2List<Materialentity>(j);
+      return NavigatorRouterPage(url,title,materialentityList);
     }
 );
 /// NavigatorWebViewPage

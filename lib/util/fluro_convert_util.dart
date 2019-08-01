@@ -1,5 +1,7 @@
 import 'dart:convert';
 
+import '../entity_factory.dart';
+
 /// fluro 参数编码解码工具类
 class FluroConvertUtils {
   /// fluro 传递中文参数前，先转换，fluro 不支持中文传递
@@ -44,5 +46,16 @@ class FluroConvertUtils {
   /// string json 转为 map
   static Map<String, dynamic> string2map(String str) {
     return json.decode(fluroCnParamsDecode(str));
+  }
+
+
+  /// string json 转为 list  todo 有错误
+  static List string2List<T>(String str) {
+   List list =  json.decode(fluroCnParamsDecode(str));
+   List  list2 =  list.map((f){
+    return EntityFactory.generateOBJ<T>(f);
+   }).toList();
+
+    return list2;
   }
 }

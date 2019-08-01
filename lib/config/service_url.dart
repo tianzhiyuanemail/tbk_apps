@@ -1,5 +1,5 @@
-const serviceUrl= 'http://localhost:8090/';
-//const serviceUrl= 'http://www.shuzibika.com/';
+//const serviceUrl= 'http://localhost:8090/';
+const serviceUrl= 'http://www.shuzibika.com/';
 const servicePath={
 
   /// index
