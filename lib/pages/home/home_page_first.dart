@@ -265,16 +265,17 @@ class SwiperDiy extends StatelessWidget {
         },
         itemCount: swiperDataList.length,
         pagination: SwiperPagination(
-            builder: DotSwiperPaginationBuilder(
-                color: Colors.white,
-                // 其他点的颜色
-                activeColor: Colors.pink,
-                // 当前点的颜色
-                space: 8,
-                // 点与点之间的距离
-                activeSize: 8,
-                // 当前点的大小
-                size: 8)),
+          builder: DotSwiperPaginationBuilder(
+              color: Colors.white,
+              // 其他点的颜色
+              activeColor: Colors.pink,
+              // 当前点的颜色
+              space: 8,
+              // 点与点之间的距离
+              activeSize: 8,
+              // 当前点的大小
+              size: 8),
+        ),
         loop: false,
         autoplay: false,
         controller: swiperController,
@@ -311,7 +312,8 @@ class TopNavigator extends StatelessWidget {
                   "&title=" +
                   FluroConvertUtils.fluroCnParamsEncode(navigatorEntity.title) +
                   "&json=" +
-                  FluroConvertUtils.object2string(navigatorEntity.materialEntityList));
+                  FluroConvertUtils.object2string(
+                      navigatorEntity.materialEntityList));
         }
       },
       child: Column(

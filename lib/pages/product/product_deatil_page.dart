@@ -47,7 +47,7 @@ class _ProductDetailState extends State<ProductDetail> {
   bool showToTopBtn = false;
 
   ///是否显示“返回到顶部”按钮
-  bool showSliverPersistentHeader = false;
+  double controllerOffset = 0;
 
   ///是否显示 导航栏
 
@@ -62,16 +62,12 @@ class _ProductDetailState extends State<ProductDetail> {
 
     ///监听滚动事件
     _controller.addListener(() {
+
+      print(_controller.offset);
       /// 导航栏监听
-      if (_controller.offset < 200) {
-        setState(() {
-          showSliverPersistentHeader = false;
-        });
-      } else {
-        setState(() {
-          showSliverPersistentHeader = true;
-        });
-      }
+      setState(() {
+        controllerOffset = _controller.offset;
+      });
 
       ///是否显示“返回到顶部”按钮
       if (_controller.offset < 1000 && showToTopBtn) {
@@ -84,24 +80,21 @@ class _ProductDetailState extends State<ProductDetail> {
         });
       }
     });
-
-
-
-
   }
+
   void _getHotGoods() {
-    HttpUtil().get('homePageGoods' ).then((val) {
+    HttpUtil().get('homePageGoods').then((val) {
       if (val["success"]) {
         List<ProductListEntity> list =
-        EntityListFactory.generateList<ProductListEntity>(val['data']);
+            EntityListFactory.generateList<ProductListEntity>(val['data']);
 
         setState(() {
           productList.addAll(list);
         });
       }
     });
-
   }
+
   @override
   void dispose() {
     ///为了避免内存泄露，需要调用_controller.dispose
@@ -115,7 +108,10 @@ class _ProductDetailState extends State<ProductDetail> {
       floatingActionButton:
           BackTopButton(controller: _controller, showToTopBtn: showToTopBtn),
       body: productEntity == null
-          ? CupertinoActivityIndicator()
+          ? Container(
+              alignment: Alignment.center,
+              child: CupertinoActivityIndicator(),
+            )
           : Stack(
               children: <Widget>[
                 EasyRefresh(
@@ -127,11 +123,7 @@ class _ProductDetailState extends State<ProductDetail> {
                   onRefresh: () async {},
                   child: _customScrollView(),
                 ),
-                Offstage(
-                  offstage: !showSliverPersistentHeader,
-                  child: ProductHeaderChild(
-                      showSliverPersistentHeader: showSliverPersistentHeader),
-                ),
+                ProductHeaderChild(controllerOffset: controllerOffset),
                 Positioned(
                   bottom: 0,
                   left: 0,
@@ -160,18 +152,6 @@ class _ProductDetailState extends State<ProductDetail> {
       controller: _controller,
       reverse: false,
       slivers: <Widget>[
-        //SliverToBoxAdapter(child: null),
-//        SliverPersistentHeader(
-//          pinned: true, //是否固定在顶部
-//          floating: true,
-//          delegate: _SliverAppBarDelegate(
-//            maxHeight: showSliverPersistentHeader ? 50 : 0.0,
-//            minHeight: showSliverPersistentHeader ? 50 : 0.0,
-//            child: ProductHeaderChild(
-//                showSliverPersistentHeader:
-//                showSliverPersistentHeader),
-//          ),
-//        ),
         SliverList(
           delegate: SliverChildListDelegate(_sliverListChild()),
         )
@@ -208,30 +188,37 @@ class _ProductDetailState extends State<ProductDetail> {
 
 /// 自定义导航栏
 class ProductHeaderChild extends StatelessWidget {
-  bool showSliverPersistentHeader;
+  double controllerOffset;
 
-  ProductHeaderChild({this.showSliverPersistentHeader});
+  ProductHeaderChild({this.controllerOffset});
 
   @override
   Widget build(BuildContext context) {
     return Container(
-      color: showSliverPersistentHeader ? Colors.white : Colors.transparent,
       alignment: Alignment.topLeft,
       margin: EdgeInsets.only(top: 0, bottom: 0),
       padding: EdgeInsets.only(top: 14, bottom: 0),
-      height: 50,
+      decoration: BoxDecoration(
+          color: controllerOffset > 200 ? Colors.white : Colors.transparent,
+          border: Border(
+              bottom: BorderSide(
+            color: controllerOffset > 200 ? Colors.black12 : Colors.transparent,
+          ))),
+      height: 60,
       child: Row(
         children: <Widget>[
-          IconButton(
-            onPressed: () {
-              Application.router.pop(context);
-            },
-            icon: Icon(
-              Icons.arrow_back_ios,
-              color: Colors.black,
-              size: 20,
-            ),
-          )
+          controllerOffset >= 0
+              ? IconButton(
+                  onPressed: () {
+                    Application.router.pop(context);
+                  },
+                  icon: Icon(
+                    Icons.arrow_back_ios,
+                    color: Colors.black,
+                    size: 20,
+                  ),
+                )
+              : Container(),
         ],
       ),
     );
@@ -257,13 +244,20 @@ class SwiperDiy extends StatelessWidget {
               return Image.network("${list[index]}", fit: BoxFit.fill);
             },
             itemCount: list.length,
-            pagination: new SwiperPagination(),
+            pagination: SwiperPagination(
+              builder: DotSwiperPaginationBuilder(
+                  color: Colors.white,
+                  // 其他点的颜色
+                  activeColor: Colors.pink,
+                  // 当前点的颜色
+                  space: 8,
+                  // 点与点之间的距离
+                  activeSize: 8,
+                  // 当前点的大小
+                  size: 8),
+            ),
             autoplay: false,
           ),
-          Offstage(
-            offstage: false,
-            child: ProductHeaderChild(showSliverPersistentHeader: false),
-          )
         ],
       ),
     );
@@ -864,7 +858,7 @@ class DetailsBottom extends StatelessWidget {
             children: <Widget>[
               InkWell(
                 onTap: () async {
-                  NautilusUtil.openUrl('https:'+productEntity.couponShareUrl);
+                  NautilusUtil.openUrl('https:' + productEntity.couponShareUrl);
                 },
                 child: Container(
                   alignment: Alignment.center,
@@ -887,7 +881,7 @@ class DetailsBottom extends StatelessWidget {
               InkWell(
                 onTap: () async {
 //                  NautilusUtil.openItemDetail(productEntity.itemId.toString());
-                  NautilusUtil.openUrl('https:'+productEntity.couponShareUrl);
+                  NautilusUtil.openUrl('https:' + productEntity.couponShareUrl);
                 },
                 child: Container(
                   alignment: Alignment.center,
@@ -912,36 +906,5 @@ class DetailsBottom extends StatelessWidget {
         ],
       ),
     );
-  }
-}
-
-class _SliverAppBarDelegate extends SliverPersistentHeaderDelegate {
-  _SliverAppBarDelegate({
-    @required this.minHeight,
-    @required this.maxHeight,
-    @required this.child,
-  });
-
-  final double minHeight;
-  final double maxHeight;
-  final Widget child;
-
-  @override
-  double get minExtent => minHeight;
-
-  @override
-  double get maxExtent => math.max((minHeight ?? kToolbarHeight), minExtent);
-
-  @override
-  Widget build(
-      BuildContext context, double shrinkOffset, bool overlapsContent) {
-    return child;
-  }
-
-  @override
-  bool shouldRebuild(_SliverAppBarDelegate oldDelegate) {
-    return maxHeight != oldDelegate.maxHeight ||
-        minHeight != oldDelegate.minHeight ||
-        child != oldDelegate.child;
   }
 }
