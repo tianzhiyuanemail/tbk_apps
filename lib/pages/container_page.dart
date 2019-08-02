@@ -1,7 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
-import 'package:tbk_app/pages/my/my_page.dart';
+import 'package:tbk_app/pages/my/user_info_page.dart';
 import 'package:tbk_app/pages/product/product_deatil_page.dart';
 
 import 'cate/cate_page.dart';

@@ -2,6 +2,8 @@ import 'package:fluro/fluro.dart';
 import 'package:flutter/material.dart';
 import 'package:tbk_app/modle/material_entity.dart';
 import 'package:tbk_app/pages/container_page.dart';
+import 'package:tbk_app/pages/my/user_login_page.dart';
+import 'package:tbk_app/pages/my/user_setup_page.dart';
 import 'package:tbk_app/pages/navigator_router/navigator_router_page.dart';
 import 'package:tbk_app/pages/product/product_list_page.dart';
 import 'package:tbk_app/pages/search/search_product_list_page.dart';
@@ -65,6 +67,28 @@ Handler navigatorWebViewPageHandler = Handler(
       String title = FluroConvertUtils.fluroCnParamsDecode(s);
 
       return WebViewPageWidget(url,title);
+    }
+);
+/// UserSetUpPage
+Handler userSetUpPageHandler = Handler(
+    handlerFunc: (BuildContext context, Map<String, List<String>> params) {
+//      String u = params['url'].first;
+//      String s = params['title'].first;
+//      String url = Uri.decodeComponent(u);
+//      String title = FluroConvertUtils.fluroCnParamsDecode(s);
+
+      return UserSetUpPage();
+    }
+);
+/// UserLoginPage
+Handler userLoginPageHandler = Handler(
+    handlerFunc: (BuildContext context, Map<String, List<String>> params) {
+//      String u = params['url'].first;
+//      String s = params['title'].first;
+//      String url = Uri.decodeComponent(u);
+//      String title = FluroConvertUtils.fluroCnParamsDecode(s);
+
+      return UserLoginPage();
     }
 );
 

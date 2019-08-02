@@ -14,6 +14,9 @@ class Routers {
   static String navigatorRouterPage = '/navigatorRouterPage';
   static String navigatorWebViewPage = '/navigatorWebViewPage';
 
+  static String userSetUpPage = '/userSetUpPage';
+  static String userLoginPage = '/userLoginPage';
+
   static void configureRouters(Router router){
 
     /// 配置默认路由
@@ -33,6 +36,9 @@ class Routers {
 
     router.define(navigatorRouterPage, handler: navigatorRouterPageHandler);
     router.define(navigatorWebViewPage, handler: navigatorWebViewPageHandler);
+
+    router.define(userLoginPage, handler: userSetUpPageHandler);
+    router.define(userLoginPage, handler: userLoginPageHandler);
 
     router.define(root, handler: rootHandler);
   }

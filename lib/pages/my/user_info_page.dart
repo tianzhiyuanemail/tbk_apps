@@ -7,8 +7,10 @@ import 'package:flutter/rendering.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:tbk_app/router/application.dart';
+import 'package:tbk_app/router/routers.dart';
 import 'package:tbk_app/util/colors_util.dart';
 import 'package:nautilus/nautilus.dart' as nautilus;
+import 'package:tbk_app/util/fluro_navigator_util.dart';
 
 class MyInfoPage extends StatefulWidget {
   @override
@@ -28,6 +30,7 @@ class _MyInfoPageState extends State<MyInfoPage> {
   void initState() {
     // TODO: implement initState
     super.initState();
+
     _scrollController.addListener(() {
       if (_scrollController.offset < 10 && controllerOffset) {
         setState(() {
