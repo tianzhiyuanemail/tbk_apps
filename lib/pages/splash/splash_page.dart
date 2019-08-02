@@ -10,6 +10,7 @@ import 'package:tbk_app/constant/constant.dart';
 import 'package:tbk_app/modle/splashModel.dart';
 import 'package:tbk_app/router/application.dart';
 import 'package:tbk_app/router/routers.dart';
+import 'package:tbk_app/util/cache_network_image_util.dart';
 import 'package:tbk_app/util/fluro_navigator_util.dart';
 import 'package:tbk_app/util/sp_util.dart';
 
@@ -167,17 +168,7 @@ class SplashPageState extends State<SplashPage> {
         onTap: () {
 //          NavigatorUtil.pushWeb(context, title: _splashModel.title, url: _splashModel.url);
         },
-        child: new Container(
-          alignment: Alignment.center,
-          child: new CachedNetworkImage(
-            width: double.infinity,
-            height: double.infinity,
-            fit: BoxFit.fill,
-            imageUrl: _splashModel.image,
-            placeholder: (context, url) => _buildSplashBg(),
-            errorWidget: (context, url, error) => _buildSplashBg(),
-          ),
-        ),
+        child:  CacheNetworkImageUtil.image(_splashModel.image, 'assets/images/splash_bg.png'),
       ),
     );
   }

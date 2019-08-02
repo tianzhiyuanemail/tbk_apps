@@ -7,6 +7,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:tbk_app/modle/product_list_entity.dart';
 import 'package:tbk_app/router/routers.dart';
+import 'package:tbk_app/util/cache_network_image_util.dart';
 import 'package:tbk_app/util/colors_util.dart';
 import 'package:tbk_app/util/fluro_navigator_util.dart';
 
@@ -33,9 +34,9 @@ class SliverProductList extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.start,
             children: <Widget>[
               Container(
-                width: ScreenUtil().setWidth(250),
-                child: Image.network(obj.pictUrl,
-                    width: ScreenUtil().setWidth(300)),
+                width: ScreenUtil().setWidth(260),
+                height: ScreenUtil().setHeight(260),
+                child: CacheNetworkImageUtil.image(obj.pictUrl, 'assets/images/product_list/spjiaz.gif'),
               ),
               Container(
                 width: ScreenUtil().setWidth(450),
@@ -172,7 +173,12 @@ class SliverProductList extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: <Widget>[
-              Image.network(obj.pictUrl, width: ScreenUtil().setWidth(370)),
+              Container(
+                alignment: Alignment.center,
+                width: ScreenUtil().setWidth(350),
+                height: ScreenUtil().setHeight(350),
+                child: CacheNetworkImageUtil.image(obj.pictUrl, 'assets/images/product_list/spjiaz.gif'),
+              ),
               Container(
                 width: ScreenUtil().setWidth(370),
                 alignment: Alignment.centerLeft,
@@ -302,9 +308,9 @@ class ProductList extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.start,
             children: <Widget>[
               Container(
-                width: ScreenUtil().setWidth(250),
-                child: Image.network(obj.pictUrl,
-                    width: ScreenUtil().setWidth(300)),
+                width: ScreenUtil().setWidth(260),
+                height: ScreenUtil().setHeight(260),
+                child: CacheNetworkImageUtil.image(obj.pictUrl, 'assets/images/product_list/spjiaz.gif'),
               ),
               Container(
                 width: ScreenUtil().setWidth(450),
@@ -441,7 +447,12 @@ class ProductList extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: <Widget>[
-              Image.network(obj.pictUrl, width: ScreenUtil().setWidth(370)),
+              Container(
+                alignment: Alignment.center,
+                width: ScreenUtil().setWidth(350),
+                height: ScreenUtil().setHeight(350),
+                child: CacheNetworkImageUtil.image(obj.pictUrl, 'assets/images/product_list/spjiaz.gif'),
+              ),
               Container(
                 width: ScreenUtil().setWidth(370),
                 alignment: Alignment.centerLeft,

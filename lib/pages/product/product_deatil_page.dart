@@ -44,31 +44,39 @@ class _ProductDetailState extends State<ProductDetail> {
   GlobalKey<RefreshHeaderState> _refreshHeaderState =
       GlobalKey<RefreshHeaderState>();
 
+
   bool showToTopBtn = false;
 
   ///是否显示“返回到顶部”按钮
-  double controllerOffset = 0;
+  bool controllerOffset = false;
 
   ///是否显示 导航栏
 
   ProductEntity productEntity;
   List<ProductListEntity> productList = [];
 
+  String richText = '';
+
   @override
   void initState() {
     super.initState();
     _getHotGoods();
     _getProductInfo();
+    _getItemDeatilRichText();
 
     ///监听滚动事件
     _controller.addListener(() {
-
-      print(_controller.offset);
       /// 导航栏监听
-      setState(() {
-        controllerOffset = _controller.offset;
-      });
 
+      if (_controller.offset < 200 && controllerOffset) {
+        setState(() {
+          controllerOffset = false;
+        });
+      } else if (_controller.offset >= 200 && !controllerOffset) {
+        setState(() {
+          controllerOffset = true;
+        });
+      }
       ///是否显示“返回到顶部”按钮
       if (_controller.offset < 1000 && showToTopBtn) {
         setState(() {
@@ -95,6 +103,28 @@ class _ProductDetailState extends State<ProductDetail> {
     });
   }
 
+  /// 调用后台商品接口
+  void _getProductInfo() {
+    HttpUtil()
+        .get('getProductInfo', parms: 'productId=' + widget.productId)
+        .then((val) {
+      setState(() {
+        productEntity =
+            EntityFactory.generateOBJ<ProductEntity>(val['data']['product']);
+      });
+    });
+  }
+
+  void _getItemDeatilRichText() {
+    HttpUtil()
+        .get('getProductDetail', parms: 'data=%7B"id":"${widget.productId}"%7D')
+        .then((val) {
+      setState(() {
+        richText = val['data']['pcDescContent'].toString();
+      });
+    });
+  }
+
   @override
   void dispose() {
     ///为了避免内存泄露，需要调用_controller.dispose
@@ -105,8 +135,6 @@ class _ProductDetailState extends State<ProductDetail> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      floatingActionButton:
-          BackTopButton(controller: _controller, showToTopBtn: showToTopBtn),
       body: productEntity == null
           ? Container(
               alignment: Alignment.center,
@@ -125,6 +153,11 @@ class _ProductDetailState extends State<ProductDetail> {
                 ),
                 ProductHeaderChild(controllerOffset: controllerOffset),
                 Positioned(
+                  bottom: 80,
+                  right: 20,
+                  child: BackTopButton(controller: _controller, showToTopBtn: showToTopBtn),
+                ) ,
+                Positioned(
                   bottom: 0,
                   left: 0,
                   child: DetailsBottom(productEntity: productEntity),
@@ -132,18 +165,6 @@ class _ProductDetailState extends State<ProductDetail> {
               ],
             ),
     );
-  }
-
-  /// 调用后台商品接口
-  void _getProductInfo() {
-    HttpUtil()
-        .get('getProductInfo', parms: 'productId=' + widget.productId)
-        .then((val) {
-      setState(() {
-        productEntity =
-            EntityFactory.generateOBJ<ProductEntity>(val['data']['product']);
-      });
-    });
   }
 
   /// CustomScrollView  实现列表 以后备用
@@ -165,8 +186,8 @@ class _ProductDetailState extends State<ProductDetail> {
 
     list.add(SwiperDiy(list: productEntity.smallImages));
     list.add(ProductInfomation(productEntity: productEntity));
-    list.add(ShopInfomation(productEntity: productEntity));
-    list.add(ItemDetails(productEntity: productEntity));
+//    list.add(ShopInfomation(productEntity: productEntity));
+    list.add(ItemDetails(richText: richText));
     list.add(ProductRecommend(list: productList));
     return list;
   }
@@ -179,7 +200,7 @@ class _ProductDetailState extends State<ProductDetail> {
         SwiperDiy(list: productEntity.smallImages),
         ProductInfomation(productEntity: productEntity),
         ShopInfomation(productEntity: productEntity),
-        ItemDetails(productEntity: productEntity),
+        ItemDetails(richText: richText),
         ProductRecommend(list: productList),
       ],
     );
@@ -188,7 +209,7 @@ class _ProductDetailState extends State<ProductDetail> {
 
 /// 自定义导航栏
 class ProductHeaderChild extends StatelessWidget {
-  double controllerOffset;
+  bool controllerOffset;
 
   ProductHeaderChild({this.controllerOffset});
 
@@ -199,16 +220,15 @@ class ProductHeaderChild extends StatelessWidget {
       margin: EdgeInsets.only(top: 0, bottom: 0),
       padding: EdgeInsets.only(top: 14, bottom: 0),
       decoration: BoxDecoration(
-          color: controllerOffset > 200 ? Colors.white : Colors.transparent,
+          color: controllerOffset  ? Colors.white : Colors.transparent,
           border: Border(
               bottom: BorderSide(
-            color: controllerOffset > 200 ? Colors.black12 : Colors.transparent,
+            color: controllerOffset   ? Colors.black12 : Colors.transparent,
           ))),
       height: 60,
       child: Row(
         children: <Widget>[
-          controllerOffset >= 0
-              ? IconButton(
+              IconButton(
                   onPressed: () {
                     Application.router.pop(context);
                   },
@@ -217,8 +237,7 @@ class ProductHeaderChild extends StatelessWidget {
                     color: Colors.black,
                     size: 20,
                   ),
-                )
-              : Container(),
+                ),
         ],
       ),
     );
@@ -275,47 +294,123 @@ class ProductInfomation extends StatelessWidget {
       margin: EdgeInsets.only(top: 10),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
           Container(
-              child: Text.rich(
-            TextSpan(
-              style: TextStyle(
-                color: Colors.pink.shade300,
-                wordSpacing: 4,
-                fontSize: 16,
-                fontWeight: FontWeight.bold,
-              ),
-              children: [
-                TextSpan(
-                    text: "券后 ",
-                    style: TextStyle(
-                      fontSize: 14,
-                    )),
-                TextSpan(
-                  text: '¥${productEntity.afterCouponPrice}',
-                  style: TextStyle(
-                    fontSize: 20,
-                    color: ColorsUtil.hexToColor(ColorsUtil.appBarColor),
-                  ),
-                ),
-              ],
+            margin: EdgeInsets.only(top: 3, right: 5),
+            child: Image.asset(
+              productEntity.userType == 1
+                  ? 'assets/images/taobao/tianmao.png'
+                  : 'assets/images/taobao/taobao.png',
+              width: 14,
+              fit: BoxFit.contain,
+              height: 14,
             ),
-          )),
+          ),
+          Container(
+            width: ScreenUtil().setWidth(580),
+            child: Text(
+              "${productEntity.title}",
+              style: TextStyle(
+                color: Colors.black,
+                fontSize: 14,
+                fontWeight: FontWeight.w400,
+              ),
+            ),
+          ),
+          Container(
+              margin: EdgeInsets.only(left: 5, top: 3, right: 0),
+              padding: EdgeInsets.only(left: 5, right: 5),
+              decoration: BoxDecoration(
+                  color: Colors.black12,
+                  borderRadius: BorderRadius.only(
+                    topLeft: Radius.circular(12),
+                    bottomLeft: Radius.circular(12),
+                  )),
+              child: Row(
+                children: <Widget>[
+                  Icon(
+                    Icons.reply,
+                    color: Colors.black26,
+                    size: 14,
+                  ),
+                  Text(
+                    "分享",
+                    style: TextStyle(
+                      color: Colors.black26,
+                      fontSize: 14,
+                      fontWeight: FontWeight.w400,
+                    ),
+                  ),
+                ],
+              )),
+        ],
+      ),
+    );
+  }
+
+  Widget _row2() {
+    return Container(
+      margin: EdgeInsets.only(top: 10, right: 10),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: <Widget>[
+          Container(
+            child: Text.rich(
+              TextSpan(
+                style: TextStyle(
+                  color: Colors.pink.shade300,
+                  wordSpacing: 4,
+                  fontSize: 16,
+                  fontWeight: FontWeight.bold,
+                ),
+                children: [
+                  TextSpan(
+                      text: "券后 ",
+                      style: TextStyle(
+                        fontSize: 14,
+                      )),
+                  TextSpan(
+                    text: '¥${productEntity.afterCouponPrice}',
+                    style: TextStyle(
+                      fontSize: 20,
+                      color: ColorsUtil.hexToColor(ColorsUtil.appBarColor),
+                    ),
+                  ),
+//                  TextSpan(
+//                    text: '  ',
+//                  ),
+//                  TextSpan(
+//                    text: "${productEntity.zkFinalPrice}",
+//                    style: TextStyle(
+//                        color: Colors.black54,
+//                        fontSize: ScreenUtil().setSp(20),
+//                        decoration: TextDecoration.lineThrough,
+//                        decorationStyle: TextDecorationStyle.dashed),
+//                  ),
+                ],
+              ),
+            ),
+          ),
           Container(
             padding: EdgeInsets.only(left: 3, right: 3, bottom: 1),
             decoration: BoxDecoration(
-                color: Colors.red.withOpacity(0.3),
+                color: Colors.red.withOpacity(0.2),
                 borderRadius: BorderRadius.circular(2)),
             child: Text.rich(
               TextSpan(
                 style: TextStyle(
-                  color: Colors.red,
+                  color: Colors.pink,
                   wordSpacing: 4,
-                  fontSize: 11,
+                  fontSize: 9,
                   fontWeight: FontWeight.bold,
                 ),
                 children: [
-                  TextSpan(text: "预估收益:¥ ", style: TextStyle()),
+                  TextSpan(
+                      text: "预估收益:¥ ",
+                      style: TextStyle(
+                        color: Colors.pink,
+                      )),
                   TextSpan(
                     text: "${productEntity.estimatedRevenueAmount}",
                     style: TextStyle(),
@@ -329,9 +424,9 @@ class ProductInfomation extends StatelessWidget {
     );
   }
 
-  Widget _row2() {
+  Widget _row3() {
     return Container(
-      margin: EdgeInsets.only(top: 10),
+      margin: EdgeInsets.only(top: 10, right: 10),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: <Widget>[
@@ -369,43 +464,9 @@ class ProductInfomation extends StatelessWidget {
     );
   }
 
-  Widget _row3() {
-    return Container(
-      margin: EdgeInsets.only(top: 10),
-      child: Row(
-        children: <Widget>[
-          Container(
-            alignment: Alignment.topLeft,
-            width: 25,
-            margin: EdgeInsets.only(right: 10),
-            padding: EdgeInsets.only(left: 3, right: 3, bottom: 0, top: 0),
-            decoration: BoxDecoration(
-                border: Border.all(width: 0.70, color: Colors.red),
-                borderRadius: BorderRadius.circular(2)),
-            child: Text(
-              productEntity.userType == 1 ? "天猫" : "淘宝",
-              style: TextStyle(fontSize: 8),
-            ),
-          ),
-          Container(
-            width: ScreenUtil().setWidth(640),
-            child: Text(
-              "${productEntity.title}",
-              style: TextStyle(
-                color: Colors.black54,
-                fontSize: 11,
-                fontWeight: FontWeight.w400,
-              ),
-            ),
-          )
-        ],
-      ),
-    );
-  }
-
   Widget _row31() {
     return Container(
-      margin: EdgeInsets.only(top: 10),
+      margin: EdgeInsets.only(top: 10, right: 10),
       child: Row(
         children: <Widget>[
           Container(
@@ -448,7 +509,7 @@ class ProductInfomation extends StatelessWidget {
     return InkWell(
       onTap: () {},
       child: Container(
-        margin: EdgeInsets.only(top: 10, bottom: 10),
+        margin: EdgeInsets.all(10),
         padding: EdgeInsets.only(left: 3, right: 3, bottom: 1),
         decoration: BoxDecoration(
             color: Colors.red.withOpacity(0.2),
@@ -502,7 +563,7 @@ class ProductInfomation extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       color: Colors.white,
-      padding: EdgeInsets.only(left: 10, right: 10, top: 5),
+      padding: EdgeInsets.only(left: 10, right: 0, top: 5),
       child: Column(
         children: <Widget>[
           _row1(),
@@ -659,71 +720,14 @@ class ShopInfomation extends StatelessWidget {
 }
 
 /// 商品详情页
-class ItemDetails extends StatefulWidget {
-  ProductEntity productEntity;
-
-  ItemDetails({this.productEntity});
-
-  @override
-  _ItemDetailsState createState() => _ItemDetailsState();
-}
-
-/// 商品详情页 State
-class _ItemDetailsState extends State<ItemDetails> {
-  bool hidden;
+class ItemDetails extends StatelessWidget {
   String richText;
 
-  @override
-  void initState() {
-    // TODO: implement initState
-    super.initState();
-    hidden = true;
-    richText = '';
-  }
-
-  void _getItemDeatilRichText() {
-    if (richText == '' || richText == null) {
-      HttpUtil()
-          .get('getProductDetail',
-              parms: 'data=%7B"id":"${widget.productEntity.itemId}"%7D')
-          .then((val) {
-        setState(() {
-          hidden = !hidden;
-          richText = val['data']['pcDescContent'].toString();
-        });
-      });
-    } else {
-      setState(() {
-        hidden = !hidden;
-      });
-    }
-  }
-
-  Widget _itemDetailsTexg() {
-    return InkWell(
-      onTap: _getItemDeatilRichText,
-      child: Container(
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: <Widget>[
-            Container(
-              child: Text("查看详情"),
-            ),
-            Container(
-              child: Text(hidden ? ">" : "<"),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
+  ItemDetails({this.richText});
 
   Widget _itemDeatilRichText() {
     return Container(
-      child: Offstage(
-        offstage: hidden,
-        child: HtmlWidget(html: richText),
-      ),
+      child: HtmlWidget(html: richText),
     );
   }
 
@@ -735,7 +739,9 @@ class _ItemDetailsState extends State<ItemDetails> {
       padding: EdgeInsets.only(left: 10, right: 10, top: 5, bottom: 10),
       child: Column(
         children: <Widget>[
-          _itemDetailsTexg(),
+          TextLine(
+            text: "宝贝详情",
+          ),
           _itemDeatilRichText(),
         ],
       ),
@@ -791,17 +797,60 @@ class ProductRecommend extends StatelessWidget {
     return Container(
       color: Colors.white,
       margin: EdgeInsets.only(top: 10),
-      padding: EdgeInsets.only(left: 10, right: 10, top: 5, bottom: 10),
+      padding: EdgeInsets.only(left: 0, right: 0, top: 5, bottom: 10),
       child: Column(
         children: <Widget>[
           _recommendText(),
           ProductList(
             list: list,
-            crossAxisCount: 2,
+            crossAxisCount: 1,
           ),
         ],
       ),
     );
+  }
+}
+
+class TextLine extends StatelessWidget {
+  String text;
+
+  TextLine({this.text});
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+        child: Row(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: <Widget>[
+        Container(
+          width: 60,
+          height: 1,
+          color: Colors.red,
+        ),
+//            Container(
+//              margin: EdgeInsets.only(left: 20),
+//              child: Icon(
+//                Icons.video_label,
+//                size: 20,
+//                color: Colors.cyan,
+//                textDirection: TextDirection.ltr,
+//              ),
+//            ),
+        Container(
+          margin: EdgeInsets.only(left: 10),
+          child: Text(
+            this.text,
+            style: TextStyle(color: Colors.redAccent),
+          ),
+        ),
+        Container(
+          margin: EdgeInsets.only(left: 20),
+          width: 60,
+          height: 1,
+          color: Colors.red,
+        ),
+      ],
+    ));
   }
 }
 
@@ -818,6 +867,7 @@ class DetailsBottom extends StatelessWidget {
       height: ScreenUtil().setHeight(100),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        crossAxisAlignment: CrossAxisAlignment.end,
         children: <Widget>[
           InkWell(
             onTap: () {
@@ -844,11 +894,21 @@ class DetailsBottom extends StatelessWidget {
               alignment: Alignment.center,
               child: Column(
                 children: <Widget>[
-                  Image.asset('assets/images/ic_tab_home_normal.png',
-                      width: 30.0, height: 30.0),
+                  Image.asset(
+                    true
+                        ? 'assets/images/product_detail/like_a.png'
+                        : 'assets/images/product_detail/like.png',
+                    width: 28.0,
+                    height: 30.0,
+                  ),
                   Text(
                     "喜欢",
-                    style: TextStyle(color: Colors.black, fontSize: 12),
+                    style: TextStyle(
+                      color: true
+                          ? ColorsUtil.hexToColor(ColorsUtil.appBarColor)
+                          : Colors.black,
+                      fontSize: 12,
+                    ),
                   )
                 ],
               ),
@@ -862,13 +922,13 @@ class DetailsBottom extends StatelessWidget {
                 },
                 child: Container(
                   alignment: Alignment.center,
-                  width: ScreenUtil().setWidth(230),
+                  width: ScreenUtil().setWidth(200),
                   color: Colors.pink.shade100,
                   padding: EdgeInsets.only(left: 20),
                   child: Row(
                     children: <Widget>[
                       Text(
-                        '    分享',
+                        '     分享',
                         style: TextStyle(
                           color: Colors.pink,
                           fontSize: ScreenUtil().setSp(28),
@@ -880,12 +940,11 @@ class DetailsBottom extends StatelessWidget {
               ),
               InkWell(
                 onTap: () async {
-//                  NautilusUtil.openItemDetail(productEntity.itemId.toString());
                   NautilusUtil.openUrl('https:' + productEntity.couponShareUrl);
                 },
                 child: Container(
                   alignment: Alignment.center,
-                  width: ScreenUtil().setWidth(230),
+                  width: ScreenUtil().setWidth(210),
                   color: ColorsUtil.hexToColor(ColorsUtil.appBarColor),
                   padding: EdgeInsets.only(left: 20),
                   child: Row(

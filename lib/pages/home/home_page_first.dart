@@ -17,6 +17,7 @@ import 'package:tbk_app/modle/home_navigator_entity.dart';
 import 'package:tbk_app/modle/product_list_entity.dart';
 import 'package:tbk_app/modle/product_recommend_entity.dart';
 import 'package:tbk_app/router/routers.dart';
+import 'package:tbk_app/util/cache_network_image_util.dart';
 import 'package:tbk_app/util/easy_refresh_util.dart';
 import 'package:tbk_app/util/fluro_convert_util.dart';
 import 'package:tbk_app/util/fluro_navigator_util.dart';
@@ -318,9 +319,12 @@ class TopNavigator extends StatelessWidget {
       },
       child: Column(
         children: <Widget>[
-          Image.network(
-            navigatorEntity.imageUrl,
-            width: ScreenUtil().setHeight(95),
+          Container(
+            alignment: Alignment.center,
+            width: ScreenUtil().setWidth(95),
+            height: ScreenUtil().setHeight(95),
+            child: CacheNetworkImageUtil.image(navigatorEntity.imageUrl,
+                'assets/images/product_list/spjiaz.gif'),
           ),
           Text(navigatorEntity.title)
         ],
@@ -357,53 +361,51 @@ class AdBanner extends StatelessWidget {
     return Container(
       height: ScreenUtil().setHeight(200),
       width: ScreenUtil().setWidth(750),
-      child: InkWell(
-        onTap: () {
-          String s = Uri.encodeComponent(adList[0].url);
-          NavigatorUtil.gotransitionPage(
-              context,
-              Routers.navigatorWebViewPage +
-                  "?url=${s}&title=" +
-                  FluroConvertUtils.fluroCnParamsEncode("测试用"));
-        },
-        child: Image.network("${adList[0].imageUrl}", fit: BoxFit.fill),
-      ),
-//      child: Swiper(
-//        index: 0,
-//        itemBuilder: (BuildContext context, int index) {
-//          return InkWell(
-//            onTap: () {
-//              _launchUrl("${adList[index].url}");
-//            },
-//            child: Image.network("${adList[index].imageUrl}", fit: BoxFit.fill),
-//          );
+//      child: InkWell(
+//        onTap: () {
+//          String s = Uri.encodeComponent(adList[0]?.url);
+//          NavigatorUtil.gotransitionPage(
+//              context,
+//              Routers.navigatorWebViewPage +
+//                  "?url=${s}&title=" +
+//                  FluroConvertUtils.fluroCnParamsEncode("测试用"));
 //        },
-//        itemCount: adList.length,
-//        loop: false,
-//        autoplay: false,
-//        duration: 300,
-//        autoplayDelay: 4000,
-//        controller: swiperController,
-//        pagination: SwiperPagination(
-//              builder: DotSwiperPaginationBuilder(
-//                  color: Colors.transparent,              // 其他点的颜色
-//                  activeColor: Colors.transparent,      // 当前点的颜色
-//                  space: 2,                           // 点与点之间的距离
-//                  activeSize: 20                      // 当前点的大小
-//              )
-//          )
-//
+//        child: Image.network("${adList[0]?.imageUrl}", fit: BoxFit.fill),
 //      ),
+      child: Swiper(
+        index: 0,
+        itemBuilder: (BuildContext context, int index) {
+          return InkWell(
+            onTap: () {
+              String s = Uri.encodeComponent(adList[0]?.url);
+              NavigatorUtil.gotransitionPage(
+                  context,
+                  Routers.navigatorWebViewPage +
+                      "?url=${s}&title=" +
+                      FluroConvertUtils.fluroCnParamsEncode("测试用"));
+            },
+            child: Image.network("${adList[index].imageUrl}", fit: BoxFit.fill),
+          );
+        },
+        itemCount: adList.length,
+        loop: false,
+        autoplay: false,
+        duration: 300,
+        autoplayDelay: 5000,
+        controller: swiperController,
+        pagination: SwiperPagination(
+          builder: DotSwiperPaginationBuilder(
+              color: Colors.transparent, // 其他点的颜色
+              activeColor: Colors.transparent, // 当前点的颜色
+              space: 2, // 点与点之间的距离
+              activeSize: 20 // 当前点的大小
+              ),
+        ),
+      ),
     );
   }
 
-  void _launchUrl(String url) async {
-    if (await canLaunch(url)) {
-      await launch(url);
-    } else {
-      throw 'url 不能访问，异常';
-    }
-  }
+
 }
 
 class Recommend extends StatelessWidget {

@@ -71,4 +71,7 @@ flutter:
   assets:
     - assets/images/
     - assets/images/home_page_first/
+    - assets/images/product_list/
+    - assets/images/product_detail/
+    - assets/images/taobao/
     - assets/data/china.json

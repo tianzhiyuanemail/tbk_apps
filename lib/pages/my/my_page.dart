@@ -6,8 +6,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:tbk_app/router/application.dart';
 import 'package:tbk_app/util/colors_util.dart';
 import 'package:nautilus/nautilus.dart' as nautilus;
+
 class MyInfoPage extends StatefulWidget {
   @override
   _MyInfoPageState createState() => _MyInfoPageState();
@@ -16,121 +18,145 @@ class MyInfoPage extends StatefulWidget {
 class _MyInfoPageState extends State<MyInfoPage> {
   var userAvatar = "http://kaze-sora.com/sozai/blog_haru/blog_mitubachi01.jpg";
   var userName = 'rre';
-  var _result = '';
 
   ScrollController _scrollController = ScrollController();
 
-  bool hidden = false;
+  ///是否显示“返回到顶部”按钮
+  bool controllerOffset = false;
 
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
-
     _scrollController.addListener(() {
-      if (_scrollController.offset > 120) {
+      if (_scrollController.offset < 10 && controllerOffset) {
         setState(() {
-          hidden = true;
+          controllerOffset = false;
         });
-      } else {
+      } else if (_scrollController.offset >= 10 && !controllerOffset) {
         setState(() {
-          hidden = false;
+          controllerOffset = true;
         });
       }
     });
   }
 
   @override
-  Widget build(BuildContext context) {
-    return new NestedScrollView(
-        headerSliverBuilder: _headerSliverBuilder,
-        controller: _scrollController,
-        reverse: false,
-        body: Container(
-          color: Colors.greenAccent,
-          child: new ListView(
-            children: <Widget>[
-              InkWell(
-                onTap: (){
-                  nautilus.login().then((data){
-                    setState(() {
-                      if(data.isSuccessful){
-                        _result ="nick->${data?.user?.nick}";
-                      }else{
-                        _result = "error->${data.errorMessage}";
-                      }
-
-                    });
-                  });
-                },
-                child:  Container(
-
-                  child: Text(_result+"uuuuuuuuuuu"),
-                ),// 头像
-              ),
-              UserRevenue(),
-              AdBanner(),
-              UserButtons(),
-              UserTools(),
-              UsersGrowthValue("24"),
-            ],
-          ),
-        ));
+  void dispose() {
+    ///为了避免内存泄露，需要调用_controller.dispose
+    _scrollController.dispose();
+    super.dispose();
   }
 
-  List<Widget> _headerSliverBuilder(
-      BuildContext context, bool innerBoxIsScrolled) {
-    return <Widget>[
-      SliverAppBar(
-        //1.在标题左侧显示的一个控件，在首页通常显示应用的 logo；在其他界面通常显示为返回按钮
-//        leading: Icon(Icons.add),
-        //2. ? 控制是否应该尝试暗示前导小部件为null
-        automaticallyImplyLeading: true,
-        elevation: 4,
-        //APP bar 的颜色，默认值为 ThemeData.primaryColor。改值通常和下面的三个属性一起使用
-        backgroundColor: ColorsUtil.hexToColor(ColorsUtil.appBarColor),
-        //App bar 的亮度，有白色和黑色两种主题，默认值为 ThemeData.primaryColorBrightness
-        brightness: Brightness.light,
-        //App bar 上图标的颜色、透明度、和尺寸信息。默认值为 ThemeData().primaryIconTheme
-        iconTheme: ThemeData().primaryIconTheme,
-        //App bar 上的文字主题。默认值为 ThemeData（）.primaryTextTheme
-        textTheme: ThemeData().accentTextTheme,
-        //此应用栏是否显示在屏幕顶部
-        primary: true,
-        //标题是否居中显示，默认值根据不同的操作系统，显示方式不一样,true居中 false居左
-        centerTitle: true,
-        //横轴上标题内容 周围的间距
-        titleSpacing: NavigationToolbar.kMiddleSpacing,
-        //展开高度
-        expandedHeight: 120,
-        //是否随着滑动隐藏标题
-        floating: true,
-        //tab 是否固定在顶部
-        pinned: true,
-        //与floating结合使用
-        snap: true,
-        actions: <Widget>[
-          new IconButton(
-            // action button
-            icon: new Icon(Icons.add),
-            onPressed: () {},
+  @override
+  Widget build(BuildContext context) {
+    return new Scaffold(
+      body: Stack(
+        children: <Widget>[
+          Container(
+//            color: ColorsUtil.hexToColor(ColorsUtil.appBarColor),
+//            child: new ListView(
+//              controller: _scrollController,
+//              children: <Widget>[
+//                UserInformation(),
+//                UserRevenue(),
+//                AdBanner(),
+//                UserButtons(),
+//                UserTools(),
+//                UsersGrowthValue("24"),
+//              ],
+//            ),
+             child: CustomScrollView(
+                controller: _scrollController,
+                reverse: false,
+                slivers: <Widget>[
+                  SliverList(
+                    delegate: SliverChildListDelegate(_sliverListChild()),
+                  )
+                ],
+              )
           ),
-          new IconButton(
-            // action button
-            icon: new Icon(Icons.add),
-            onPressed: () {},
-          ),
+          HeaderChild(controllerOffset: controllerOffset),
         ],
-        //当前界面的标题文字
-        title: hidden ? Text('我的页面') : null,
-        //5.一个显示在 AppBar 下方的控件，高度和 AppBar 高度一样，
-        // 可以实现一些特殊的效果，该属性通常在 SliverAppBar 中使用
-        flexibleSpace: FlexibleSpaceBar(
-          centerTitle: true,
-          background: UserInformation(),
-        ),
-      )
-    ];
+      ),
+    );
+  }
+
+  /// CustomScrollView _sliverListChild
+  List<Widget> _sliverListChild() {
+    List<Widget> list = List();
+
+    list.add(UserInformation());
+    list.add(UserRevenue());
+    list.add(AdBanner());
+    list.add(UserButtons());
+    list.add(UserTools());
+    list.add(UsersGrowthValue("24"));
+    return list;
+  }
+
+}
+
+/// 自定义导航栏
+class HeaderChild extends StatelessWidget {
+  bool controllerOffset;
+
+  HeaderChild({this.controllerOffset});
+
+  @override
+  Widget build(BuildContext context) {
+    return controllerOffset
+        ? Container(
+            alignment: Alignment.topLeft,
+            margin: EdgeInsets.only(top: 0, bottom: 0),
+            padding: EdgeInsets.only(top: 14, bottom: 0),
+            decoration: BoxDecoration(
+              color: ColorsUtil.hexToColor(ColorsUtil.appBarColor),
+              border: Border(
+                bottom: BorderSide(
+                  color: Colors.black12,
+                ),
+              ),
+            ),
+            height: 60,
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: <Widget>[
+                Text("       "),
+                Container(
+                    margin: EdgeInsets.only(left: 70),
+                    child: Text(
+                      "京淘优券",
+                      style: TextStyle(fontSize: 18, color: Colors.white),
+                    )),
+                Container(
+                  margin: EdgeInsets.only(top: 5),
+                  child: TopButton(),
+                )
+              ],
+            ),
+          )
+        : Container();
+  }
+}
+
+class TopButton extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      child: Row(
+        children: <Widget>[
+          IconButton(
+            onPressed: () {},
+            icon: Icon(Icons.print),
+          ),
+          IconButton(
+            onPressed: () {},
+            icon: Icon(Icons.print),
+          )
+        ],
+      ),
+    );
   }
 }
 
@@ -139,53 +165,98 @@ class UserInformation extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      margin: EdgeInsets.only(top: 20),
-      width: ScreenUtil().setWidth(750),
-      child: Row(
-        children: <Widget>[
-          /// 左侧按钮
-          Expanded(
-            child: Container(
-              margin: EdgeInsets.only(top: 18, left: 15),
-              child: Column(
+        padding: EdgeInsets.only(top: 0, left: 15,bottom: 15),
+        width: ScreenUtil().setWidth(750),
+        color: ColorsUtil.hexToColor(ColorsUtil.appBarColor),
+        child: Column(
+          children: <Widget>[
+            /// 头像 昵称 邀请码
+            Container(
+              margin: EdgeInsets.only(top: 15),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: <Widget>[
-                  /// 头像 昵称 邀请码
-                  Container(
-                    child: Row(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: <Widget>[
-                        // 头像
-                        Container(
-                          alignment: Alignment.topRight,
-                          decoration: BoxDecoration(
-                              border:
-                                  Border.all(width: 0.50, color: Colors.white),
-                              borderRadius: BorderRadius.circular(50)),
-                          child: CircleAvatar(
-                            radius: 30,
-                            backgroundImage: new NetworkImage(
-                              'http://e.hiphotos.baidu'
-                              '.com/image/pic/item/359b033b5bb5c9eac1754f45df39b6003bf3b396.jpg',
-                            ),
+                  Row(
+                    children: <Widget>[
+                      // 头像
+                      Container(
+                        margin: EdgeInsets.only(top: 10),
+                        alignment: Alignment.topRight,
+                        decoration: BoxDecoration(
+                            border:
+                                Border.all(width: 0.50, color: Colors.white),
+                            borderRadius: BorderRadius.circular(50)),
+                        child: CircleAvatar(
+                          radius: 30,
+                          backgroundImage: new NetworkImage(
+                            'http://e.hiphotos.baidu'
+                            '.com/image/pic/item/359b033b5bb5c9eac1754f45df39b6003bf3b396.jpg',
                           ),
                         ),
-                        // 昵称
-                        Container(
-                          margin: EdgeInsets.only(left: 10),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: <Widget>[
-                              Container(
-                                margin: EdgeInsets.only(left: 0, top: 10),
+                      ),
+                      // 昵称
+                      Container(
+                        margin: EdgeInsets.only(top: 10, left: 10),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: <Widget>[
+                            Container(
+                              margin: EdgeInsets.only(top: 10),
+                              child: Row(
+                                children: <Widget>[
+                                  Text(
+                                    "木有昵称",
+                                    style: TextStyle(
+                                        fontSize: 11,
+                                        color: Colors.white,
+                                        fontWeight: FontWeight.bold),
+                                    textAlign: TextAlign.left,
+                                  ),
+                                  Container(
+                                    decoration: BoxDecoration(
+                                        color: Colors.black54,
+                                        borderRadius:
+                                            BorderRadius.circular(10)),
+                                    margin: EdgeInsets.only(left: 5),
+                                    padding: EdgeInsets.only(
+                                        left: 5, right: 5, bottom: 1),
+                                    child: Text(
+                                      "超级会员",
+                                      style: TextStyle(
+                                          fontSize: 11, color: Colors.white),
+                                    ),
+                                  )
+                                ],
+                              ),
+                            ),
+                            Container(
+                              margin: EdgeInsets.only(top: 10),
+                              child: InkWell(
+                                onTap: () {},
                                 child: Row(
                                   children: <Widget>[
                                     Text(
-                                      "木有昵称",
+                                      "邀请码：",
                                       style: TextStyle(
+                                        fontSize: 11,
+                                        color: Colors.white,
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                      textAlign: TextAlign.left,
+                                    ),
+                                    Container(
+                                      margin: EdgeInsets.only(left: 5),
+                                      padding: EdgeInsets.only(
+                                          left: 5, right: 5, bottom: 1),
+                                      child: Text(
+                                        "oiqher",
+                                        style: TextStyle(
                                           fontSize: 11,
                                           color: Colors.white,
-                                          fontWeight: FontWeight.bold),
-                                      textAlign: TextAlign.left,
+                                        ),
+                                        textAlign: TextAlign.left,
+                                      ),
                                     ),
                                     Container(
                                       decoration: BoxDecoration(
@@ -196,140 +267,87 @@ class UserInformation extends StatelessWidget {
                                       padding: EdgeInsets.only(
                                           left: 5, right: 5, bottom: 1),
                                       child: Text(
-                                        "超级会员",
+                                        "复制",
                                         style: TextStyle(
-                                            fontSize: 11, color: Colors.white),
+                                            color: Colors.white, fontSize: 10),
+                                        textAlign: TextAlign.left,
                                       ),
-                                    )
+                                    ),
                                   ],
                                 ),
                               ),
-                              Container(
-                                margin: EdgeInsets.only(left: 0, top: 10),
-                                child: InkWell(
-                                  onTap: () {},
-                                  child: Row(
-                                    children: <Widget>[
-                                      Text(
-                                        "邀请码：",
-                                        style: TextStyle(
-                                          fontSize: 11,
-                                          color: Colors.white,
-                                          fontWeight: FontWeight.bold,
-                                        ),
-                                        textAlign: TextAlign.left,
-                                      ),
-                                      Container(
-                                        margin: EdgeInsets.only(left: 5),
-                                        padding: EdgeInsets.only(
-                                            left: 5, right: 5, bottom: 1),
-                                        child: Text(
-                                          "oiqher",
-                                          style: TextStyle(
-                                            fontSize: 11,
-                                            color: Colors.white,
-                                          ),
-                                          textAlign: TextAlign.left,
-                                        ),
-                                      ),
-                                      Container(
-                                        decoration: BoxDecoration(
-                                            color: Colors.black54,
-                                            borderRadius:
-                                                BorderRadius.circular(10)),
-                                        margin: EdgeInsets.only(left: 5),
-                                        padding: EdgeInsets.only(
-                                            left: 5, right: 5, bottom: 1),
-                                        child: Text(
-                                          "复制",
-                                          style: TextStyle(
-                                              color: Colors.white,
-                                              fontSize: 10),
-                                          textAlign: TextAlign.left,
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                              ),
-                            ],
-                          ),
-                        )
-                      ],
-                    ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
                   ),
-
-                  /// 粉丝 成长值
+                  //按钮
                   Container(
-                    margin: EdgeInsets.only(top: 10),
+                    child: TopButton(),
+                  )
+                ],
+              ),
+            ),
+
+            /// 粉丝 成长值
+            Container(
+              margin: EdgeInsets.only(top: 10),
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: <Widget>[
+                  //
+                  Container(
                     child: Row(
-                      crossAxisAlignment: CrossAxisAlignment.start,
                       children: <Widget>[
-                        //
                         Container(
-                          child: Row(
-                            children: <Widget>[
-                              Container(
-                                margin: EdgeInsets.only(left: 5),
-                                child: Text(
-                                  "粉丝",
-                                  style: TextStyle(
-                                    fontSize: 11,
-                                    color: Colors.white,
-                                  ),
-                                ),
-                              ),
-                              Container(
-                                margin: EdgeInsets.only(left: 5),
-                                child: Text(
-                                  "0",
-                                  style: TextStyle(
-                                    fontSize: 11,
-                                    color: Colors.white,
-                                  ),
-                                ),
-                              ),
-                              Container(
-                                margin: EdgeInsets.only(left: 15),
-                                child: Text(
-                                  "成长值",
-                                  style: TextStyle(
-                                    fontSize: 11,
-                                    color: Colors.white,
-                                  ),
-                                ),
-                              ),
-                              Container(
-                                margin: EdgeInsets.only(left: 5),
-                                child: Text(
-                                  "0",
-                                  style: TextStyle(
-                                    fontSize: 11,
-                                    color: Colors.white,
-                                  ),
-                                ),
-                              ),
-                            ],
+                          margin: EdgeInsets.only(left: 5),
+                          child: Text(
+                            "粉丝",
+                            style: TextStyle(
+                              fontSize: 11,
+                              color: Colors.white,
+                            ),
                           ),
-                        )
+                        ),
+                        Container(
+                          margin: EdgeInsets.only(left: 5),
+                          child: Text(
+                            "0",
+                            style: TextStyle(
+                              fontSize: 11,
+                              color: Colors.white,
+                            ),
+                          ),
+                        ),
+                        Container(
+                          margin: EdgeInsets.only(left: 15),
+                          child: Text(
+                            "成长值",
+                            style: TextStyle(
+                              fontSize: 11,
+                              color: Colors.white,
+                            ),
+                          ),
+                        ),
+                        Container(
+                          margin: EdgeInsets.only(left: 5),
+                          child: Text(
+                            "0",
+                            style: TextStyle(
+                              fontSize: 11,
+                              color: Colors.white,
+                            ),
+                          ),
+                        ),
                       ],
                     ),
                   )
                 ],
               ),
-            ),
-            flex: 8,
-          ),
-        ],
-      ),
-//      decoration: BoxDecoration(
-//        image: DecorationImage(
-//          image: NetworkImage(
-//              "https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1551944816841&di=329f747e3f4c2554f24c609fd6f77c49&imgtype=0&src=http%3A%2F%2Fimg.tupianzj.com%2Fuploads%2Fallimg%2F160610%2F9-160610114520.jpg"),
-//          fit: BoxFit.cover,
-//        ),
-//      ),
-    );
+            )
+          ],
+        ));
   }
 }
 

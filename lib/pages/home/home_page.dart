@@ -121,8 +121,6 @@ class _BookAudioVideoPageState extends State<HomePage>
           ),
         ));
   }
-
-
 }
 
 class TabBars extends StatelessWidget {
