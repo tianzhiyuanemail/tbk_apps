@@ -7,15 +7,13 @@ import 'package:flutter/rendering.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:oktoast/oktoast.dart';
-import 'package:provide/provide.dart';
 import 'package:tbk_app/modle/user_info_entity.dart';
-import 'package:tbk_app/provide/user_info_provide.dart';
-import 'package:tbk_app/router/application.dart';
 import 'package:tbk_app/router/routers.dart';
 import 'package:tbk_app/util/colors_util.dart';
-import 'package:nautilus/nautilus.dart' as nautilus;
 import 'package:tbk_app/util/fluro_navigator_util.dart';
-import 'package:tbk_app/util/shared_preference_util.dart';
+import 'package:tbk_app/util/http_util.dart';
+
+import '../../entity_factory.dart';
 
 class MyInfoPage extends StatefulWidget {
   @override
@@ -31,13 +29,13 @@ class _MyInfoPageState extends State<MyInfoPage> {
 
   @override
   void initState() {
-    SharedPreferenceUtil.getUser().then((UserInfoEntity userInfo) {
-      setState(() {
-        userInfoEntity = userInfo;
-      });
-    });
-
     super.initState();
+
+    HttpUtil().get('getUser').then((val) {
+      if (val["success"]) {
+        userInfoEntity =  EntityFactory.generateOBJ<UserInfoEntity>(val['data']);
+      }
+    });
 
     _scrollController.addListener(() {
       if (_scrollController.offset < 10 && controllerOffset) {
@@ -62,11 +60,15 @@ class _MyInfoPageState extends State<MyInfoPage> {
   @override
   Widget build(BuildContext context) {
     return new Scaffold(
-//      backgroundColor: ColorsUtil.hexToColor(ColorsUtil.appBarColor),
       body: userInfoEntity == null
           ? Container
           : Stack(
               children: <Widget>[
+                Container(
+                  color: ColorsUtil.hexToColor(ColorsUtil.appBarColor),
+                  width: ScreenUtil().setWidth(750),
+                  height: ScreenUtil().setHeight(500),
+                ),
                 Container(
                   child: CustomScrollView(
                     controller: _scrollController,
@@ -74,7 +76,21 @@ class _MyInfoPageState extends State<MyInfoPage> {
                     slivers: <Widget>[
                       SliverList(
                         delegate: SliverChildListDelegate(_sliverListChild()),
-                      )
+                      ),
+                      SliverToBoxAdapter(
+                        child: Container(
+                          color: Colors.white,
+                          child: Column(
+                            children: <Widget>[
+                              UserRevenue(userInfoEntity: userInfoEntity),
+                              AdBanner(),
+                              UserButtons(),
+                              UserTools(),
+                              UsersGrowthValue("24")
+                            ],
+                          ),
+                        ),
+                      ),
                     ],
                   ),
                 ),
@@ -91,11 +107,7 @@ class _MyInfoPageState extends State<MyInfoPage> {
     list.add(UserInformation(
       userInfoEntity: userInfoEntity,
     ));
-    list.add(UserRevenue(userInfoEntity: userInfoEntity));
-    list.add(AdBanner());
-    list.add(UserButtons());
-    list.add(UserTools());
-    list.add(UsersGrowthValue("24"));
+
     return list;
   }
 }
@@ -151,16 +163,19 @@ class TopButton extends StatelessWidget {
         children: <Widget>[
           IconButton(
             onPressed: () {
-                showToast("用户信息");
+              showToast("用户信息");
             },
-            icon: Icon(Icons.message,color: Colors.white,),
+            icon: Icon(
+              Icons.message,
+              color: Colors.white,
+            ),
           ),
           IconButton(
             onPressed: () {
               NavigatorUtil.gotransitionPage(
                   context, "${Routers.userSetUpPage}");
             },
-            icon: Icon(Icons.settings,color: Colors.white),
+            icon: Icon(Icons.settings, color: Colors.white),
           ),
         ],
       ),
@@ -184,7 +199,7 @@ class UserInformation extends StatelessWidget {
           children: <Widget>[
             /// 头像 昵称 邀请码
             Container(
-              margin: EdgeInsets.only(top: 15),
+              margin: EdgeInsets.only(top: 40),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -434,34 +449,36 @@ class UserRevenue extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      margin: EdgeInsets.only(left: 10, right: 10, top: 0),
-      decoration: BoxDecoration(
-          color: Colors.white, borderRadius: BorderRadius.circular(10)),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: <Widget>[
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceAround,
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: <Widget>[
-              _revenuNumber('0', '本月预估'),
-              _revenuNumber('0', '今日收益'),
-            ],
-          ),
-          Divider(
-            height: 10.0,
-            indent: 0.0,
-            color: Colors.black12,
-          ),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceAround,
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: <Widget>[
-              _lastMonthRevenuNumber('0', '上月结算'),
-              _lastMonthRevenuNumber('0', '上月预估'),
-            ],
-          ),
-        ],
+      child: Container(
+        margin: EdgeInsets.only(left: 10, right: 10, top: 0),
+        decoration: BoxDecoration(
+            color: Colors.white, borderRadius: BorderRadius.circular(10)),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: <Widget>[
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceAround,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: <Widget>[
+                _revenuNumber('0', '本月预估'),
+                _revenuNumber('0', '今日收益'),
+              ],
+            ),
+            Divider(
+              height: 10.0,
+              indent: 0.0,
+              color: Colors.black12,
+            ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceAround,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: <Widget>[
+                _lastMonthRevenuNumber('0', '上月结算'),
+                _lastMonthRevenuNumber('0', '上月预估'),
+              ],
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -580,10 +597,10 @@ class UserTools extends StatelessWidget {
 
   Widget _userToolsButtons() {
     return Container(
-      margin: EdgeInsets.only(bottom: 10),
+      margin: EdgeInsets.only(bottom: 10, left: 10, right: 10),
       child: Wrap(
         crossAxisAlignment: WrapCrossAlignment.start,
-        spacing: 40,
+        spacing: 60,
         children: <Widget>[
           _userToolsButton('assets/images/ic_tab_home_active.png', '新手指导', () {
             print("收益");

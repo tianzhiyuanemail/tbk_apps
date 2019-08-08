@@ -27,6 +27,7 @@ const servicePath={
   'sendSms': serviceUrl+'tbk/sms/sendSms', // sendSms
   'registerOrLogin': serviceUrl+'tbk/users/user/registerOrLogin.json', // registerOrLogin
   'updateUser': serviceUrl+'tbk/users/user/updateUser.json', // registerOrLogin
+  'getUser': serviceUrl+'tbk/users/user/getUser.json', // registerOrLogin
 
 
   ///

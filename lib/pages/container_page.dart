@@ -7,6 +7,7 @@ import 'package:tbk_app/pages/product/product_deatil_page.dart';
 import 'package:tbk_app/router/routers.dart';
 import 'package:tbk_app/util/fluro_navigator_util.dart';
 import 'package:tbk_app/util/shared_preference_util.dart';
+import 'package:tbk_app/util/sp_util.dart';
 
 import 'cate/cate_page.dart';
 import 'home/home_page.dart';
@@ -38,7 +39,7 @@ class _ContainerPageState extends State<ContainerPage> {
     _Item('我的', 'assets/images/ic_tab_profile_active.png',
         'assets/images/ic_tab_profile_normal.png')
   ];
-  UserInfoEntity userInfoEntity;
+  String tocken;
   List<BottomNavigationBarItem> itemList;
   int _selectIndex = 0;
 
@@ -50,12 +51,8 @@ class _ContainerPageState extends State<ContainerPage> {
       ..add(CatePage())
       ..add(ProductDetail('588618803525'))
       ..add(MyInfoPage());
-
-    SharedPreferenceUtil.getUser().then((UserInfoEntity userInfo) {
-      setState(() {
-        userInfoEntity = userInfo;
-      });
-    });
+    tocken =
+        SpUtil.getString("tocken") == null ? "" : SpUtil.getString("tocken");
 
     if (itemList == null) {
       itemList = itemNames
@@ -81,9 +78,9 @@ class _ContainerPageState extends State<ContainerPage> {
       bottomNavigationBar: BottomNavigationBar(
         items: this.itemList,
         onTap: (int index) {
-          if(index == 3 && userInfoEntity == null){
-            NavigatorUtil.gotransitionPage(context,  "${Routers.userLoginPage}");
-          }else {
+          if (index == 3 && (tocken == null || tocken == '')) {
+            NavigatorUtil.gotransitionPage(context, "${Routers.userLoginPage}");
+          } else {
             ///这里根据点击的index来显示，非index的page均隐藏
             setState(() {
               _selectIndex = index;

@@ -96,8 +96,7 @@ class _HomePageFirstState extends State<HomePageFirst>
   Widget build(BuildContext context) {
     Loading.ctx = context; // 注入context
     return Scaffold(
-      floatingActionButton:
-          BackTopButton(controller: _controller, showToTopBtn: showToTopBtn),
+      floatingActionButton: BackTopButton(controller: _controller, showToTopBtn: showToTopBtn),
       body: EasyRefresh(
         refreshFooter: EasyRefreshUtil.classicsFooter(_refreshFooterState),
         refreshHeader: EasyRefreshUtil.classicsHeader(_refreshHeaderState),
@@ -115,25 +114,29 @@ class _HomePageFirstState extends State<HomePageFirst>
           });
           _getHotGoods();
         },
-        child: ListView(
+        child: CustomScrollView(
           controller: _controller,
-          children: <Widget>[
-            SwiperDiy(
-              swiperDataList: swiperList,
-              swiperController: _swiperController,
+          reverse: false,
+          slivers: <Widget>[
+            SliverToBoxAdapter(
+              child: SwiperDiy(
+                  swiperDataList: swiperList,
+                  swiperController: _swiperController),
             ),
-            TopNavigator(navigatorList: navigatorList),
-            AdBanner(
-              adList: adList,
-              swiperController: _swiperController,
+            SliverToBoxAdapter(
+              child: TopNavigator(navigatorList: navigatorList),
             ),
-            FlootContent(),
-            Recommend(recommendList: recommendList),
-            hotTitle,
-            ProductList(
-              list: hotGoodsList,
-              crossAxisCount: 1,
-            )
+            SliverToBoxAdapter(
+              child:
+                  AdBanner(adList: adList, swiperController: _swiperController),
+            ),
+            SliverToBoxAdapter(
+              child: Recommend(recommendList: recommendList),
+            ),
+            SliverToBoxAdapter(
+              child: hotTitle,
+            ),
+            SliverProductList(list: hotGoodsList, crossAxisCount: 1),
           ],
         ),
       ),
@@ -404,8 +407,6 @@ class AdBanner extends StatelessWidget {
       ),
     );
   }
-
-
 }
 
 class Recommend extends StatelessWidget {
@@ -518,7 +519,10 @@ class Recommend extends StatelessWidget {
 //      height: ScreenUtil().setHeight(380),
       margin: EdgeInsets.only(top: 10),
       child: Column(
-        children: <Widget>[_titleWidget(), _recommendList(context)],
+        children: <Widget>[
+          _titleWidget(),
+          _recommendList(context),
+        ],
       ),
     );
   }

@@ -9,6 +9,7 @@ import 'package:tbk_app/util/fluro_navigator_util.dart';
 import 'package:tbk_app/util/http_util.dart';
 import 'package:tbk_app/util/map_url_params_utils.dart';
 import 'package:tbk_app/util/shared_preference_util.dart';
+import 'package:tbk_app/util/sp_util.dart';
 
 import '../../entity_factory.dart';
 
@@ -236,16 +237,6 @@ class _UserLoginPageState extends State<UserLoginPage> {
             可以用过FormState对Form的子孙FromField进行统一的操作
          */
         if (_signInFormKey.currentState.validate()) {
-          //如果输入都检验通过，则进行登录操作
-//          Scaffold.of(context).showSnackBar(
-//            SnackBar(
-//              backgroundColor: Colors.pink,
-//              content: Text(
-//                "执行登录操作",
-//                style: TextStyle(color: Colors.black45),
-//              ),
-//            ),
-//          );
 
           //调用所有自孩子的save回调，保存表单内容
           _signInFormKey.currentState.save();
@@ -258,7 +249,8 @@ class _UserLoginPageState extends State<UserLoginPage> {
           HttpUtil().get('registerOrLogin',parms: MapUrlParamsUtils.getUrlParamsByMap(map)).then((val) {
             if(val["success"] ){
               UserInfoEntity userInfoEntityr =  EntityFactory.generateOBJ<UserInfoEntity>(val['data']);
-              SharedPreferenceUtil.saveUser(userInfoEntityr);
+
+              SpUtil.putString("tocken", userInfoEntityr.tocken);
               NavigatorUtil.gotransitionPage(context,  "${Routers.root}");
             }
           });

@@ -10,6 +10,7 @@ import 'package:tbk_app/util/fluro_navigator_util.dart';
 import 'package:tbk_app/util/http_util.dart';
 import 'package:tbk_app/util/map_url_params_utils.dart';
 import 'package:tbk_app/util/shared_preference_util.dart';
+import 'package:tbk_app/util/sp_util.dart';
 import 'package:video_player/video_player.dart';
 
 import '../../entity_factory.dart';
@@ -29,10 +30,10 @@ class _UserSetUpPageState extends State<UserSetUpPage> {
     // TODO: implement initState
     super.initState();
 
-    SharedPreferenceUtil.getUser().then((UserInfoEntity userInfo) {
-      setState(() {
-        userInfoEntity = userInfo;
-      });
+    HttpUtil().get('getUser').then((val) {
+      if (val["success"]) {
+        userInfoEntity = EntityFactory.generateOBJ<UserInfoEntity>(val['data']);
+      }
     });
   }
 
@@ -40,29 +41,31 @@ class _UserSetUpPageState extends State<UserSetUpPage> {
 
   /// image
   void _onImageButtonPressed(ImageSource source) async {
-
     try {
       _imageFile = await ImagePicker.pickImage(source: source);
       HttpUtil().uploadImg(_imageFile).then((val) {
-        UploadFileEntity uploadFileEntity = EntityFactory.generateOBJ<UploadFileEntity>(val);
+        UploadFileEntity uploadFileEntity =
+            EntityFactory.generateOBJ<UploadFileEntity>(val);
 
-        Map<String, Object> map  = Map();
+        Map<String, Object> map = Map();
         //map["name"] =   4;
-        map["avatarUrl"] =  uploadFileEntity.data;
+        map["avatarUrl"] = uploadFileEntity.data;
         //map["phone"] =   _password;
 
-        HttpUtil().get('updateUser',parms: MapUrlParamsUtils.getUrlParamsByMap(map)).then((val) {
-          if(val["success"] ){
-            UserInfoEntity userInfoEntityr =  EntityFactory.generateOBJ<UserInfoEntity>(val['data']);
-            SharedPreferenceUtil.saveUser(userInfoEntityr);
+        HttpUtil()
+            .get('updateUser', parms: MapUrlParamsUtils.getUrlParamsByMap(map))
+            .then((val) {
+          if (val["success"]) {
+            UserInfoEntity userInfoEntityr =
+                EntityFactory.generateOBJ<UserInfoEntity>(val['data']);
+
+            SpUtil.putString("tocken", userInfoEntityr.tocken);
             setState(() {
               userInfoEntity.avatarUrl = uploadFileEntity.data;
               print(userInfoEntity.avatarUrl);
             });
           }
         });
-
-
       });
     } catch (e) {
       print("上传图片异常");
@@ -81,29 +84,31 @@ class _UserSetUpPageState extends State<UserSetUpPage> {
   }
 
   Widget sletctPick() {
-    return Container(
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: <Widget>[
-          new ListTile(
-            leading: new Icon(Icons.photo_camera),
-            title: new Text("拍照"),
-            onTap: () async {
-              _onImageButtonPressed(ImageSource.camera);
-              Navigator.pop(context);
-            },
-          ),
-          new ListTile(
-            leading: new Icon(Icons.photo_library),
-            title: new Text("相册"),
-            onTap: () async {
-              _onImageButtonPressed(ImageSource.gallery);
-              Navigator.pop(context);
-            },
-          ),
-        ],
-      ),
-    );
+    return userInfoEntity == null
+        ? Container
+        : Container(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: <Widget>[
+                new ListTile(
+                  leading: new Icon(Icons.photo_camera),
+                  title: new Text("拍照"),
+                  onTap: () async {
+                    _onImageButtonPressed(ImageSource.camera);
+                    Navigator.pop(context);
+                  },
+                ),
+                new ListTile(
+                  leading: new Icon(Icons.photo_library),
+                  title: new Text("相册"),
+                  onTap: () async {
+                    _onImageButtonPressed(ImageSource.gallery);
+                    Navigator.pop(context);
+                  },
+                ),
+              ],
+            ),
+          );
   }
 
   /// init pick end

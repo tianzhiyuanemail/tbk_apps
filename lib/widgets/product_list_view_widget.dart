@@ -20,262 +20,276 @@ class SliverProductList extends StatelessWidget {
       : super(key: key);
 
   /// 商品列表
-  List<Widget> _getListVidget1(BuildContext context) {
-    return list.map((obj) {
-      return InkWell(
-        onTap: () {
-          NavigatorUtil.gotransitionPage(context,  "${Routers.detailsPage}?id=${ obj.itemId}");
-        },
-        child: Container(
-          color: Colors.white,
-          padding: EdgeInsets.all(5),
-          margin: EdgeInsets.only(bottom: 3),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.start,
-            children: <Widget>[
-              Container(
-                width: ScreenUtil().setWidth(260),
-                height: ScreenUtil().setHeight(260),
-                child: CacheNetworkImageUtil.image(obj.pictUrl, 'assets/images/product_list/spjiaz.gif'),
-              ),
-              Container(
-                width: ScreenUtil().setWidth(450),
-                margin: EdgeInsets.only(left: 10, top: 15, bottom: 15),
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: <Widget>[
-                    Container(
-                      child: Text(
-                        obj.shortTitle.isEmpty?obj.title:obj.shortTitle,
-                        style: TextStyle(
-                          color: Colors.black,
-                          fontSize: ScreenUtil().setSp(26),
-                        ),
-                        maxLines: 2,
-                        overflow: TextOverflow.ellipsis,
-                      ),
-                    ),
-                    Container(
+   Widget  _getWidget1(BuildContext context,int index) {
+     ProductListEntity obj = list[index];
+     return InkWell(
+       onTap: () {
+         NavigatorUtil.gotransitionPage(
+             context, "${Routers.detailsPage}?id=${obj.itemId}");
+       },
+       child: Container(
+         color: Colors.white,
+         padding: EdgeInsets.all(5),
+         margin: EdgeInsets.only(bottom: 3),
+         child: Row(
+           mainAxisAlignment: MainAxisAlignment.start,
+           children: <Widget>[
+             Container(
+               width: ScreenUtil().setWidth(260),
+               height: ScreenUtil().setHeight(260),
+               child: CacheNetworkImageUtil.image(obj.pictUrl,
+                   'assets/images/product_list/spjiaz.gif'),
+             ),
+             Container(
+               width: ScreenUtil().setWidth(450),
+               margin: EdgeInsets.only(left: 10, top: 15, bottom: 15),
+               child: Column(
+                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                 crossAxisAlignment: CrossAxisAlignment.start,
+                 children: <Widget>[
+                   Container(
+                     child: Text(
+                       '${obj.shortTitle == null ? obj.title : obj.shortTitle}',
+                       style: TextStyle(
+                         color: Colors.black,
+                         fontSize: ScreenUtil().setSp(26),
+                       ),
+                       maxLines: 2,
+                       overflow: TextOverflow.ellipsis,
+                     ),
+                   ),
+                   Container(
 //                      width: ScreenUtil().setWidth(220),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.start,
-                        children: <Widget>[
-                          Text(
-                            "券后  ￥",
-                            style: TextStyle(
-                              color: Colors.pink,
-                              fontSize: ScreenUtil().setSp(20),
-                            ),
-                          ),
-                          Container(
-                            margin: EdgeInsets.only(bottom: 5),
-                            child: Text(
-                              "${obj.afterCouponPrice}  ",
-                              style: TextStyle(
-                                color: Colors.pink,
-                                fontSize: ScreenUtil().setSp(35),
-                              ),
-                            ),
-                          ),
-                          Text(
-                            "￥${obj.zkFinalPrice}",
-                            style: TextStyle(
-                                color: Colors.black54,
-                                fontSize: ScreenUtil().setSp(20),
-                                decoration: TextDecoration.lineThrough,
-                                decorationStyle: TextDecorationStyle.dashed),
-                          ),
-                        ],
-                      ),
-                    ),
-                    Container(
-                      child: Text(
-                        "月销售${obj.volume}笔",
-                        style: TextStyle(
-                          color: Colors.black54,
-                          fontSize: ScreenUtil().setSp(20),
-                        ),
-                      ),
-                    ),
-                    Container(
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.start,
-                        children: <Widget>[
-                          InkWell(
-                            onTap: () async {},
-                            child: Container(
-                              alignment: Alignment.center,
-                              width: ScreenUtil().setWidth(150),
-                              height: ScreenUtil().setHeight(50),
-                              decoration: BoxDecoration(
-                                color: Colors.pink.shade50,
-                                border: Border.all(color:  ColorsUtil.hexToColor(ColorsUtil.appBarColor),),
-                                borderRadius: BorderRadius.only(
-                                  topLeft: Radius.circular(20),
-                                  bottomLeft: Radius.circular(20),
-                                ),
-                              ),
-                              child: Text(
-                                '${obj.couponAmount}元券',
-                                style: TextStyle(
-                                    color:  ColorsUtil.hexToColor(ColorsUtil.appBarColor),
-                                    fontSize: ScreenUtil().setSp(20)),
-                              ),
-                            ),
-                          ),
-                          InkWell(
-                            onTap: () async {},
-                            child: Container(
-                              alignment: Alignment.center,
-                              width: ScreenUtil().setWidth(150),
-                              height: ScreenUtil().setHeight(50),
-                              decoration: BoxDecoration(
-                                color:  ColorsUtil.hexToColor(ColorsUtil.appBarColor),
-                                borderRadius: BorderRadius.only(
-                                  topRight: Radius.circular(20),
-                                  bottomRight: Radius.circular(20),
-                                ),
-                              ),
-                              child: Text(
-                                '领券',
-                                style: TextStyle(
-                                    color: Colors.white,
-                                    fontSize: ScreenUtil().setSp(20)),
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ],
-          ),
-        ),
-      );
-    }).toList();
+                     child: Row(
+                       mainAxisAlignment: MainAxisAlignment.start,
+                       children: <Widget>[
+                         Text(
+                           "券后  ￥",
+                           style: TextStyle(
+                             color: Colors.pink,
+                             fontSize: ScreenUtil().setSp(20),
+                           ),
+                         ),
+                         Container(
+                           margin: EdgeInsets.only(bottom: 5),
+                           child: Text(
+                             "${obj.afterCouponPrice}  ",
+                             style: TextStyle(
+                               color: Colors.pink,
+                               fontSize: ScreenUtil().setSp(35),
+                             ),
+                           ),
+                         ),
+                         Text(
+                           "￥${obj.zkFinalPrice}",
+                           style: TextStyle(
+                               color: Colors.black54,
+                               fontSize: ScreenUtil().setSp(20),
+                               decoration: TextDecoration.lineThrough,
+                               decorationStyle:
+                               TextDecorationStyle.dashed),
+                         ),
+                       ],
+                     ),
+                   ),
+                   Container(
+                     child: Text(
+                       "月销售${obj.volume}笔",
+                       style: TextStyle(
+                         color: Colors.black54,
+                         fontSize: ScreenUtil().setSp(20),
+                       ),
+                     ),
+                   ),
+                   Container(
+                     child: Row(
+                       mainAxisAlignment: MainAxisAlignment.start,
+                       children: <Widget>[
+                         InkWell(
+                           onTap: () async {},
+                           child: Container(
+                             alignment: Alignment.center,
+                             width: ScreenUtil().setWidth(150),
+                             height: ScreenUtil().setHeight(50),
+                             decoration: BoxDecoration(
+                               color: Colors.pink.shade50,
+                               border: Border.all(
+                                 color: ColorsUtil.hexToColor(
+                                     ColorsUtil.appBarColor),
+                               ),
+                               borderRadius: BorderRadius.only(
+                                 topLeft: Radius.circular(20),
+                                 bottomLeft: Radius.circular(20),
+                               ),
+                             ),
+                             child: Text(
+                               '${obj.couponAmount}元券',
+                               style: TextStyle(
+                                   color: ColorsUtil.hexToColor(
+                                       ColorsUtil.appBarColor),
+                                   fontSize: ScreenUtil().setSp(20)),
+                             ),
+                           ),
+                         ),
+                         InkWell(
+                           onTap: () async {},
+                           child: Container(
+                             alignment: Alignment.center,
+                             width: ScreenUtil().setWidth(150),
+                             height: ScreenUtil().setHeight(50),
+                             decoration: BoxDecoration(
+                               color: ColorsUtil.hexToColor(
+                                   ColorsUtil.appBarColor),
+                               borderRadius: BorderRadius.only(
+                                 topRight: Radius.circular(20),
+                                 bottomRight: Radius.circular(20),
+                               ),
+                             ),
+                             child: Text(
+                               '领券',
+                               style: TextStyle(
+                                   color: Colors.white,
+                                   fontSize: ScreenUtil().setSp(20)),
+                             ),
+                           ),
+                         ),
+                       ],
+                     ),
+                   ),
+                 ],
+               ),
+             ),
+           ],
+         ),
+       ),
+     );
   }
 
   /// 商品列表
-  List<Widget> _getListVidget2(BuildContext context) {
-    return list.map((obj) {
-      return InkWell(
-        onTap: () {
-          NavigatorUtil.gotransitionPage(context, Routers.detailsPage + "?id=" + obj.itemId.toString());
-        },
-        child: Container(
-          color: Colors.white,
-          padding: EdgeInsets.all(5),
-          margin: EdgeInsets.only(bottom: 3),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: <Widget>[
-              Container(
-                alignment: Alignment.center,
-                width: ScreenUtil().setWidth(350),
-                height: ScreenUtil().setHeight(350),
-                child: CacheNetworkImageUtil.image(obj.pictUrl, 'assets/images/product_list/spjiaz.gif'),
-              ),
-              Container(
-                width: ScreenUtil().setWidth(370),
-                alignment: Alignment.centerLeft,
-                padding: EdgeInsets.only(left: 10, right: 10),
-                decoration: BoxDecoration(
-                  color: Colors.pink.shade100,
-                  borderRadius: BorderRadius.all(
-                    Radius.circular(0),
-                  ),
-                ),
-                child: Text(
-                  obj.couponInfo,
-                  style: TextStyle(
-                    color: Colors.pink,
-                    fontSize: ScreenUtil().setSp(26),
-                  ),
+   Widget  _getWidget2(BuildContext context,int index) {
+     ProductListEntity obj = list[index];
+     return InkWell(
+      onTap: () {
+        NavigatorUtil.gotransitionPage(
+            context, Routers.detailsPage + "?id=${obj.itemId}");
+      },
+      child: Container(
+        color: Colors.white,
+        padding: EdgeInsets.all(5),
+        margin: EdgeInsets.only(bottom: 3),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: <Widget>[
+            Container(
+              alignment: Alignment.center,
+              width: ScreenUtil().setWidth(350),
+              height: ScreenUtil().setHeight(350),
+              child: CacheNetworkImageUtil.image(obj.pictUrl,
+                  'assets/images/product_list/spjiaz.gif'),
+            ),
+            Container(
+              width: ScreenUtil().setWidth(370),
+              alignment: Alignment.centerLeft,
+              padding: EdgeInsets.only(left: 10, right: 10),
+              decoration: BoxDecoration(
+                color: Colors.pink.shade100,
+                borderRadius: BorderRadius.all(
+                  Radius.circular(0),
                 ),
               ),
-              Text(
-                obj.shortTitle.isEmpty?obj.title:obj.shortTitle,
+              child: Text(
+                '${obj.couponInfo}',
                 style: TextStyle(
-                    color: Colors.black, fontSize: ScreenUtil().setSp(26)),
-                maxLines: 2,
-                overflow: TextOverflow.ellipsis,
+                  color: Colors.pink,
+                  fontSize: ScreenUtil().setSp(26),
+                ),
               ),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.start,
-                children: <Widget>[
-                  Text(
-                    "券后  ￥",
+            ),
+            Text(
+              "${obj.shortTitle == null ? obj.title : obj.shortTitle}",
+              style: TextStyle(
+                  color: Colors.black,
+                  fontSize: ScreenUtil().setSp(26)),
+              maxLines: 2,
+              overflow: TextOverflow.ellipsis,
+            ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.start,
+              children: <Widget>[
+                Text(
+                  "券后  ￥",
+                  style: TextStyle(
+                    color: Colors.pink.shade400,
+                    fontSize: ScreenUtil().setSp(20),
+                  ),
+                ),
+                Container(
+                  margin: EdgeInsets.only(bottom: 5),
+                  child: Text(
+                    "${obj.afterCouponPrice}  ",
                     style: TextStyle(
-                      color: Colors.pink.shade400,
-                      fontSize: ScreenUtil().setSp(20),
+                      color: Colors.pink,
+                      fontSize: ScreenUtil().setSp(35),
                     ),
                   ),
-                  Container(
-                    margin: EdgeInsets.only(bottom: 5),
-                   child: Text(
-                     obj.afterCouponPrice+"  ",
-                     style: TextStyle(
-                       color: Colors.pink,
-                       fontSize: ScreenUtil().setSp(35),
-                     ),
-                   ),
-                  ),
-                  Text(
-                    "￥"+obj.zkFinalPrice,
-                    style: TextStyle(
-                        color: Colors.black54,
-                        fontSize: ScreenUtil().setSp(20),
-                        decoration: TextDecoration.lineThrough,
-                        decorationStyle: TextDecorationStyle.dashed),
-                  ),
-                ],
-              ),
-            ],
-          ),
+                ),
+                Text(
+                  "￥${obj.zkFinalPrice}",
+                  style: TextStyle(
+                      color: Colors.black54,
+                      fontSize: ScreenUtil().setSp(20),
+                      decoration: TextDecoration.lineThrough,
+                      decorationStyle: TextDecorationStyle.dashed),
+                ),
+              ],
+            ),
+          ],
         ),
-      );
-    }).toList();
+      ),
+    );
   }
 
   Widget _List(BuildContext context) {
     if (list.length != 0) {
       if (crossAxisCount == 1) {
-        return SliverGrid.count(
-          crossAxisCount: 1,
-          //横轴数量
-          crossAxisSpacing: 2.0,
-          //横轴间距
-          mainAxisSpacing: 1.0,
-          //纵轴间距
-          childAspectRatio: 2.2,
-          //横纵比例 长宽只能这个属性设置
-          children: _getListVidget1(context),
+        return SliverGrid(
+          gridDelegate: new SliverGridDelegateWithMaxCrossAxisExtent(
+            maxCrossAxisExtent: 500.0,
+            mainAxisSpacing: 10.0,
+            crossAxisSpacing: 10.0,
+            childAspectRatio: 2.3,
+          ),
+          delegate: new SliverChildBuilderDelegate(
+            (BuildContext context, int index) {
+              return _getWidget1(context,index);
+            },
+            childCount: list.length,
+          ),
         );
       } else {
-        return SliverGrid.count(
-          crossAxisCount: 2,
-          //横轴数量
-          crossAxisSpacing: 7.0,
-          //横轴间距
-          mainAxisSpacing: 1.0,
-          //纵轴间距
-          childAspectRatio: 0.66,
-          //横纵比例 长宽只能这个属性设置
-          children: _getListVidget2(context),
+        return SliverGrid(
+          gridDelegate: new SliverGridDelegateWithMaxCrossAxisExtent(
+            maxCrossAxisExtent: 200.0,
+            mainAxisSpacing: 10.0,
+            crossAxisSpacing: 10.0,
+            childAspectRatio: 0.6,
+          ),
+          delegate: new SliverChildBuilderDelegate(
+            (BuildContext context, int index) {
+              return _getWidget2(context,index);
+            },
+            childCount: list.length,
+          ),
         );
       }
     } else {
       return SliverToBoxAdapter(
-        child: Container(
-          alignment: Alignment.center,
-          height: ScreenUtil().setHeight(750),
-          child: CupertinoActivityIndicator(),
-        )
-      );
+          child: Container(
+        alignment: Alignment.center,
+        height: ScreenUtil().setHeight(750),
+        child: CupertinoActivityIndicator(),
+      ));
     }
   }
 
@@ -292,13 +306,15 @@ class ProductList extends StatelessWidget {
   final List<ProductListEntity> list;
   final int crossAxisCount;
 
-  ProductList({Key key, this.list,this.crossAxisCount}) : super(key: key);
+  ProductList({Key key, this.list, this.crossAxisCount}) : super(key: key);
+
   /// 商品列表
   List<Widget> _getListVidget1(BuildContext context) {
     return list.map((obj) {
       return InkWell(
         onTap: () {
-          NavigatorUtil.gotransitionPage(context, "${Routers.detailsPage}?id=${obj.itemId}");
+          NavigatorUtil.gotransitionPage(
+              context, "${Routers.detailsPage}?id=${obj.itemId}");
         },
         child: Container(
           color: Colors.white,
@@ -310,7 +326,8 @@ class ProductList extends StatelessWidget {
               Container(
                 width: ScreenUtil().setWidth(260),
                 height: ScreenUtil().setHeight(260),
-                child: CacheNetworkImageUtil.image(obj.pictUrl, 'assets/images/product_list/spjiaz.gif'),
+                child: CacheNetworkImageUtil.image(
+                    obj.pictUrl, 'assets/images/product_list/spjiaz.gif'),
               ),
               Container(
                 width: ScreenUtil().setWidth(450),
@@ -321,7 +338,9 @@ class ProductList extends StatelessWidget {
                   children: <Widget>[
                     Container(
                       child: Text(
-                        obj.shortTitle == null|| obj.shortTitle.isEmpty?obj.title:obj.shortTitle,
+                        obj.shortTitle == null || obj.shortTitle.isEmpty
+                            ? obj.title
+                            : obj.shortTitle,
                         style: TextStyle(
                           color: Colors.black,
                           fontSize: ScreenUtil().setSp(26),
@@ -338,7 +357,8 @@ class ProductList extends StatelessWidget {
                           Text(
                             "券后  ￥",
                             style: TextStyle(
-                              color:  ColorsUtil.hexToColor(ColorsUtil.appBarColor),
+                              color:
+                                  ColorsUtil.hexToColor(ColorsUtil.appBarColor),
                               fontSize: ScreenUtil().setSp(20),
                             ),
                           ),
@@ -347,7 +367,8 @@ class ProductList extends StatelessWidget {
                             child: Text(
                               "${obj.afterCouponPrice}  ",
                               style: TextStyle(
-                                color: ColorsUtil.hexToColor(ColorsUtil.appBarColor),
+                                color: ColorsUtil.hexToColor(
+                                    ColorsUtil.appBarColor),
                                 fontSize: ScreenUtil().setSp(35),
                               ),
                             ),
@@ -384,7 +405,10 @@ class ProductList extends StatelessWidget {
                               height: ScreenUtil().setHeight(50),
                               decoration: BoxDecoration(
                                 color: Colors.pink.shade50,
-                                border: Border.all(color:  ColorsUtil.hexToColor(ColorsUtil.appBarColor),),
+                                border: Border.all(
+                                  color: ColorsUtil.hexToColor(
+                                      ColorsUtil.appBarColor),
+                                ),
                                 borderRadius: BorderRadius.only(
                                   topLeft: Radius.circular(20),
                                   bottomLeft: Radius.circular(20),
@@ -393,7 +417,8 @@ class ProductList extends StatelessWidget {
                               child: Text(
                                 '${obj.couponAmount}元券',
                                 style: TextStyle(
-                                    color:  ColorsUtil.hexToColor(ColorsUtil.appBarColor),
+                                    color: ColorsUtil.hexToColor(
+                                        ColorsUtil.appBarColor),
                                     fontSize: ScreenUtil().setSp(20)),
                               ),
                             ),
@@ -405,7 +430,8 @@ class ProductList extends StatelessWidget {
                               width: ScreenUtil().setWidth(150),
                               height: ScreenUtil().setHeight(50),
                               decoration: BoxDecoration(
-                                color:  ColorsUtil.hexToColor(ColorsUtil.appBarColor),
+                                color: ColorsUtil.hexToColor(
+                                    ColorsUtil.appBarColor),
                                 borderRadius: BorderRadius.only(
                                   topRight: Radius.circular(20),
                                   bottomRight: Radius.circular(20),
@@ -437,7 +463,8 @@ class ProductList extends StatelessWidget {
     return list.map((obj) {
       return InkWell(
         onTap: () {
-          NavigatorUtil.gotransitionPage(context, "${Routers.detailsPage}?id=${obj.itemId}");
+          NavigatorUtil.gotransitionPage(
+              context, "${Routers.detailsPage}?id=${obj.itemId}");
         },
         child: Container(
           color: Colors.white,
@@ -451,7 +478,8 @@ class ProductList extends StatelessWidget {
                 alignment: Alignment.center,
                 width: ScreenUtil().setWidth(350),
                 height: ScreenUtil().setHeight(350),
-                child: CacheNetworkImageUtil.image(obj.pictUrl, 'assets/images/product_list/spjiaz.gif'),
+                child: CacheNetworkImageUtil.image(
+                    obj.pictUrl, 'assets/images/product_list/spjiaz.gif'),
               ),
               Container(
                 width: ScreenUtil().setWidth(370),
@@ -472,7 +500,7 @@ class ProductList extends StatelessWidget {
                 ),
               ),
               Text(
-                obj.shortTitle.isEmpty?obj.title:obj.shortTitle,
+                obj.shortTitle.isEmpty ? obj.title : obj.shortTitle,
                 style: TextStyle(
                     color: Colors.black, fontSize: ScreenUtil().setSp(26)),
                 maxLines: 2,
@@ -491,7 +519,7 @@ class ProductList extends StatelessWidget {
                   Container(
                     margin: EdgeInsets.only(bottom: 5),
                     child: Text(
-                      obj.afterCouponPrice+"  ",
+                      obj.afterCouponPrice + "  ",
                       style: TextStyle(
                         color: Colors.pink,
                         fontSize: ScreenUtil().setSp(35),
@@ -516,7 +544,6 @@ class ProductList extends StatelessWidget {
   }
 
   Widget _List(BuildContext context) {
-
     if (list.length != 0) {
       if (crossAxisCount == 1) {
         return GridView.count(
@@ -547,9 +574,7 @@ class ProductList extends StatelessWidget {
           children: _getListVidget1(context),
         );
       }
-    }
-
-    else {
+    } else {
       return Container(
         alignment: Alignment.center,
         height: ScreenUtil().setHeight(750),
