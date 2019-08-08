@@ -1,5 +1,5 @@
-//const serviceUrl= 'http://localhost:8090/';
-const serviceUrl= 'http://www.shuzibika.com/';
+const serviceUrl= 'http://localhost:8090/';
+//const serviceUrl= 'http://www.shuzibika.com/';
 const servicePath={
 
   /// index
@@ -24,6 +24,13 @@ const servicePath={
 
 
   /// my
+  'sendSms': serviceUrl+'tbk/sms/sendSms', // sendSms
+  'registerOrLogin': serviceUrl+'tbk/users/user/registerOrLogin.json', // registerOrLogin
+  'updateUser': serviceUrl+'tbk/users/user/updateUser.json', // registerOrLogin
+
+
+  ///
+  'uploadFile': serviceUrl+'tbk/common/uploadFile.json', // registerOrLogin
 
 
 };

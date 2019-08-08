@@ -178,7 +178,8 @@ class _CatePageState extends State<CatePage>
               child: rightList(data.chileCate),
             );
           },
-        ));
+        ),
+    );
   }
 
   Widget rightList(List<CateEntity> cateChild) {

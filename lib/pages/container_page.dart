@@ -1,11 +1,16 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
+import 'package:tbk_app/modle/user_info_entity.dart';
 import 'package:tbk_app/pages/my/user_info_page.dart';
 import 'package:tbk_app/pages/product/product_deatil_page.dart';
+import 'package:tbk_app/router/routers.dart';
+import 'package:tbk_app/util/fluro_navigator_util.dart';
+import 'package:tbk_app/util/shared_preference_util.dart';
 
 import 'cate/cate_page.dart';
 import 'home/home_page.dart';
+import 'my/user_login_page.dart';
 
 ///这个页面是作为整个APP的最外层的容器，以Tab为基础控制每个item的显示与隐藏
 class ContainerPage extends StatefulWidget {
@@ -33,7 +38,7 @@ class _ContainerPageState extends State<ContainerPage> {
     _Item('我的', 'assets/images/ic_tab_profile_active.png',
         'assets/images/ic_tab_profile_normal.png')
   ];
-
+  UserInfoEntity userInfoEntity;
   List<BottomNavigationBarItem> itemList;
   int _selectIndex = 0;
 
@@ -45,6 +50,12 @@ class _ContainerPageState extends State<ContainerPage> {
       ..add(CatePage())
       ..add(ProductDetail('588618803525'))
       ..add(MyInfoPage());
+
+    SharedPreferenceUtil.getUser().then((UserInfoEntity userInfo) {
+      setState(() {
+        userInfoEntity = userInfo;
+      });
+    });
 
     if (itemList == null) {
       itemList = itemNames
@@ -70,17 +81,24 @@ class _ContainerPageState extends State<ContainerPage> {
       bottomNavigationBar: BottomNavigationBar(
         items: this.itemList,
         onTap: (int index) {
-          ///这里根据点击的index来显示，非index的page均隐藏
-          setState(() {
-            _selectIndex = index;
-            //这个是用来控制比较特别的shopPage中WebView不能动态隐藏的问题
-            //shopPageWidget.setShowState(pages.indexOf(shopPageWidget) == _selectIndex);
-          });
+          if(index == 3 && userInfoEntity == null){
+            NavigatorUtil.gotransitionPage(context,  "${Routers.userLoginPage}");
+          }else {
+            ///这里根据点击的index来显示，非index的page均隐藏
+            setState(() {
+              _selectIndex = index;
+              //这个是用来控制比较特别的shopPage中WebView不能动态隐藏的问题
+              //shopPageWidget.setShowState(pages.indexOf(shopPageWidget) == _selectIndex);
+            });
+          }
         },
+
         ///图标大小
         iconSize: 24,
+
         ///当前选中的索引
         currentIndex: _selectIndex,
+
         ///选中后，底部BottomNavigationBar内容的颜色(选中时，默认为主题色)（仅当type:
         ///BottomNavigationBarType.fixed,时生效）
         fixedColor: Color.fromARGB(255, 0, 188, 96),

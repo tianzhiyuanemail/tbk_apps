@@ -6,11 +6,16 @@ import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:oktoast/oktoast.dart';
+import 'package:provide/provide.dart';
+import 'package:tbk_app/modle/user_info_entity.dart';
+import 'package:tbk_app/provide/user_info_provide.dart';
 import 'package:tbk_app/router/application.dart';
 import 'package:tbk_app/router/routers.dart';
 import 'package:tbk_app/util/colors_util.dart';
 import 'package:nautilus/nautilus.dart' as nautilus;
 import 'package:tbk_app/util/fluro_navigator_util.dart';
+import 'package:tbk_app/util/shared_preference_util.dart';
 
 class MyInfoPage extends StatefulWidget {
   @override
@@ -18,9 +23,7 @@ class MyInfoPage extends StatefulWidget {
 }
 
 class _MyInfoPageState extends State<MyInfoPage> {
-  var userAvatar = "http://kaze-sora.com/sozai/blog_haru/blog_mitubachi01.jpg";
-  var userName = 'rre';
-
+  UserInfoEntity userInfoEntity;
   ScrollController _scrollController = ScrollController();
 
   ///是否显示“返回到顶部”按钮
@@ -28,7 +31,12 @@ class _MyInfoPageState extends State<MyInfoPage> {
 
   @override
   void initState() {
-    // TODO: implement initState
+    SharedPreferenceUtil.getUser().then((UserInfoEntity userInfo) {
+      setState(() {
+        userInfoEntity = userInfo;
+      });
+    });
+
     super.initState();
 
     _scrollController.addListener(() {
@@ -54,34 +62,25 @@ class _MyInfoPageState extends State<MyInfoPage> {
   @override
   Widget build(BuildContext context) {
     return new Scaffold(
-      body: Stack(
-        children: <Widget>[
-          Container(
-//            color: ColorsUtil.hexToColor(ColorsUtil.appBarColor),
-//            child: new ListView(
-//              controller: _scrollController,
-//              children: <Widget>[
-//                UserInformation(),
-//                UserRevenue(),
-//                AdBanner(),
-//                UserButtons(),
-//                UserTools(),
-//                UsersGrowthValue("24"),
-//              ],
-//            ),
-             child: CustomScrollView(
-                controller: _scrollController,
-                reverse: false,
-                slivers: <Widget>[
-                  SliverList(
-                    delegate: SliverChildListDelegate(_sliverListChild()),
-                  )
-                ],
-              )
-          ),
-          HeaderChild(controllerOffset: controllerOffset),
-        ],
-      ),
+//      backgroundColor: ColorsUtil.hexToColor(ColorsUtil.appBarColor),
+      body: userInfoEntity == null
+          ? Container
+          : Stack(
+              children: <Widget>[
+                Container(
+                  child: CustomScrollView(
+                    controller: _scrollController,
+                    reverse: false,
+                    slivers: <Widget>[
+                      SliverList(
+                        delegate: SliverChildListDelegate(_sliverListChild()),
+                      )
+                    ],
+                  ),
+                ),
+                HeaderChild(controllerOffset: controllerOffset),
+              ],
+            ),
     );
   }
 
@@ -89,15 +88,16 @@ class _MyInfoPageState extends State<MyInfoPage> {
   List<Widget> _sliverListChild() {
     List<Widget> list = List();
 
-    list.add(UserInformation());
-    list.add(UserRevenue());
+    list.add(UserInformation(
+      userInfoEntity: userInfoEntity,
+    ));
+    list.add(UserRevenue(userInfoEntity: userInfoEntity));
     list.add(AdBanner());
     list.add(UserButtons());
     list.add(UserTools());
     list.add(UsersGrowthValue("24"));
     return list;
   }
-
 }
 
 /// 自定义导航栏
@@ -150,13 +150,18 @@ class TopButton extends StatelessWidget {
       child: Row(
         children: <Widget>[
           IconButton(
-            onPressed: () {},
-            icon: Icon(Icons.print),
+            onPressed: () {
+                showToast("用户信息");
+            },
+            icon: Icon(Icons.message,color: Colors.white,),
           ),
           IconButton(
-            onPressed: () {},
-            icon: Icon(Icons.print),
-          )
+            onPressed: () {
+              NavigatorUtil.gotransitionPage(
+                  context, "${Routers.userSetUpPage}");
+            },
+            icon: Icon(Icons.settings,color: Colors.white),
+          ),
         ],
       ),
     );
@@ -165,10 +170,14 @@ class TopButton extends StatelessWidget {
 
 /// 用户基本信息
 class UserInformation extends StatelessWidget {
+  UserInfoEntity userInfoEntity;
+
+  UserInformation({Key key, this.userInfoEntity});
+
   @override
   Widget build(BuildContext context) {
     return Container(
-        padding: EdgeInsets.only(top: 0, left: 15,bottom: 15),
+        padding: EdgeInsets.only(top: 0, left: 15, bottom: 15),
         width: ScreenUtil().setWidth(750),
         color: ColorsUtil.hexToColor(ColorsUtil.appBarColor),
         child: Column(
@@ -192,10 +201,8 @@ class UserInformation extends StatelessWidget {
                             borderRadius: BorderRadius.circular(50)),
                         child: CircleAvatar(
                           radius: 30,
-                          backgroundImage: new NetworkImage(
-                            'http://e.hiphotos.baidu'
-                            '.com/image/pic/item/359b033b5bb5c9eac1754f45df39b6003bf3b396.jpg',
-                          ),
+                          backgroundImage:
+                              new NetworkImage("${userInfoEntity.avatarUrl}"),
                         ),
                       ),
                       // 昵称
@@ -209,11 +216,12 @@ class UserInformation extends StatelessWidget {
                               child: Row(
                                 children: <Widget>[
                                   Text(
-                                    "木有昵称",
+                                    '${userInfoEntity.name}',
                                     style: TextStyle(
-                                        fontSize: 11,
-                                        color: Colors.white,
-                                        fontWeight: FontWeight.bold),
+                                      fontSize: 11,
+                                      color: Colors.white,
+                                      fontWeight: FontWeight.bold,
+                                    ),
                                     textAlign: TextAlign.left,
                                   ),
                                   Container(
@@ -225,7 +233,7 @@ class UserInformation extends StatelessWidget {
                                     padding: EdgeInsets.only(
                                         left: 5, right: 5, bottom: 1),
                                     child: Text(
-                                      "超级会员",
+                                      '${userInfoEntity.level}',
                                       style: TextStyle(
                                           fontSize: 11, color: Colors.white),
                                     ),
@@ -253,7 +261,7 @@ class UserInformation extends StatelessWidget {
                                       padding: EdgeInsets.only(
                                           left: 5, right: 5, bottom: 1),
                                       child: Text(
-                                        "oiqher",
+                                        '${userInfoEntity.id}',
                                         style: TextStyle(
                                           fontSize: 11,
                                           color: Colors.white,
@@ -356,6 +364,10 @@ class UserInformation extends StatelessWidget {
 
 /// 用户收益
 class UserRevenue extends StatelessWidget {
+  UserInfoEntity userInfoEntity;
+
+  UserRevenue({Key key, this.userInfoEntity});
+
   Widget _revenuNumber(String v1, String v2) {
     return Column(
       mainAxisAlignment: MainAxisAlignment.center,

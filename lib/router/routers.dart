@@ -37,7 +37,7 @@ class Routers {
     router.define(navigatorRouterPage, handler: navigatorRouterPageHandler);
     router.define(navigatorWebViewPage, handler: navigatorWebViewPageHandler);
 
-    router.define(userLoginPage, handler: userSetUpPageHandler);
+    router.define(userSetUpPage, handler: userSetUpPageHandler);
     router.define(userLoginPage, handler: userLoginPageHandler);
 
     router.define(root, handler: rootHandler);

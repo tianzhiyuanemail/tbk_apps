@@ -2,20 +2,16 @@ import 'dart:io';
 
 import 'package:cookie_jar/cookie_jar.dart';
 import 'package:dio/dio.dart';
-import 'package:tbk_app/config/loading.dart';
 import 'package:tbk_app/config/service_url.dart';
+import 'package:tbk_app/modle/user_info_entity.dart';
+import 'package:tbk_app/util/shared_preference_util.dart';
 
 class HttpUtil {
-  static HttpUtil instance;
+
   Dio dio;
   BaseOptions options;
-
   CancelToken cancelToken = new CancelToken();
 
-  static HttpUtil getInstance() {
-    if (null == instance) instance = new HttpUtil();
-    return instance;
-  }
 
   /*
    * config it and create
@@ -32,7 +28,8 @@ class HttpUtil {
       //Http请求头.
       headers: {
         //do something
-        "version": "1.0.0"
+        "version": "1.0.0",
+        "Authorization": SharedPreferenceUtil.getUsers() == null ?"":SharedPreferenceUtil.getUsers().tocken,
       },
       //请求的Content-Type，默认值是[ContentType.json]. 也可以用ContentType.parse("application/x-www-form-urlencoded")
       contentType: ContentType.json,
@@ -46,7 +43,9 @@ class HttpUtil {
     dio.interceptors.add(CookieManager(CookieJar()));
 
     //添加拦截器
-    dio.interceptors.add(InterceptorsWrapper(onRequest: (RequestOptions options) {
+    dio.interceptors
+        .add(InterceptorsWrapper(onRequest: (RequestOptions options) {
+
       print("请求之前");
       // Do something before request is sent
 //      Loading.before(options.uri, '正在加速中...');
@@ -59,25 +58,29 @@ class HttpUtil {
 //        return response;
 //      });
 //        Loading.complete(response.request.uri );
-        // Do something with response data
-        return response; // continue
-
+      // Do something with response data
+      return response; // continue
     }, onError: (DioError e) {
       print("错误之前");
       // Do something with response error
       return e; //continue
     }));
+
+
   }
 
   /*
    * get请求
    */
- Future get( path, { parms,data, options, cancelToken}) async {
-   print("传入参数${servicePath[path]}?${parms}");
+  Future get(path, {parms, data, options, cancelToken}) async {
+    print("传入参数${servicePath[path]}?${parms}");
 
-   Response response;
+    Response response;
     try {
-      response = await dio.get("${servicePath[path]}?${parms}", queryParameters: data, options: options, cancelToken: cancelToken);
+
+
+      response = await dio.get("${servicePath[path]}?${parms}",
+          queryParameters: data, options: options, cancelToken: cancelToken);
       print('get success---------${response.statusCode}');
 
       //      response.data; 响应体
@@ -95,10 +98,11 @@ class HttpUtil {
   /*
    * post请求
    */
-  Future post( path, parms,{data, options, cancelToken}) async {
+  Future post(path, parms, {data, options, cancelToken}) async {
     Response response;
     try {
-      response = await dio.post(path+"?"+parms, queryParameters: data, options: options, cancelToken: cancelToken);
+      response = await dio.post(path + "?" + parms,
+          queryParameters: data, options: options, cancelToken: cancelToken);
       print('post success---------${response.data}');
     } on DioError catch (e) {
       print('post error---------$e');
@@ -107,13 +111,32 @@ class HttpUtil {
     return response.data;
   }
 
+  // 上传图片
+  Future uploadImg(imgfile) async {
+    String path = imgfile.path;
+    var name = path.substring(path.lastIndexOf("/") + 1, path.length);
+    FormData formData = new FormData.from({
+      "file": new UploadFileInfo(new File(path), name),
+      "contents": "tbk/user/",
+    });
+    Response response;
+    Dio dio = new Dio();
+    response = await dio.post(servicePath['uploadFile'], data: formData);
+    if (response.statusCode == 200) {
+      return response.data;
+    } else {
+      throw Exception('后端接口异常');
+    }
+  }
+
   /*
    * 下载文件
    */
   Future downloadFile(urlPath, savePath) async {
     Response response;
     try {
-      response = await dio.download(urlPath, savePath,onReceiveProgress: (int count, int total){
+      response = await dio.download(urlPath, savePath,
+          onReceiveProgress: (int count, int total) {
         //进度
         print("$count $total");
       });
