@@ -16,7 +16,7 @@ import 'config/loading.dart';
 import 'pages/splash/splash_page.dart';
 import 'util/colors_util.dart';
 
-void main() async{
+void main() async {
   var childCate = ChildCate();
   var userInfoProvide = UserInfoProvide();
 
@@ -68,8 +68,9 @@ class MyApp extends StatelessWidget {
           onGenerateRoute: Application.router.generator,
           debugShowCheckedModeBanner: false,
           theme: ThemeData(
-              backgroundColor:
-                  ColorsUtil.hexToColor(ColorsUtil.backGroundColor)),
+            platform: TargetPlatform.iOS,
+            backgroundColor: ColorsUtil.hexToColor(ColorsUtil.backGroundColor),
+          ),
           home: Scaffold(
             resizeToAvoidBottomPadding: false,
             body: SplashPage(),

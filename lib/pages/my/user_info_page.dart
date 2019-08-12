@@ -30,10 +30,12 @@ class _MyInfoPageState extends State<MyInfoPage> {
   @override
   void initState() {
     super.initState();
-
+//
     HttpUtil().get('getUser').then((val) {
       if (val["success"]) {
-        userInfoEntity =  EntityFactory.generateOBJ<UserInfoEntity>(val['data']);
+        setState(() {
+          userInfoEntity = EntityFactory.generateOBJ<UserInfoEntity>(val['data']);
+        });
       }
     });
 
@@ -61,7 +63,10 @@ class _MyInfoPageState extends State<MyInfoPage> {
   Widget build(BuildContext context) {
     return new Scaffold(
       body: userInfoEntity == null
-          ? Container
+          ? Container(
+              alignment: Alignment.center,
+              child: CupertinoActivityIndicator(),
+            )
           : Stack(
               children: <Widget>[
                 Container(

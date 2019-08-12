@@ -137,6 +137,8 @@ class _UserLoginPageState extends State<UserLoginPage> {
                     }
                     focusScopeNode.requestFocus(passwordFocusNode);
                   },
+                  keyboardAppearance:Brightness.light,
+                  keyboardType: TextInputType.phone,
                   decoration: InputDecoration(
                       icon: Icon(
                         Icons.phone,
@@ -167,6 +169,8 @@ class _UserLoginPageState extends State<UserLoginPage> {
                     const EdgeInsets.only(left: 25, right: 25, top: 20),
                     child: TextFormField(
                       focusNode: passwordFocusNode,
+                      keyboardAppearance:Brightness.light,
+                      keyboardType: TextInputType.phone,
                       decoration: InputDecoration(
                         icon: Icon(
                           Icons.beenhere,

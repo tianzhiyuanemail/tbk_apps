@@ -21,7 +21,7 @@ class UserSetUpPage extends StatefulWidget {
 }
 
 class _UserSetUpPageState extends State<UserSetUpPage> {
-  UserInfoEntity userInfoEntity;
+  UserInfoEntity userInfoEntity  = new UserInfoEntity();
 
   File _imageFile;
 
@@ -32,7 +32,9 @@ class _UserSetUpPageState extends State<UserSetUpPage> {
 
     HttpUtil().get('getUser').then((val) {
       if (val["success"]) {
-        userInfoEntity = EntityFactory.generateOBJ<UserInfoEntity>(val['data']);
+        setState(() {
+          userInfoEntity = EntityFactory.generateOBJ<UserInfoEntity>(val['data']);
+        });
       }
     });
   }
@@ -85,7 +87,7 @@ class _UserSetUpPageState extends State<UserSetUpPage> {
 
   Widget sletctPick() {
     return userInfoEntity == null
-        ? Container
+        ? Container()
         : Container(
             child: Column(
               mainAxisSize: MainAxisSize.min,

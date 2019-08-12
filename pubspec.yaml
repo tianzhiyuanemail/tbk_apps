@@ -62,7 +62,7 @@ dependencies:
   oktoast: ^2.1.7
   image_picker: ^0.6.1
   video_player: 0.10.1+5
-
+  loading_indicator: ^1.1.0
 
 
 dev_dependencies:

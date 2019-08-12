@@ -21,11 +21,13 @@ import 'package:tbk_app/util/easy_refresh_util.dart';
 import 'package:tbk_app/util/fluro_navigator_util.dart';
 import 'package:tbk_app/util/http_util.dart';
 import 'package:tbk_app/util/nautilus_util.dart';
+import 'package:tbk_app/util/screen.dart';
 import 'package:tbk_app/widgets/back_top_widget.dart';
 import 'package:tbk_app/widgets/product_list_view_widget.dart';
 
 import '../../entity_factory.dart';
 import '../../entity_list_factory.dart';
+import 'package:loading_indicator/loading_indicator.dart';
 
 // ignore: must_be_immutable
 class ProductDetail extends StatefulWidget {
@@ -44,7 +46,6 @@ class _ProductDetailState extends State<ProductDetail> {
   GlobalKey<RefreshHeaderState> _refreshHeaderState =
       GlobalKey<RefreshHeaderState>();
 
-
   bool showToTopBtn = false;
 
   ///是否显示“返回到顶部”按钮
@@ -57,6 +58,8 @@ class _ProductDetailState extends State<ProductDetail> {
 
   String richText = '';
 
+  double navAlpha = 0;
+
   @override
   void initState() {
     super.initState();
@@ -64,19 +67,25 @@ class _ProductDetailState extends State<ProductDetail> {
     _getProductInfo();
     _getItemDeatilRichText();
 
-    ///监听滚动事件
+    /// 导航栏监听
     _controller.addListener(() {
-      /// 导航栏监听
-
-      if (_controller.offset < 200 && controllerOffset) {
+      var offset = _controller.offset;
+      if (offset < 0) {
+        if (navAlpha != 0) {
+          setState(() {
+            navAlpha = 0;
+          });
+        }
+      } else if (offset < 50) {
         setState(() {
-          controllerOffset = false;
+          navAlpha = 1 - (50 - offset) / 50;
         });
-      } else if (_controller.offset >= 200 && !controllerOffset) {
+      } else if (navAlpha != 1) {
         setState(() {
-          controllerOffset = true;
+          navAlpha = 1;
         });
       }
+
       ///是否显示“返回到顶部”按钮
       if (_controller.offset < 1000 && showToTopBtn) {
         setState(() {
@@ -135,14 +144,19 @@ class _ProductDetailState extends State<ProductDetail> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: productEntity == null
-          ? Container(
-              alignment: Alignment.center,
-              child: CupertinoActivityIndicator(),
-            )
-          : Stack(
-              children: <Widget>[
-                EasyRefresh(
+      body: Stack(
+        children: <Widget>[
+          productEntity == null
+              ? Padding(
+                  padding: const EdgeInsets.all(185),
+                  child: Container(
+                    alignment: Alignment.center,
+                    child: LoadingIndicator(
+                      indicatorType: Indicator.ballRotateChase,
+                      color: Colors.black45,
+                    ),
+                  ))
+              : EasyRefresh(
                   refreshFooter:
                       EasyRefreshUtil.classicsFooter(_refreshFooterState),
                   refreshHeader:
@@ -151,20 +165,78 @@ class _ProductDetailState extends State<ProductDetail> {
                   onRefresh: () async {},
                   child: _customScrollView(),
                 ),
-                ProductHeaderChild(controllerOffset: controllerOffset),
-                Positioned(
-                  bottom: 80,
-                  right: 20,
-                  child: BackTopButton(controller: _controller, showToTopBtn: showToTopBtn),
-                ) ,
-                Positioned(
-                  bottom: 0,
-                  left: 0,
-                  child: DetailsBottom(productEntity: productEntity),
-                )
+          buildNavigationBar(),
+          Positioned(
+            bottom: 80,
+            right: 20,
+            child: BackTopButton(
+                controller: _controller, showToTopBtn: showToTopBtn),
+          ),
+          Positioned(
+            bottom: 0,
+            left: 0,
+            child: DetailsBottom(productEntity: productEntity),
+          )
+        ],
+      ),
+    );
+  }
+
+  Widget buildNavigationBar() {
+    return Stack(
+      children: <Widget>[
+        Positioned(
+          left: 0,
+          child: Container(
+            margin: EdgeInsets.fromLTRB(5, Screen.topSafeHeight, 0, 0),
+            child: buildActions(Colors.red),
+          ),
+        ),
+        Opacity(
+          opacity: navAlpha,
+          child: Container(
+            padding: EdgeInsets.fromLTRB(5, Screen.topSafeHeight, 0, 0),
+            height: Screen.navigationBarHeight,
+            decoration: BoxDecoration(
+              color: Colors.white,
+              border: Border(
+                bottom: BorderSide(
+                  color: Colors.black12,
+                ),
+              ),
+            ),
+            child: Row(
+              children: <Widget>[
+                buildActions(Colors.blue),
+                Expanded(
+                  child: Text(
+                    '商品详情',
+                    style: TextStyle(fontSize: 17, fontWeight: FontWeight.bold),
+                    textAlign: TextAlign.center,
+                  ),
+                ),
+                SizedBox(width: 40),
               ],
             ),
+          ),
+        )
+      ],
     );
+  }
+
+  Widget buildActions(Color iconColor) {
+    return Row(children: <Widget>[
+      IconButton(
+        onPressed: () {
+          Application.router.pop(context);
+        },
+        icon: Icon(
+          Icons.arrow_back_ios,
+          color: Colors.black,
+          size: 20,
+        ),
+      ),
+    ]);
   }
 
   /// CustomScrollView  实现列表 以后备用
@@ -190,57 +262,6 @@ class _ProductDetailState extends State<ProductDetail> {
     list.add(ItemDetails(richText: richText));
     list.add(ProductRecommend(list: productList));
     return list;
-  }
-
-  /// _listView
-  ListView _listView() {
-    return ListView(
-      controller: _controller,
-      children: <Widget>[
-        SwiperDiy(list: productEntity.smallImages),
-        ProductInfomation(productEntity: productEntity),
-        ShopInfomation(productEntity: productEntity),
-        ItemDetails(richText: richText),
-        ProductRecommend(list: productList),
-      ],
-    );
-  }
-}
-
-/// 自定义导航栏
-class ProductHeaderChild extends StatelessWidget {
-  bool controllerOffset;
-
-  ProductHeaderChild({this.controllerOffset});
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      alignment: Alignment.topLeft,
-      margin: EdgeInsets.only(top: 0, bottom: 0),
-      padding: EdgeInsets.only(top: 14, bottom: 0),
-      decoration: BoxDecoration(
-          color: controllerOffset  ? Colors.white : Colors.transparent,
-          border: Border(
-              bottom: BorderSide(
-            color: controllerOffset   ? Colors.black12 : Colors.transparent,
-          ))),
-      height: 60,
-      child: Row(
-        children: <Widget>[
-              IconButton(
-                  onPressed: () {
-                    Application.router.pop(context);
-                  },
-                  icon: Icon(
-                    Icons.arrow_back_ios,
-                    color: Colors.black,
-                    size: 20,
-                  ),
-                ),
-        ],
-      ),
-    );
   }
 }
 
