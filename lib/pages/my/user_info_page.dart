@@ -6,12 +6,14 @@ import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:loading_indicator/loading_indicator.dart';
 import 'package:oktoast/oktoast.dart';
 import 'package:tbk_app/modle/user_info_entity.dart';
 import 'package:tbk_app/router/routers.dart';
 import 'package:tbk_app/util/colors_util.dart';
 import 'package:tbk_app/util/fluro_navigator_util.dart';
 import 'package:tbk_app/util/http_util.dart';
+import 'package:tbk_app/util/loadingIndicator_util.dart';
 
 import '../../entity_factory.dart';
 
@@ -21,7 +23,7 @@ class MyInfoPage extends StatefulWidget {
 }
 
 class _MyInfoPageState extends State<MyInfoPage> {
-  UserInfoEntity userInfoEntity;
+  UserInfoEntity userInfoEntity = new UserInfoEntity();
   ScrollController _scrollController = ScrollController();
 
   ///是否显示“返回到顶部”按钮
@@ -34,7 +36,8 @@ class _MyInfoPageState extends State<MyInfoPage> {
     HttpUtil().get('getUser').then((val) {
       if (val["success"]) {
         setState(() {
-          userInfoEntity = EntityFactory.generateOBJ<UserInfoEntity>(val['data']);
+          userInfoEntity =
+              EntityFactory.generateOBJ<UserInfoEntity>(val['data']);
         });
       }
     });
@@ -63,10 +66,7 @@ class _MyInfoPageState extends State<MyInfoPage> {
   Widget build(BuildContext context) {
     return new Scaffold(
       body: userInfoEntity == null
-          ? Container(
-              alignment: Alignment.center,
-              child: CupertinoActivityIndicator(),
-            )
+          ? LoadingIndicatorUtil()
           : Stack(
               children: <Widget>[
                 Container(

@@ -10,6 +10,7 @@ import 'package:tbk_app/util/http_util.dart';
 import 'package:tbk_app/util/map_url_params_utils.dart';
 import 'package:tbk_app/util/shared_preference_util.dart';
 import 'package:tbk_app/util/sp_util.dart';
+import 'package:nautilus/nautilus.dart' as nautilus;
 
 import '../../entity_factory.dart';
 
@@ -19,7 +20,6 @@ class UserLoginPage extends StatefulWidget {
 }
 
 class _UserLoginPageState extends State<UserLoginPage> {
-
   ///利用FocusNode和FocusScopeNode来控制焦点 可以通过FocusNode.of(context)来获取widget树中默认的FocusScopeNode
 
   FocusNode phoneFocusNode = FocusNode();
@@ -71,30 +71,37 @@ class _UserLoginPageState extends State<UserLoginPage> {
             /**这里要手动设置container的高度和宽度，不然显示不了
              * 利用MediaQuery可以获取到跟屏幕信息有关的数据
              */
+            margin: EdgeInsets.only(top: 100),
             height: ScreenUtil().setHeight(1334),
             width: ScreenUtil().setWidth(750),
             child: Column(
               children: <Widget>[
+                Container(
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    color: Colors.white,
+                  ),
+                  child: Image.asset("assets/images/sys/bootstarp.png",
+                      width: 100.0, height: 100.0),
+                ),
                 //顶部图片
-                Image.asset("assets/images/ic_tab_home_active.png",
-                    width: 200.0, height: 200.0),
-            Container(
-              padding: EdgeInsets.only(top: 23),
-              child: Stack(
-                alignment: Alignment.center,
-                children: <Widget>[
-                  Column(
+                Container(
+                  padding: EdgeInsets.only(top: 23),
+                  child: Stack(
+                    alignment: Alignment.center,
                     children: <Widget>[
-                      //创建表单
-                      this.buildSignInTextForm(),
-                      this.buildSignInButton(),
-                      this._xieyi(),
-                      this._otherLogin(),
+                      Column(
+                        children: <Widget>[
+                          //创建表单
+                          this.buildSignInTextForm(),
+                          this._xieyi(),
+                          this.buildSignInButton(),
+                          this._otherLogin(),
+                        ],
+                      ),
                     ],
                   ),
-                ],
-              ),
-            ),
+                ),
               ],
             ),
           ),
@@ -113,7 +120,7 @@ class _UserLoginPageState extends State<UserLoginPage> {
         color: Colors.white,
       ),
       width: 300,
-      height: 190,
+      height: 160,
       /**
        * Flutter提供了一个Form widget，它可以对输入框进行分组，
        * 然后进行一些统一操作，如输入内容校验、输入框重置以及输入内容保存。
@@ -137,7 +144,7 @@ class _UserLoginPageState extends State<UserLoginPage> {
                     }
                     focusScopeNode.requestFocus(passwordFocusNode);
                   },
-                  keyboardAppearance:Brightness.light,
+                  keyboardAppearance: Brightness.light,
                   keyboardType: TextInputType.phone,
                   decoration: InputDecoration(
                       icon: Icon(
@@ -166,10 +173,10 @@ class _UserLoginPageState extends State<UserLoginPage> {
                 Flexible(
                   child: Padding(
                     padding:
-                    const EdgeInsets.only(left: 25, right: 25, top: 20),
+                        const EdgeInsets.only(left: 25, right: 25, top: 20),
                     child: TextFormField(
                       focusNode: passwordFocusNode,
-                      keyboardAppearance:Brightness.light,
+                      keyboardAppearance: Brightness.light,
                       keyboardType: TextInputType.phone,
                       decoration: InputDecoration(
                         icon: Icon(
@@ -212,7 +219,7 @@ class _UserLoginPageState extends State<UserLoginPage> {
 
   Widget _xieyi() {
     return Container(
-      padding: const EdgeInsets.only(top: 50),
+      padding: const EdgeInsets.only(top: 10),
       child: Text(
         "同意京淘优券协议",
         style: TextStyle(
@@ -225,41 +232,30 @@ class _UserLoginPageState extends State<UserLoginPage> {
 
   /// 创建登录界面的按钮
   Widget buildSignInButton() {
-    return GestureDetector(
-      child: Container(
-        padding: EdgeInsets.only(left: 42, right: 42, top: 20, bottom: 10),
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.all(Radius.circular(5)),
+    return Container(
+      margin: EdgeInsets.only(top: 20, bottom: 20),
+      child: RaisedButton(
+        child: Container(
+          padding: EdgeInsets.only(left: 42, right: 42, top: 5, bottom: 5),
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.all(Radius.circular(5)),
+          ),
+          child: Text(
+            "登录",
+            style: TextStyle(fontSize: 25, color: Colors.black45),
+          ),
         ),
-        child: Text(
-          "登录",
-          style: TextStyle(fontSize: 25, color: Colors.black45),
-        ),
+        onPressed: () {
+          /**利用key来获取widget的状态FormState
+              可以用过FormState对Form的子孙FromField进行统一的操作
+           */
+          if (_signInFormKey.currentState.validate()) {
+            //调用所有自孩子的save回调，保存表单内容
+            _signInFormKey.currentState.save();
+            _phoneLogin();
+          }
+        },
       ),
-      onTap: () {
-        /**利用key来获取widget的状态FormState
-            可以用过FormState对Form的子孙FromField进行统一的操作
-         */
-        if (_signInFormKey.currentState.validate()) {
-
-          //调用所有自孩子的save回调，保存表单内容
-          _signInFormKey.currentState.save();
-
-          Map<String, Object> map  = Map();
-          map["loginType"] =   4;
-          map["mobile"] =   phoneNumber;
-          map["code"] =   _password;
-
-          HttpUtil().get('registerOrLogin',parms: MapUrlParamsUtils.getUrlParamsByMap(map)).then((val) {
-            if(val["success"] ){
-              UserInfoEntity userInfoEntityr =  EntityFactory.generateOBJ<UserInfoEntity>(val['data']);
-
-              SpUtil.putString("tocken", userInfoEntityr.tocken);
-              NavigatorUtil.gotransitionPage(context,  "${Routers.root}");
-            }
-          });
-        }
-      },
     );
   }
 
@@ -274,7 +270,11 @@ class _UserLoginPageState extends State<UserLoginPage> {
               shape: BoxShape.circle,
               color: Colors.white,
             ),
-            child: IconButton(icon: Icon(Icons.print), onPressed: null),
+            child: InkWell(
+              child: Image.asset("assets/images/taobao/taobao.png",
+                  width: 50.0, height: 50.0),
+              onTap: _taobaoLogin(),
+            ),
           ),
           SizedBox(
             width: 40,
@@ -285,11 +285,10 @@ class _UserLoginPageState extends State<UserLoginPage> {
               shape: BoxShape.circle,
               color: Colors.white,
             ),
-            child: IconButton(
-              icon: Icon(
-                Icons.print,
-              ),
-              onPressed: null,
+            child: InkWell(
+              child: Image.asset("assets/images/taobao/tianmao.png",
+                  width: 50.0, height: 50.0),
+              onTap: _weixinLogin(),
             ),
           ),
         ],
@@ -303,15 +302,18 @@ class _UserLoginPageState extends State<UserLoginPage> {
       //调用所有自孩子的save回调，保存表单内容
       _signInFormKey.currentState.save();
 
-      Map<String, Object> map  = Map();
-      map["type"] =   1;
-      map["mobile"] =   phoneNumber;
+      Map<String, Object> map = Map();
+      map["type"] = 1;
+      map["mobile"] = phoneNumber;
 
-      HttpUtil().get('sendSms',parms: MapUrlParamsUtils.getUrlParamsByMap(map)).then((val) {
-        if(val["success"] ){
-          SmsEntity smsEntity =  EntityFactory.generateOBJ<SmsEntity>(val['data']);
+      HttpUtil()
+          .get('sendSms', parms: MapUrlParamsUtils.getUrlParamsByMap(map))
+          .then((val) {
+        if (val["success"]) {
+          SmsEntity smsEntity =
+              EntityFactory.generateOBJ<SmsEntity>(val['data']);
 
-          if (smsEntity.code == 'OK'){
+          if (smsEntity.code == 'OK') {
             _timerUtil = TimerUtil(mTotalTime: 60 * 1000);
             _timerUtil.setOnTimerTickCallback((int tick) {
               double _tick = tick / 1000;
@@ -326,12 +328,35 @@ class _UserLoginPageState extends State<UserLoginPage> {
             });
             _timerUtil.startCountDown();
           }
-
-
         }
       });
-
-
     }
   }
+
+  void _phoneLogin() {
+    Map<String, Object> map = Map();
+    map["loginType"] = 4;
+    map["mobile"] = phoneNumber;
+    map["code"] = _password;
+
+    HttpUtil()
+        .get('registerOrLogin',
+        parms: MapUrlParamsUtils.getUrlParamsByMap(map))
+        .then((val) {
+      if (val["success"]) {
+        UserInfoEntity userInfoEntityr =
+        EntityFactory.generateOBJ<UserInfoEntity>(val['data']);
+
+        SpUtil.putString("tocken", userInfoEntityr.tocken);
+        NavigatorUtil.gotransitionPage(context, "${Routers.root}");
+      }
+    });
+  }
+
+  _taobaoLogin() async {
+    var result = await nautilus.login();
+    print(result.toString());
+  }
+
+  _weixinLogin() {}
 }

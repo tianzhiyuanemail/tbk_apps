@@ -380,8 +380,7 @@ class _UserSetUpPageState extends State<UserSetUpPage> {
                           FlatButton(
                               onPressed: () {
                                 Navigator.of(context).pop('1');
-//
-                                SharedPreferenceUtil.delUser();
+                                SpUtil.remove("tocken");
                                 NavigatorUtil.gotransitionPage(
                                     context, "${Routers.root}");
                               },

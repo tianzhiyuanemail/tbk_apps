@@ -20,6 +20,7 @@ import 'package:tbk_app/util/colors_util.dart';
 import 'package:tbk_app/util/easy_refresh_util.dart';
 import 'package:tbk_app/util/fluro_navigator_util.dart';
 import 'package:tbk_app/util/http_util.dart';
+import 'package:tbk_app/util/loadingIndicator_util.dart';
 import 'package:tbk_app/util/nautilus_util.dart';
 import 'package:tbk_app/util/screen.dart';
 import 'package:tbk_app/widgets/back_top_widget.dart';
@@ -147,15 +148,7 @@ class _ProductDetailState extends State<ProductDetail> {
       body: Stack(
         children: <Widget>[
           productEntity == null
-              ? Padding(
-                  padding: const EdgeInsets.all(185),
-                  child: Container(
-                    alignment: Alignment.center,
-                    child: LoadingIndicator(
-                      indicatorType: Indicator.ballRotateChase,
-                      color: Colors.black45,
-                    ),
-                  ))
+              ? LoadingIndicatorUtil()
               : EasyRefresh(
                   refreshFooter:
                       EasyRefreshUtil.classicsFooter(_refreshFooterState),
