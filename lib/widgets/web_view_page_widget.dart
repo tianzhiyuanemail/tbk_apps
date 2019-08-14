@@ -128,7 +128,7 @@ class _WebViewPageWidgetState extends State<WebViewPageWidget> {
               size: 20,
             ),
             onPressed: () {
-              NavigatorUtil.gotransitionPop(context);
+              NavigatorUtil.goBack(context);
             },
           ),
         ),

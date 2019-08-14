@@ -13,6 +13,7 @@ import 'package:tbk_app/modle/product_list_entity.dart';
 import 'package:tbk_app/modle/sort_modle.dart';
 import 'package:tbk_app/util/easy_refresh_util.dart';
 import 'package:tbk_app/util/http_util.dart';
+import 'package:tbk_app/util/image_utils.dart';
 import 'package:tbk_app/util/map_url_params_utils.dart';
 import 'package:tbk_app/widgets/back_top_widget.dart';
 import 'package:tbk_app/widgets/product_list_view_widget.dart';
@@ -95,6 +96,7 @@ class _HomePageOtherState extends State<HomePageOther>
           });
           _getGoods();
         },
+        autoLoad: true,
         child: CustomScrollView(
           controller: _controller,
           slivers: <Widget>[
@@ -172,7 +174,7 @@ class CateHotProduct extends StatelessWidget {
         onTap: () {
           print(productId);
         },
-        child: Image.network(productImage),
+        child: loadNetworkImage(productImage),
       ),
     );
   }
@@ -190,7 +192,7 @@ class SecondaryCategory extends StatelessWidget {
       },
       child: Column(
         children: <Widget>[
-          Image.network(
+          loadNetworkImage(
             'http://e.hiphotos.baidu.com/image/pic/item/359b033b5bb5c9eac1754f45df39b6003bf3b396.jpg',
             width: ScreenUtil().setHeight(95),
           ),

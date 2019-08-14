@@ -1,5 +1,3 @@
-import 'dart:convert';
-
 import 'package:common_utils/common_utils.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -8,7 +6,6 @@ import 'package:tbk_app/modle/taobao_user_entity.dart';
 import 'package:tbk_app/modle/user_info_entity.dart';
 import 'package:tbk_app/router/routers.dart';
 import 'package:tbk_app/util/colors_util.dart';
-import 'package:tbk_app/util/fluro_convert_util.dart';
 import 'package:tbk_app/util/fluro_navigator_util.dart';
 import 'package:tbk_app/util/http_util.dart';
 import 'package:tbk_app/util/map_url_params_utils.dart';
@@ -18,12 +15,16 @@ import 'package:nautilus/nautilus.dart' as nautilus;
 
 import '../../entity_factory.dart';
 
-class UserLoginPage extends StatefulWidget {
+class UserLoginBangDingPage extends StatefulWidget {
+  TaobaoUserEntity taobaoUserEntity;
+
+  UserLoginBangDingPage(this.taobaoUserEntity);
+
   @override
-  _UserLoginPageState createState() => _UserLoginPageState();
+  _UserLoginBangDingPageState createState() => _UserLoginBangDingPageState();
 }
 
-class _UserLoginPageState extends State<UserLoginPage> {
+class _UserLoginBangDingPageState extends State<UserLoginBangDingPage> {
   ///利用FocusNode和FocusScopeNode来控制焦点 可以通过FocusNode.of(context)来获取widget树中默认的FocusScopeNode
 
   FocusNode phoneFocusNode = FocusNode();
@@ -103,8 +104,6 @@ class _UserLoginPageState extends State<UserLoginPage> {
                   this._buildSignInTextForm(),
                   this._buildSignInButton(),
                   this._buildText("登录即表示同意用户协议"),
-                  this._otherLogin(),
-                  this._buildText2("其他登录方式"),
                 ],
               ),
             ),
@@ -252,19 +251,6 @@ class _UserLoginPageState extends State<UserLoginPage> {
     );
   }
 
-  Widget _buildText2(str) {
-    return Container(
-      padding: const EdgeInsets.only(top: 3),
-      child: Text(
-        str,
-        style: TextStyle(
-          fontSize: 16,
-          color: Colors.black45,
-        ),
-      ),
-    );
-  }
-
   /// 创建登录界面的按钮
   Widget _buildSignInButton() {
     return Container(
@@ -289,43 +275,6 @@ class _UserLoginPageState extends State<UserLoginPage> {
             _phoneLogin();
           }
         },
-      ),
-    );
-  }
-
-  Widget _otherLogin() {
-    return Container(
-      margin: EdgeInsets.only(top: 100),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: <Widget>[
-          Container(
-//            padding: EdgeInsets.all(5),
-//            decoration: BoxDecoration(
-//              shape: BoxShape.circle,
-//              color: Colors.white,
-//            ),
-            child: InkWell(
-              child: Image.asset("assets/images/taobao/taobao.png",
-                  width: 50.0, height: 50.0),
-              onTap: () {
-                _taobaoLogin();
-              },
-            ),
-          ),
-          SizedBox(
-            width: 40,
-          ),
-          Container(
-            child: InkWell(
-              child: Image.asset("assets/images/taobao/tianmao.png",
-                  width: 50.0, height: 50.0),
-              onTap: () {
-                _weixinLogin();
-              },
-            ),
-          ),
-        ],
       ),
     );
   }
@@ -373,6 +322,15 @@ class _UserLoginPageState extends State<UserLoginPage> {
     map["mobile"] = phoneNumber;
     map["code"] = _password;
 
+    if (widget.taobaoUserEntity != null){
+
+      map["avatarUrl"] = widget.taobaoUserEntity.avatarUrl;
+      map["nick"] = widget.taobaoUserEntity.nick;
+      map["openId"] = widget.taobaoUserEntity.openId;
+      map["type"] = 1;
+    }
+
+
     HttpUtil()
         .get('registerOrLogin', parms: MapUrlParamsUtils.getUrlParamsByMap(map))
         .then((val) {
@@ -385,30 +343,4 @@ class _UserLoginPageState extends State<UserLoginPage> {
       }
     });
   }
-
-  void _taobaoLogin() {
-    nautilus.login().then((data) {
-      setState(() {
-        if (data.isSuccessful) {
-          print(data.user.nick);
-
-          TaobaoUserEntity t = new TaobaoUserEntity();
-          t.avatarUrl = data.user.avatarUrl;
-          t.nick = data.user.nick;
-          t.openId = data.user.openId;
-          t.openSid = data.user.openSid;
-          t.topAccessToken = data.user.topAccessToken;
-          t.topAuthCode = data.user.topAuthCode;
-
-          NavigatorUtil.gotransitionPage(
-              context,
-              Routers.userLoginPageBangDing +
-                  "?json=" +
-                  FluroConvertUtils.object2string(t));
-        } else {}
-      });
-    });
-  }
-
-  void _weixinLogin() {}
 }

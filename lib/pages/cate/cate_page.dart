@@ -13,6 +13,7 @@ import 'package:tbk_app/util/colors_util.dart';
 import 'package:tbk_app/util/fluro_convert_util.dart';
 import 'package:tbk_app/util/fluro_navigator_util.dart';
 import 'package:tbk_app/util/http_util.dart';
+import 'package:tbk_app/util/image_utils.dart';
 
 import '../../entity_list_factory.dart';
 
@@ -198,7 +199,7 @@ class _CatePageState extends State<CatePage>
             padding: EdgeInsets.all(23),
             child: Column(
               children: <Widget>[
-                Image.network(
+                loadNetworkImage(
                   cate.cateIcon,
                   width: ScreenUtil().setWidth(150),
                 ),

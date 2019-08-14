@@ -50,7 +50,7 @@ class _nineParcelPostState extends State<NavigatorRouterPage>
                   size: 20,
                 ),
                 onPressed: () {
-                  NavigatorUtil.gotransitionPop(context);
+                  NavigatorUtil.goBack(context);
                 },
               ),
               bottom: widget.materialentityList.length == 1

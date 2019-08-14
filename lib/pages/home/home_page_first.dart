@@ -22,6 +22,7 @@ import 'package:tbk_app/util/easy_refresh_util.dart';
 import 'package:tbk_app/util/fluro_convert_util.dart';
 import 'package:tbk_app/util/fluro_navigator_util.dart';
 import 'package:tbk_app/util/http_util.dart';
+import 'package:tbk_app/util/image_utils.dart';
 import 'package:tbk_app/util/map_url_params_utils.dart';
 import 'package:tbk_app/widgets/back_top_widget.dart';
 import 'package:tbk_app/widgets/product_list_view_widget.dart';
@@ -57,12 +58,7 @@ class _HomePageFirstState extends State<HomePageFirst>
 
   @override
   void initState() {
-    _getHotGoods();
-    _bannersQueryListForMap();
-    _navigatorQueryListForMap();
-    _getRecommendList();
-    _getAdvertisements();
-
+    _onRefresh();
     //监听滚动事件，打印滚动位置
     _controller.addListener(() {
       if (_controller.offset < 1000 && showToTopBtn) {
@@ -96,24 +92,18 @@ class _HomePageFirstState extends State<HomePageFirst>
   Widget build(BuildContext context) {
     Loading.ctx = context; // 注入context
     return Scaffold(
-      floatingActionButton: BackTopButton(controller: _controller, showToTopBtn: showToTopBtn),
+      floatingActionButton:
+          BackTopButton(controller: _controller, showToTopBtn: showToTopBtn),
       body: EasyRefresh(
         refreshFooter: EasyRefreshUtil.classicsFooter(_refreshFooterState),
         refreshHeader: EasyRefreshUtil.classicsHeader(_refreshHeaderState),
         loadMore: () async {
-          _getHotGoods();
+          _loadMore();
         },
         onRefresh: () async {
-          _bannersQueryListForMap();
-          _navigatorQueryListForMap();
-          _getRecommendList();
-          _getAdvertisements();
-
-          setState(() {
-            page = 1;
-          });
-          _getHotGoods();
+          _onRefresh();
         },
+        autoLoad: true,
         child: CustomScrollView(
           controller: _controller,
           reverse: false,
@@ -144,7 +134,7 @@ class _HomePageFirstState extends State<HomePageFirst>
   }
 
   /// 特惠
-  void _getHotGoods() {
+  void _loadMore() {
     Map<String, Object> map = Map();
     map["materialId"] = 4094;
     map["pageNo"] = page;
@@ -162,6 +152,18 @@ class _HomePageFirstState extends State<HomePageFirst>
         });
       }
     });
+  }
+
+  /// 特惠
+  void _onRefresh() {
+    setState(() {
+      page = 1;
+    });
+    _loadMore();
+    _bannersQueryListForMap();
+    _navigatorQueryListForMap();
+    _getRecommendList();
+    _getAdvertisements();
   }
 
   /// 广告
@@ -264,7 +266,7 @@ class SwiperDiy extends StatelessWidget {
       child: Swiper(
         index: 0,
         itemBuilder: (BuildContext context, int index) {
-          return Image.network("${swiperDataList[index].imageUrl}",
+          return loadNetworkImage("${swiperDataList[index].imageUrl}",
               fit: BoxFit.fill);
         },
         itemCount: swiperDataList.length,
@@ -326,8 +328,7 @@ class TopNavigator extends StatelessWidget {
             alignment: Alignment.center,
             width: ScreenUtil().setWidth(95),
             height: ScreenUtil().setHeight(95),
-            child: CacheNetworkImageUtil.image(navigatorEntity.imageUrl,
-                'assets/images/product_list/spjiaz.gif'),
+            child: loadNetworkImage(navigatorEntity.imageUrl),
           ),
           Text(navigatorEntity.title)
         ],
@@ -387,7 +388,8 @@ class AdBanner extends StatelessWidget {
                       "?url=${s}&title=" +
                       FluroConvertUtils.fluroCnParamsEncode("测试用"));
             },
-            child: Image.network("${adList[index].imageUrl}", fit: BoxFit.fill),
+            child:
+                loadNetworkImage("${adList[index].imageUrl}", fit: BoxFit.fill),
           );
         },
         itemCount: adList.length,
@@ -452,7 +454,7 @@ class Recommend extends StatelessWidget {
         ),
         child: Column(
           children: <Widget>[
-            Image.network(recommendList[index].imageUrl),
+            loadNetworkImage(recommendList[index].imageUrl),
             Row(
               children: <Widget>[
                 Container(
@@ -555,7 +557,7 @@ class FlootContent extends StatelessWidget {
       padding: EdgeInsets.all(10),
       child: InkWell(
         onTap: () {},
-        child: Image.network(
+        child: loadNetworkImage(
             "http://e.hiphotos.baidu.com/image/pic/item/359b033b5bb5c9eac1754f45df39b6003bf3b396.jpg"),
       ),
     );

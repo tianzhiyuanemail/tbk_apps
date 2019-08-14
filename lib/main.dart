@@ -11,7 +11,7 @@ import 'package:tbk_app/provide/user_info_provide.dart';
 import 'package:tbk_app/router/application.dart';
 import 'package:tbk_app/router/routers.dart';
 import 'package:tbk_app/util/sp_util.dart';
-
+import 'package:flutter_localizations/flutter_localizations.dart';
 import 'config/loading.dart';
 import 'pages/splash/splash_page.dart';
 import 'util/colors_util.dart';
@@ -62,21 +62,34 @@ class MyApp extends StatelessWidget {
 
     return new RestartWidget(
       child: OKToast(
-        //
-        dismissOtherOnShow: true, // 这一步
-        child: MaterialApp(
-          onGenerateRoute: Application.router.generator,
-          debugShowCheckedModeBanner: false,
-          theme: ThemeData(
-            platform: TargetPlatform.iOS,
-            backgroundColor: ColorsUtil.hexToColor(ColorsUtil.backGroundColor),
-          ),
-          home: Scaffold(
-            resizeToAvoidBottomPadding: false,
-            body: SplashPage(),
-          ),
-        ),
-      ),
+          //
+          dismissOtherOnShow: true,
+          // 这一步
+          child: MaterialApp(
+              onGenerateRoute: Application.router.generator,
+              debugShowCheckedModeBanner: false,
+              theme: ThemeData(
+                platform: TargetPlatform.iOS,
+                backgroundColor:
+                    ColorsUtil.hexToColor(ColorsUtil.backGroundColor),
+              ),
+              home: Scaffold(
+                resizeToAvoidBottomPadding: false,
+                body: SplashPage(),
+              ),
+              localizationsDelegates: [
+                GlobalMaterialLocalizations.delegate,
+                GlobalWidgetsLocalizations.delegate,
+              ],
+              supportedLocales: [
+                const Locale('zh', 'CH'),
+                const Locale('en', 'US')
+              ]),
+          backgroundColor: Colors.black54,
+          textPadding:
+              const EdgeInsets.symmetric(horizontal: 16.0, vertical: 10.0),
+          radius: 20.0,
+          position: ToastPosition.bottom),
     );
   }
 }

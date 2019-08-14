@@ -8,6 +8,7 @@ import 'package:tbk_app/modle/tab_item_modle.dart';
 import 'package:tbk_app/router/routers.dart';
 import 'package:tbk_app/util/colors_util.dart';
 import 'package:tbk_app/util/fluro_navigator_util.dart';
+import 'package:tbk_app/util/image_utils.dart';
 import 'package:tbk_app/widgets/search_text_field_widget.dart';
 
 import 'hom_page_other.dart';
@@ -139,7 +140,7 @@ class TabBars extends StatelessWidget {
         tabs: list
             .map((tabItem) => tabItem.isName
                 ? Text(tabItem.name, style: TextStyle(fontSize: 15))
-                : Image.network(tabItem.img))
+                : loadNetworkImage(tabItem.img))
             .toList(),
         isScrollable: true,
         controller: tabController,

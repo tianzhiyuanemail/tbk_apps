@@ -1,7 +1,9 @@
 import 'package:fluro/fluro.dart';
 import 'package:flutter/material.dart';
 import 'package:tbk_app/modle/material_entity.dart';
+import 'package:tbk_app/modle/taobao_user_entity.dart';
 import 'package:tbk_app/pages/container_page.dart';
+import 'package:tbk_app/pages/my/user_login_bangding_page.dart';
 import 'package:tbk_app/pages/my/user_login_page.dart';
 import 'package:tbk_app/pages/my/user_setup_page.dart';
 import 'package:tbk_app/pages/navigator_router/navigator_router_page.dart';
@@ -10,6 +12,7 @@ import 'package:tbk_app/pages/search/search_product_list_page.dart';
 import 'package:tbk_app/util/fluro_convert_util.dart';
 import 'package:tbk_app/widgets/web_view_page_widget.dart';
 
+import '../entity_factory.dart';
 import '../pages/product/product_deatil_page.dart';
 import '../pages/search/search_page.dart';
 import 'dart:convert';
@@ -89,6 +92,15 @@ Handler userLoginPageHandler = Handler(
 //      String title = FluroConvertUtils.fluroCnParamsDecode(s);
 
       return UserLoginPage();
+    }
+);
+/// userLoginPageBangDing
+Handler userLoginPageBangDingHandler = Handler(
+    handlerFunc: (BuildContext context, Map<String, List<String>> params) {
+      String j = params['json'].first;
+      Map<String, dynamic> map = FluroConvertUtils.string2map(j);
+      TaobaoUserEntity taobaoUserEntity = EntityFactory.generateOBJ<TaobaoUserEntity>(map);
+      return UserLoginBangDingPage(taobaoUserEntity);
     }
 );
 

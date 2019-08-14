@@ -92,6 +92,7 @@ class _NavigatorRouterViewPageState extends State<NavigatorRouterViewPage>
           });
           _getGoods();
         },
+        autoLoad: true,
         child: ListView(
           controller: _controller,
           children: <Widget>[

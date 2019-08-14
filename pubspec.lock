@@ -8,6 +8,13 @@ packages:
       url: "https://pub.flutter-io.cn"
     source: hosted
     version: "2.1.0"
+  azlistview:
+    dependency: "direct main"
+    description:
+      name: azlistview
+      url: "https://pub.flutter-io.cn"
+    source: hosted
+    version: "0.1.2"
   boolean_selector:
     dependency: transitive
     description:
@@ -78,6 +85,13 @@ packages:
       url: "https://pub.flutter-io.cn"
     source: hosted
     version: "0.1.2"
+  date_utils:
+    dependency: "direct main"
+    description:
+      name: date_utils
+      url: "https://pub.flutter-io.cn"
+    source: hosted
+    version: "0.1.0+2"
   decimal:
     dependency: transitive
     description:
@@ -106,11 +120,27 @@ packages:
       url: "https://pub.flutter-io.cn"
     source: hosted
     version: "1.5.0"
+  flustars:
+    dependency: "direct main"
+    description:
+      name: flustars
+      url: "https://pub.flutter-io.cn"
+    source: hosted
+    version: "0.2.6+1"
   flutter:
     dependency: "direct main"
     description: flutter
     source: sdk
     version: "0.0.0"
+  flutter_2d_amap:
+    dependency: "direct main"
+    description:
+      path: "."
+      ref: HEAD
+      resolved-ref: "9705e914e9c3593f41cb4d32d0f43b3abb9b14f1"
+      url: "https://github.com/simplezhli/flutter_2d_amap.git"
+    source: git
+    version: "0.0.1"
   flutter_cache_manager:
     dependency: transitive
     description:
@@ -134,6 +164,11 @@ packages:
       url: "https://github.com/tianzhiyuanemail/flutter_html_widget.git"
     source: git
     version: "0.0.2"
+  flutter_localizations:
+    dependency: "direct main"
+    description: flutter
+    source: sdk
+    version: "0.0.0"
   flutter_page_indicator:
     dependency: transitive
     description:
@@ -145,6 +180,13 @@ packages:
     dependency: "direct main"
     description:
       name: flutter_screenutil
+      url: "https://pub.flutter-io.cn"
+    source: hosted
+    version: "0.5.3"
+  flutter_slidable:
+    dependency: "direct main"
+    description:
+      name: flutter_slidable
       url: "https://pub.flutter-io.cn"
     source: hosted
     version: "0.5.3"
@@ -195,6 +237,20 @@ packages:
       url: "https://pub.flutter-io.cn"
     source: hosted
     version: "0.6.1"
+  intl:
+    dependency: transitive
+    description:
+      name: intl
+      url: "https://pub.flutter-io.cn"
+    source: hosted
+    version: "0.15.8"
+  keyboard_actions:
+    dependency: "direct main"
+    description:
+      name: keyboard_actions
+      url: "https://pub.flutter-io.cn"
+    source: hosted
+    version: "2.1.2"
   loading_indicator:
     dependency: "direct main"
     description:
@@ -288,6 +344,13 @@ packages:
       url: "https://pub.flutter-io.cn"
     source: hosted
     version: "0.4.3"
+  simple_gesture_detector:
+    dependency: "direct main"
+    description:
+      name: simple_gesture_detector
+      url: "https://pub.flutter-io.cn"
+    source: hosted
+    version: "0.1.3"
   sky_engine:
     dependency: transitive
     description: flutter
@@ -300,6 +363,13 @@ packages:
       url: "https://pub.flutter-io.cn"
     source: hosted
     version: "1.5.5"
+  sprintf:
+    dependency: "direct main"
+    description:
+      name: sprintf
+      url: "https://pub.flutter-io.cn"
+    source: hosted
+    version: "4.0.2"
   sqflite:
     dependency: transitive
     description:
@@ -314,6 +384,13 @@ packages:
       url: "https://pub.flutter-io.cn"
     source: hosted
     version: "1.9.3"
+  sticky_headers:
+    dependency: "direct main"
+    description:
+      name: sticky_headers
+      url: "https://pub.flutter-io.cn"
+    source: hosted
+    version: "0.1.8"
   stream_channel:
     dependency: transitive
     description:
@@ -398,6 +475,13 @@ packages:
       url: "https://pub.flutter-io.cn"
     source: hosted
     version: "0.10.1+5"
+  webview_flutter:
+    dependency: "direct main"
+    description:
+      name: webview_flutter
+      url: "https://pub.flutter-io.cn"
+    source: hosted
+    version: "0.3.10+4"
 sdks:
-  dart: ">=2.2.0 <3.0.0"
+  dart: ">=2.3.0-dev.0.5.flutter-a1668566e5 <3.0.0"
   flutter: ">=1.5.0 <2.0.0"

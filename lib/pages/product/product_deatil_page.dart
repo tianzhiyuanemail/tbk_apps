@@ -20,6 +20,7 @@ import 'package:tbk_app/util/colors_util.dart';
 import 'package:tbk_app/util/easy_refresh_util.dart';
 import 'package:tbk_app/util/fluro_navigator_util.dart';
 import 'package:tbk_app/util/http_util.dart';
+import 'package:tbk_app/util/image_utils.dart';
 import 'package:tbk_app/util/loadingIndicator_util.dart';
 import 'package:tbk_app/util/nautilus_util.dart';
 import 'package:tbk_app/util/screen.dart';
@@ -156,6 +157,7 @@ class _ProductDetailState extends State<ProductDetail> {
                       EasyRefreshUtil.classicsHeader(_refreshHeaderState),
                   loadMore: () async {},
                   onRefresh: () async {},
+                  autoLoad: true,
                   child: _customScrollView(),
                 ),
           buildNavigationBar(),
@@ -274,7 +276,7 @@ class SwiperDiy extends StatelessWidget {
           Swiper(
             index: 0,
             itemBuilder: (BuildContext context, int index) {
-              return Image.network("${list[index]}", fit: BoxFit.fill);
+              return loadNetworkImage("${list[index]}", fit: BoxFit.fill);
             },
             itemCount: list.length,
             pagination: SwiperPagination(

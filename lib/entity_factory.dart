@@ -11,6 +11,8 @@ import 'package:tbk_app/modle/cate_entity.dart';
 import 'package:tbk_app/modle/home_navigator_entity.dart';
 import 'package:tbk_app/modle/sms_entity.dart';
 
+import 'modle/taobao_user_entity.dart';
+
 class EntityFactory {
   static T generateOBJ<T>(json) {
     if (1 == 0) {
@@ -39,7 +41,18 @@ class EntityFactory {
       return HomeNavigatorEntity.fromJson(json) as T;
     } else if (T.toString() == "SmsEntity") {
       return SmsEntity.fromJson(json) as T;
-    } else {
+    } else if (T.toString() == "TaobaoUserEntity") {
+      return TaobaoUserEntity.fromJson(json) as T;
+    }
+//    else if (T.toString() == "AccountEntity") {
+//      return AccountEntity.fromJson(json) as T;
+//    } else if (T.toString() == "SearchEntity") {
+//      return SearchEntity.fromJson(json) as T;
+//    } else if (T.toString() == "UserEntity") {
+//      return UserEntity.fromJson(json) as T;
+//    }
+
+    else {
       return null;
     }
   }

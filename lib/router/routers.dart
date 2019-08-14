@@ -16,6 +16,7 @@ class Routers {
 
   static String userSetUpPage = '/userSetUpPage';
   static String userLoginPage = '/userLoginPage';
+  static String userLoginPageBangDing = '/userLoginPageBangDing';
 
   static void configureRouters(Router router){
 
@@ -39,6 +40,7 @@ class Routers {
 
     router.define(userSetUpPage, handler: userSetUpPageHandler);
     router.define(userLoginPage, handler: userLoginPageHandler);
+    router.define(userLoginPageBangDing, handler: userLoginPageBangDingHandler);
 
     router.define(root, handler: rootHandler);
   }

@@ -138,7 +138,7 @@ class _UserSetUpPageState extends State<UserSetUpPage> {
               color: Colors.black45,
             ),
             onPressed: () {
-              NavigatorUtil.gotransitionPop(context);
+              NavigatorUtil.goBack(context);
             },
           ),
         ),

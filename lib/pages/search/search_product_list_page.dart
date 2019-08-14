@@ -171,6 +171,7 @@ class _SearchProductListPage extends State<SearchProductListPage>
           });
           _getGoods();
         },
+        autoLoad: true,
         child: CustomScrollView(
           controller: _controller,
           slivers: <Widget>[

@@ -31,7 +31,7 @@ class EasyRefreshUtil {
        bgColor: Colors.white,
        textColor: Colors.pink,
        moreInfoColor: Colors.pink,
-//    refreshHeight: 50.0,
+       refreshHeight: 90.0,
 //    isFloat: false,
 //    showMore: false,
        moreInfo: "....",

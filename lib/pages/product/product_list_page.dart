@@ -159,7 +159,7 @@ class _ProductListPage extends State<ProductListPage>
               size: 20,
             ),
             onPressed: () {
-              NavigatorUtil.gotransitionPop(context);
+              NavigatorUtil.goBack(context);
             },
           ),
         ),
@@ -178,6 +178,7 @@ class _ProductListPage extends State<ProductListPage>
           });
           _getGoods();
         },
+        autoLoad: true,
         child: CustomScrollView(
           controller: _controller,
           slivers: <Widget>[

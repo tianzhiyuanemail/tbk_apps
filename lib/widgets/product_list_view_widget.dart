@@ -10,6 +10,7 @@ import 'package:tbk_app/router/routers.dart';
 import 'package:tbk_app/util/cache_network_image_util.dart';
 import 'package:tbk_app/util/colors_util.dart';
 import 'package:tbk_app/util/fluro_navigator_util.dart';
+import 'package:tbk_app/util/image_utils.dart';
 
 /// Sliver 商品列表  SliverList
 class SliverProductList extends StatelessWidget {
@@ -20,155 +21,153 @@ class SliverProductList extends StatelessWidget {
       : super(key: key);
 
   /// 商品列表
-   Widget  _getWidget1(BuildContext context,int index) {
-     ProductListEntity obj = list[index];
-     return InkWell(
-       onTap: () {
-         NavigatorUtil.gotransitionPage(
-             context, "${Routers.detailsPage}?id=${obj.itemId}");
-       },
-       child: Container(
-         color: Colors.white,
-         padding: EdgeInsets.all(5),
-         margin: EdgeInsets.only(bottom: 3),
-         child: Row(
-           mainAxisAlignment: MainAxisAlignment.start,
-           children: <Widget>[
-             Container(
-               width: ScreenUtil().setWidth(260),
-               height: ScreenUtil().setHeight(260),
-               child: CacheNetworkImageUtil.image(obj.pictUrl,
-                   'assets/images/product_list/spjiaz.gif'),
-             ),
-             Container(
-               width: ScreenUtil().setWidth(450),
-               margin: EdgeInsets.only(left: 10, top: 15, bottom: 15),
-               child: Column(
-                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                 crossAxisAlignment: CrossAxisAlignment.start,
-                 children: <Widget>[
-                   Container(
-                     child: Text(
-                       '${obj.shortTitle == null ? obj.title : obj.shortTitle}',
-                       style: TextStyle(
-                         color: Colors.black,
-                         fontSize: ScreenUtil().setSp(26),
-                       ),
-                       maxLines: 2,
-                       overflow: TextOverflow.ellipsis,
-                     ),
-                   ),
-                   Container(
+  Widget _getWidget1(BuildContext context, int index) {
+    ProductListEntity obj = list[index];
+    return InkWell(
+      onTap: () {
+        NavigatorUtil.gotransitionPage(
+            context, "${Routers.detailsPage}?id=${obj.itemId}");
+      },
+      child: Container(
+        color: Colors.white,
+        padding: EdgeInsets.all(5),
+        margin: EdgeInsets.only(bottom: 3),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.start,
+          children: <Widget>[
+            Container(
+              width: ScreenUtil().setWidth(260),
+              height: ScreenUtil().setHeight(260),
+              child: loadNetworkImage(obj.pictUrl),
+            ),
+            Container(
+              width: ScreenUtil().setWidth(450),
+              margin: EdgeInsets.only(left: 10, top: 15, bottom: 15),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: <Widget>[
+                  Container(
+                    child: Text(
+                      '${obj.shortTitle == null ? obj.title : obj.shortTitle}',
+                      style: TextStyle(
+                        color: Colors.black,
+                        fontSize: ScreenUtil().setSp(26),
+                      ),
+                      maxLines: 2,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                  ),
+                  Container(
 //                      width: ScreenUtil().setWidth(220),
-                     child: Row(
-                       mainAxisAlignment: MainAxisAlignment.start,
-                       children: <Widget>[
-                         Text(
-                           "券后  ￥",
-                           style: TextStyle(
-                             color: Colors.pink,
-                             fontSize: ScreenUtil().setSp(20),
-                           ),
-                         ),
-                         Container(
-                           margin: EdgeInsets.only(bottom: 5),
-                           child: Text(
-                             "${obj.afterCouponPrice}  ",
-                             style: TextStyle(
-                               color: Colors.pink,
-                               fontSize: ScreenUtil().setSp(35),
-                             ),
-                           ),
-                         ),
-                         Text(
-                           "￥${obj.zkFinalPrice}",
-                           style: TextStyle(
-                               color: Colors.black54,
-                               fontSize: ScreenUtil().setSp(20),
-                               decoration: TextDecoration.lineThrough,
-                               decorationStyle:
-                               TextDecorationStyle.dashed),
-                         ),
-                       ],
-                     ),
-                   ),
-                   Container(
-                     child: Text(
-                       "月销售${obj.volume}笔",
-                       style: TextStyle(
-                         color: Colors.black54,
-                         fontSize: ScreenUtil().setSp(20),
-                       ),
-                     ),
-                   ),
-                   Container(
-                     child: Row(
-                       mainAxisAlignment: MainAxisAlignment.start,
-                       children: <Widget>[
-                         InkWell(
-                           onTap: () async {},
-                           child: Container(
-                             alignment: Alignment.center,
-                             width: ScreenUtil().setWidth(150),
-                             height: ScreenUtil().setHeight(50),
-                             decoration: BoxDecoration(
-                               color: Colors.pink.shade50,
-                               border: Border.all(
-                                 color: ColorsUtil.hexToColor(
-                                     ColorsUtil.appBarColor),
-                               ),
-                               borderRadius: BorderRadius.only(
-                                 topLeft: Radius.circular(20),
-                                 bottomLeft: Radius.circular(20),
-                               ),
-                             ),
-                             child: Text(
-                               '${obj.couponAmount}元券',
-                               style: TextStyle(
-                                   color: ColorsUtil.hexToColor(
-                                       ColorsUtil.appBarColor),
-                                   fontSize: ScreenUtil().setSp(20)),
-                             ),
-                           ),
-                         ),
-                         InkWell(
-                           onTap: () async {},
-                           child: Container(
-                             alignment: Alignment.center,
-                             width: ScreenUtil().setWidth(150),
-                             height: ScreenUtil().setHeight(50),
-                             decoration: BoxDecoration(
-                               color: ColorsUtil.hexToColor(
-                                   ColorsUtil.appBarColor),
-                               borderRadius: BorderRadius.only(
-                                 topRight: Radius.circular(20),
-                                 bottomRight: Radius.circular(20),
-                               ),
-                             ),
-                             child: Text(
-                               '领券',
-                               style: TextStyle(
-                                   color: Colors.white,
-                                   fontSize: ScreenUtil().setSp(20)),
-                             ),
-                           ),
-                         ),
-                       ],
-                     ),
-                   ),
-                 ],
-               ),
-             ),
-           ],
-         ),
-       ),
-     );
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      children: <Widget>[
+                        Text(
+                          "券后  ￥",
+                          style: TextStyle(
+                            color: Colors.pink,
+                            fontSize: ScreenUtil().setSp(20),
+                          ),
+                        ),
+                        Container(
+                          margin: EdgeInsets.only(bottom: 5),
+                          child: Text(
+                            "${obj.afterCouponPrice}  ",
+                            style: TextStyle(
+                              color: Colors.pink,
+                              fontSize: ScreenUtil().setSp(35),
+                            ),
+                          ),
+                        ),
+                        Text(
+                          "￥${obj.zkFinalPrice}",
+                          style: TextStyle(
+                              color: Colors.black54,
+                              fontSize: ScreenUtil().setSp(20),
+                              decoration: TextDecoration.lineThrough,
+                              decorationStyle: TextDecorationStyle.dashed),
+                        ),
+                      ],
+                    ),
+                  ),
+                  Container(
+                    child: Text(
+                      "月销售${obj.volume}笔",
+                      style: TextStyle(
+                        color: Colors.black54,
+                        fontSize: ScreenUtil().setSp(20),
+                      ),
+                    ),
+                  ),
+                  Container(
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      children: <Widget>[
+                        InkWell(
+                          onTap: () async {},
+                          child: Container(
+                            alignment: Alignment.center,
+                            width: ScreenUtil().setWidth(150),
+                            height: ScreenUtil().setHeight(50),
+                            decoration: BoxDecoration(
+                              color: Colors.pink.shade50,
+                              border: Border.all(
+                                color: ColorsUtil.hexToColor(
+                                    ColorsUtil.appBarColor),
+                              ),
+                              borderRadius: BorderRadius.only(
+                                topLeft: Radius.circular(20),
+                                bottomLeft: Radius.circular(20),
+                              ),
+                            ),
+                            child: Text(
+                              '${obj.couponAmount}元券',
+                              style: TextStyle(
+                                  color: ColorsUtil.hexToColor(
+                                      ColorsUtil.appBarColor),
+                                  fontSize: ScreenUtil().setSp(20)),
+                            ),
+                          ),
+                        ),
+                        InkWell(
+                          onTap: () async {},
+                          child: Container(
+                            alignment: Alignment.center,
+                            width: ScreenUtil().setWidth(150),
+                            height: ScreenUtil().setHeight(50),
+                            decoration: BoxDecoration(
+                              color:
+                                  ColorsUtil.hexToColor(ColorsUtil.appBarColor),
+                              borderRadius: BorderRadius.only(
+                                topRight: Radius.circular(20),
+                                bottomRight: Radius.circular(20),
+                              ),
+                            ),
+                            child: Text(
+                              '领券',
+                              style: TextStyle(
+                                  color: Colors.white,
+                                  fontSize: ScreenUtil().setSp(20)),
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
   }
 
   /// 商品列表
-   Widget  _getWidget2(BuildContext context,int index) {
-     ProductListEntity obj = list[index];
-     return InkWell(
+  Widget _getWidget2(BuildContext context, int index) {
+    ProductListEntity obj = list[index];
+    return InkWell(
       onTap: () {
         NavigatorUtil.gotransitionPage(
             context, Routers.detailsPage + "?id=${obj.itemId}");
@@ -185,8 +184,7 @@ class SliverProductList extends StatelessWidget {
               alignment: Alignment.center,
               width: ScreenUtil().setWidth(350),
               height: ScreenUtil().setHeight(350),
-              child: CacheNetworkImageUtil.image(obj.pictUrl,
-                  'assets/images/product_list/spjiaz.gif'),
+              child: loadNetworkImage(obj.pictUrl),
             ),
             Container(
               width: ScreenUtil().setWidth(370),
@@ -209,8 +207,7 @@ class SliverProductList extends StatelessWidget {
             Text(
               "${obj.shortTitle == null ? obj.title : obj.shortTitle}",
               style: TextStyle(
-                  color: Colors.black,
-                  fontSize: ScreenUtil().setSp(26)),
+                  color: Colors.black, fontSize: ScreenUtil().setSp(26)),
               maxLines: 2,
               overflow: TextOverflow.ellipsis,
             ),
@@ -262,7 +259,7 @@ class SliverProductList extends StatelessWidget {
           ),
           delegate: new SliverChildBuilderDelegate(
             (BuildContext context, int index) {
-              return _getWidget1(context,index);
+              return _getWidget1(context, index);
             },
             childCount: list.length,
           ),
@@ -277,7 +274,7 @@ class SliverProductList extends StatelessWidget {
           ),
           delegate: new SliverChildBuilderDelegate(
             (BuildContext context, int index) {
-              return _getWidget2(context,index);
+              return _getWidget2(context, index);
             },
             childCount: list.length,
           ),
@@ -326,8 +323,7 @@ class ProductList extends StatelessWidget {
               Container(
                 width: ScreenUtil().setWidth(260),
                 height: ScreenUtil().setHeight(260),
-                child: CacheNetworkImageUtil.image(
-                    obj.pictUrl, 'assets/images/product_list/spjiaz.gif'),
+                child: loadNetworkImage(obj.pictUrl),
               ),
               Container(
                 width: ScreenUtil().setWidth(450),
@@ -478,8 +474,7 @@ class ProductList extends StatelessWidget {
                 alignment: Alignment.center,
                 width: ScreenUtil().setWidth(350),
                 height: ScreenUtil().setHeight(350),
-                child: CacheNetworkImageUtil.image(
-                    obj.pictUrl, 'assets/images/product_list/spjiaz.gif'),
+                child: loadNetworkImage(obj.pictUrl),
               ),
               Container(
                 width: ScreenUtil().setWidth(370),
