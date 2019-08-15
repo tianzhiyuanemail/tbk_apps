@@ -106,5 +106,6 @@ flutter:
     - assets/images/product_detail/
     - assets/images/taobao/
     - assets/images/user/
+    - assets/images/user/account/
     - assets/images/sys/
     - assets/data/china.json

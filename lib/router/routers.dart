@@ -29,6 +29,19 @@ class Routers {
   static String updateTagPage = "/user/updateTagPage";
   static String userSecurityPage = "/user/userSecurityPage";
 
+  static String accountPage = "/account";
+  static String accountRecordListPage = "/account/recordList";
+  static String addWithdrawalAccountPage = "/account/addWithdrawal";
+  static String bankSelectPage = "/account/bankSelect";
+  static String citySelectPage = "/account/citySelect";
+  static String withdrawalAccountListPage = "/account/withdrawalAccountList";
+  static String withdrawalAccountPage = "/account/withdrawalAccount";
+  static String withdrawalPage = "/account/withdrawal";
+  static String withdrawalPasswordPage = "/account/withdrawalPassword";
+  static String withdrawalRecordListPage = "/account/withdrawalRecordList";
+  static String withdrawalResultPage = "/account/withdrawalResult";
+
+
   static String messagePage = "/messagePage";
 
 
@@ -69,14 +82,29 @@ class Routers {
     router.define(updatePasswordPage, handler: updatePasswordPageHandler);
     router.define(updateNamePage, handler: updateNamePageHandler);
     router.define(updateTagPage, handler: updateTagPageHandler);
-
     router.define(userSecurityPage, handler: userSecurityPageHandler);
+
+    router.define(accountPage, handler: accountPageHandler);
+    router.define(accountRecordListPage, handler: accountRecordListPageHandler);
+    router.define(addWithdrawalAccountPage, handler: addWithdrawalAccountPageHandler);
+    router.define(bankSelectPage, handler: bankSelectPageHandler);
+    router.define(citySelectPage, handler: citySelectPageHandler);
+    router.define(withdrawalAccountListPage, handler: withdrawalAccountListPageHandler);
+    router.define(withdrawalAccountPage, handler: withdrawalAccountPageHandler);
+    router.define(withdrawalPage, handler: withdrawalPageHandler);
+    router.define(withdrawalPasswordPage, handler: withdrawalPasswordPageHandler);
+    router.define(withdrawalRecordListPage, handler: withdrawalRecordListPageHandler);
+    router.define(withdrawalResultPage, handler: withdrawalResultPageHandler);
+
+
 
     router.define(messagePage, handler: messagePageHandler);
 
     router.define(settingPage, handler: settingPageHandler);
     router.define(aboutPage, handler: aboutPageHandler);
     router.define(accountManagerPage, handler: accountManagerPageHandler);
+
+
 
 
 

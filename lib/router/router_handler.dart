@@ -3,6 +3,17 @@ import 'package:flutter/material.dart';
 import 'package:tbk_app/modle/material_entity.dart';
 import 'package:tbk_app/modle/taobao_user_entity.dart';
 import 'package:tbk_app/pages/container_page.dart';
+import 'package:tbk_app/pages/user/fund/account_record_list_page.dart';
+import 'package:tbk_app/pages/user/fund/add_withdrawal_account_page.dart';
+import 'package:tbk_app/pages/user/fund/bank_select_page.dart';
+import 'package:tbk_app/pages/user/fund/city_select_page.dart';
+import 'package:tbk_app/pages/user/fund/account_page.dart';
+import 'package:tbk_app/pages/user/fund/withdrawal_account_list_page.dart';
+import 'package:tbk_app/pages/user/fund/withdrawal_account_page.dart';
+import 'package:tbk_app/pages/user/fund/withdrawal_page.dart';
+import 'package:tbk_app/pages/user/fund/withdrawal_password_page.dart';
+import 'package:tbk_app/pages/user/fund/withdrawal_record_list_page.dart';
+import 'package:tbk_app/pages/user/fund/withdrawal_result_page.dart';
 import 'package:tbk_app/pages/user/message/message_page.dart';
 import 'package:tbk_app/pages/user/setting/about_page.dart';
 import 'package:tbk_app/pages/user/setting/account_manager_page.dart';
@@ -136,6 +147,71 @@ Handler userSecurityPageHandler = Handler(
     handlerFunc: (BuildContext context, Map<String, List<String>> params) {
   return UserSecurityPage();
 });
+
+/// fund
+Handler accountPageHandler = Handler(
+    handlerFunc: (BuildContext context, Map<String, List<String>> params) {
+  return AccountPage();
+});
+
+Handler accountRecordListPageHandler = Handler(
+    handlerFunc: (BuildContext context, Map<String, List<String>> params) {
+  return AccountRecordListPage();
+});
+
+Handler addWithdrawalAccountPageHandler = Handler(
+    handlerFunc: (BuildContext context, Map<String, List<String>> params) {
+  return AddWithdrawalAccountPage();
+});
+
+Handler bankSelectPageHandler = Handler(
+    handlerFunc: (BuildContext context, Map<String, List<String>> params) {
+  return BankSelectPage();
+});
+
+Handler citySelectPageHandler = Handler(
+    handlerFunc: (BuildContext context, Map<String, List<String>> params) {
+  return CitySelectPage();
+});
+
+Handler withdrawalAccountListPageHandler = Handler(
+    handlerFunc: (BuildContext context, Map<String, List<String>> params) {
+  return WithdrawalAccountListPage();
+});
+
+Handler withdrawalAccountPageHandler = Handler(
+    handlerFunc: (BuildContext context, Map<String, List<String>> params) {
+  return WithdrawalAccountPage();
+});
+
+Handler withdrawalPageHandler = Handler(
+    handlerFunc: (BuildContext context, Map<String, List<String>> params) {
+  return WithdrawalPage();
+});
+
+Handler withdrawalPasswordPageHandler = Handler(
+    handlerFunc: (BuildContext context, Map<String, List<String>> params) {
+  return WithdrawalPasswordPage();
+});
+
+Handler withdrawalRecordListPageHandler = Handler(
+    handlerFunc: (BuildContext context, Map<String, List<String>> params) {
+  return WithdrawalRecordListPage();
+});
+
+Handler withdrawalResultPageHandler = Handler(
+    handlerFunc: (BuildContext context, Map<String, List<String>> params) {
+  return WithdrawalResultPage();
+});
+
+
+
+/// fund
+
+
+
+
+
 
 /// login end
 Handler messagePageHandler = Handler(

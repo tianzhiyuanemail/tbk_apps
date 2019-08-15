@@ -6,8 +6,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:loading_indicator/loading_indicator.dart';
-import 'package:oktoast/oktoast.dart';
 import 'package:tbk_app/modle/user_info_entity.dart';
 import 'package:tbk_app/router/routers.dart';
 import 'package:tbk_app/util/colors_util.dart';
@@ -15,6 +13,7 @@ import 'package:tbk_app/util/fluro_navigator_util.dart';
 import 'package:tbk_app/util/http_util.dart';
 import 'package:tbk_app/util/image_utils.dart';
 import 'package:tbk_app/util/loadingIndicator_util.dart';
+import 'package:tbk_app/widgets/image_text_click_item.dart';
 
 import '../../entity_factory.dart';
 
@@ -71,11 +70,6 @@ class _MyInfoPageState extends State<MyInfoPage> {
           : Stack(
               children: <Widget>[
                 Container(
-                  color: ColorsUtil.hexToColor(ColorsUtil.appBarColor),
-                  width: ScreenUtil().setWidth(750),
-                  height: ScreenUtil().setHeight(500),
-                ),
-                Container(
                   child: CustomScrollView(
                     controller: _scrollController,
                     reverse: false,
@@ -85,14 +79,11 @@ class _MyInfoPageState extends State<MyInfoPage> {
                       ),
                       SliverToBoxAdapter(
                         child: Container(
-                          color: Colors.white,
                           child: Column(
                             children: <Widget>[
                               UserRevenue(userInfoEntity: userInfoEntity),
-                              AdBanner(),
                               UserButtons(),
                               UserTools(),
-                              UsersGrowthValue("24")
                             ],
                           ),
                         ),
@@ -168,7 +159,7 @@ class TopButton extends StatelessWidget {
       child: Row(
         children: <Widget>[
           IconButton(
-            onPressed: (){
+            onPressed: () {
               NavigatorUtil.push(context, Routers.messagePage);
             },
             icon: loadAssetImage(
@@ -178,7 +169,7 @@ class TopButton extends StatelessWidget {
             ),
           ),
           IconButton(
-            onPressed: (){
+            onPressed: () {
               NavigatorUtil.push(context, Routers.settingPage);
             },
             icon: loadAssetImage(
@@ -494,59 +485,13 @@ class UserRevenue extends StatelessWidget {
   }
 }
 
-/// 广告
-class AdBanner extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      height: ScreenUtil().setHeight(200),
-      margin: EdgeInsets.only(left: 10, right: 10, top: 10),
-      decoration: BoxDecoration(
-          color: Colors.white, borderRadius: BorderRadius.circular(10)),
-      child: Container(
-        margin: EdgeInsets.all(3),
-        decoration: BoxDecoration(
-          image: DecorationImage(
-            image: NetworkImage(
-                "https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1551944816841&di=329f747e3f4c2554f24c609fd6f77c49&imgtype=0&src=http%3A%2F%2Fimg.tupianzj.com%2Fuploads%2Fallimg%2F160610%2F9-160610114520.jpg"),
-            fit: BoxFit.cover,
-          ),
-          borderRadius: BorderRadius.circular(10),
-        ),
-      ),
-    );
-  }
-}
-
 ///  收益 订单 粉丝 邀请 按钮
 class UserButtons extends StatelessWidget {
-  Widget _userButtonsChild(
-      String assetsImages, String title, Function function) {
-    return Container(
-        margin: EdgeInsets.only(top: 8),
-        child: InkWell(
-          onTap: function,
-          child: Column(
-            children: <Widget>[
-              Container(
-                child: Image.asset(assetsImages, width: 30.0, height: 30.0),
-              ),
-              Container(
-                margin: EdgeInsets.only(top: 3, bottom: 5),
-                child: Text(
-                  title,
-                  style: TextStyle(fontSize: 11),
-                ),
-              ),
-            ],
-          ),
-        ));
-  }
-
   @override
   Widget build(BuildContext context) {
     return Container(
       margin: EdgeInsets.only(left: 10, right: 10, top: 10),
+      padding: EdgeInsets.only(left: 10, right: 10, top: 10, bottom: 10),
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(10),
@@ -554,17 +499,17 @@ class UserButtons extends StatelessWidget {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceAround,
         children: <Widget>[
-          _userButtonsChild('assets/images/ic_tab_home_active.png', '收益', () {
-            print("收益");
+          ImageTextClickItem('user/收益', '收益', () {
+            NavigatorUtil.push(context, Routers.accountPage);
           }),
-          _userButtonsChild('assets/images/ic_tab_home_active.png', '订单', () {
-            print("订单");
+          ImageTextClickItem('user/收益', '订单', () {
+            NavigatorUtil.push(context, Routers.settingPage);
           }),
-          _userButtonsChild('assets/images/ic_tab_home_active.png', '粉丝', () {
-            print("粉丝");
+          ImageTextClickItem('user/粉丝列表', '粉丝', () {
+            NavigatorUtil.push(context, Routers.settingPage);
           }),
-          _userButtonsChild('assets/images/ic_tab_home_active.png', '邀请', () {
-            print("邀请");
+          ImageTextClickItem('user/邀请码', '邀请', () {
+            NavigatorUtil.push(context, Routers.settingPage);
           }),
         ],
       ),
@@ -582,60 +527,52 @@ class UserTools extends StatelessWidget {
     );
   }
 
-  Widget _userToolsButton(
-      String assetsImages, String title, Function function) {
-    return Container(
-        margin: EdgeInsets.only(top: 8),
-        child: InkWell(
-          onTap: function,
-          child: Column(
-            children: <Widget>[
-              Container(
-                child: Image.asset(assetsImages, width: 30.0, height: 30.0),
-              ),
-              Container(
-                margin: EdgeInsets.only(top: 3, bottom: 5),
-                child: Text(
-                  title,
-                  style: TextStyle(fontSize: 11),
-                ),
-              ),
-            ],
-          ),
-        ));
-  }
-
-  Widget _userToolsButtons() {
+  Widget _userToolsButtons(BuildContext context) {
     return Container(
       margin: EdgeInsets.only(bottom: 10, left: 10, right: 10),
-      child: Wrap(
-        crossAxisAlignment: WrapCrossAlignment.start,
-        spacing: 60,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.center,
         children: <Widget>[
-          _userToolsButton('assets/images/ic_tab_home_active.png', '新手指导', () {
-            print("收益");
-          }),
-          _userToolsButton('assets/images/ic_tab_home_active.png', '我的收藏', () {
-            print("订单");
-          }),
-          _userToolsButton('assets/images/ic_tab_home_active.png', '常见问题', () {
-            print("粉丝");
-          }),
-          _userToolsButton('assets/images/ic_tab_home_active.png', '我的客服', () {
-            print("邀请");
-          }),
-          _userToolsButton('assets/images/ic_tab_home_active.png', '官方公告', () {
-            print("收益");
-          }),
-          _userToolsButton('assets/images/ic_tab_home_active.png', '订单查询', () {
-            print("订单");
-          }),
-          _userToolsButton('assets/images/ic_tab_home_active.png', '商务合作', () {
-            print("粉丝");
-          }),
-          _userToolsButton('assets/images/ic_tab_home_active.png', '关于我们', () {
-            print("邀请");
-          }),
+          Padding(
+            padding: EdgeInsets.only(left: 10, right: 10, top: 10, bottom: 10),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceAround,
+              children: <Widget>[
+                ImageTextClickItem('user/收益', '新手指导', () {
+                  NavigatorUtil.push(context, Routers.settingPage);
+                }),
+                ImageTextClickItem('user/订单', '我的收藏', () {
+                  print("订单");
+                }),
+                ImageTextClickItem('user/粉丝列表', '常见问题', () {
+                  print("粉丝");
+                }),
+                ImageTextClickItem('user/邀请码', '我的客服', () {
+                  print("邀请");
+                }),
+              ],
+            ),
+          ),
+          Padding(
+            padding: EdgeInsets.only(left: 10, right: 10, top: 10, bottom: 10),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceAround,
+              children: <Widget>[
+                ImageTextClickItem('ic_tab_home_active', '官方公告', () {
+                  print("收益");
+                }),
+                ImageTextClickItem('ic_tab_home_active', '订单查询', () {
+                  print("订单");
+                }),
+                ImageTextClickItem('ic_tab_home_active', '商务合作', () {
+                  print("粉丝");
+                }),
+                ImageTextClickItem('ic_tab_home_active', '关于我们', () {
+                  print("邀请");
+                }),
+              ],
+            ),
+          )
         ],
       ),
     );
@@ -651,94 +588,8 @@ class UserTools extends StatelessWidget {
         children: <Widget>[
           _userToolsText(),
           Divider(height: 10.0, indent: 0.0, color: Colors.black12),
-          _userToolsButtons(),
+          _userToolsButtons( context),
         ],
-      ),
-    );
-  }
-}
-
-///  我的成长值
-class UsersGrowthValue extends StatelessWidget {
-  String growthValue = '24';
-
-  UsersGrowthValue(this.growthValue);
-
-  Widget _userToolsText() {
-    return Container(
-      alignment: Alignment.centerLeft,
-      margin: EdgeInsets.only(left: 20, top: 5, bottom: 3),
-      child: Text("我的工具"),
-    );
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      margin: EdgeInsets.only(left: 10, right: 10, top: 10),
-      decoration: BoxDecoration(
-          color: Colors.white, borderRadius: BorderRadius.circular(10)),
-      child: Column(
-        children: <Widget>[
-          _growthValue(),
-          _imageInkWell(),
-        ],
-      ),
-    );
-  }
-
-  _growthValue() {
-    return Container(
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: <Widget>[
-          Container(
-            alignment: Alignment.centerLeft,
-            margin: EdgeInsets.only(left: 20, top: 5, bottom: 3),
-            child: Row(
-              children: <Widget>[
-                Text("我的成长值"),
-                Container(
-                  margin: EdgeInsets.only(left: 10),
-                  child: Text(
-                    growthValue,
-                    style: TextStyle(color: Colors.red, fontSize: 20),
-                  ),
-                )
-              ],
-            ),
-          ),
-          InkWell(
-            onTap: () {},
-            child: Container(
-              alignment: Alignment.centerLeft,
-              margin: EdgeInsets.only(right: 20),
-              child: Row(
-                children: <Widget>[
-                  Text("提成成长值"),
-                  Image.asset("assets/images/ic_tab_home_active.png",
-                      width: 20.0, height: 20.0)
-                ],
-              ),
-            ),
-          )
-        ],
-      ),
-    );
-  }
-
-  _imageInkWell() {
-    return InkWell(
-      onTap: () {},
-      child: Container(
-        height: 100,
-        decoration: BoxDecoration(
-            image: DecorationImage(
-              image: NetworkImage(
-                  "https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1551944816841&di=329f747e3f4c2554f24c609fd6f77c49&imgtype=0&src=http%3A%2F%2Fimg.tupianzj.com%2Fuploads%2Fallimg%2F160610%2F9-160610114520.jpg"),
-              fit: BoxFit.cover,
-            ),
-            borderRadius: BorderRadius.circular(10)),
       ),
     );
   }
