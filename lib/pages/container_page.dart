@@ -1,17 +1,14 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
-import 'package:tbk_app/modle/user_info_entity.dart';
-import 'package:tbk_app/pages/my/user_info_page.dart';
+import 'package:tbk_app/pages/user/user_info_page.dart';
 import 'package:tbk_app/pages/product/product_deatil_page.dart';
 import 'package:tbk_app/router/routers.dart';
 import 'package:tbk_app/util/fluro_navigator_util.dart';
-import 'package:tbk_app/util/shared_preference_util.dart';
 import 'package:tbk_app/util/sp_util.dart';
 
 import 'cate/cate_page.dart';
 import 'home/home_page.dart';
-import 'my/user_login_page.dart';
 
 ///这个页面是作为整个APP的最外层的容器，以Tab为基础控制每个item的显示与隐藏
 class ContainerPage extends StatefulWidget {
@@ -80,6 +77,7 @@ class _ContainerPageState extends State<ContainerPage> {
         onTap: (int index) {
           if (index == 3 && (tocken == null || tocken == '')) {
             NavigatorUtil.gotransitionPage(context, "${Routers.userLoginPage}");
+//            NavigatorUtil.push(context, "${Routers.loginPage}");
           } else {
             ///这里根据点击的index来显示，非index的page均隐藏
             setState(() {

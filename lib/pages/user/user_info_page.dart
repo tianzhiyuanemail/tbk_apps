@@ -13,6 +13,7 @@ import 'package:tbk_app/router/routers.dart';
 import 'package:tbk_app/util/colors_util.dart';
 import 'package:tbk_app/util/fluro_navigator_util.dart';
 import 'package:tbk_app/util/http_util.dart';
+import 'package:tbk_app/util/image_utils.dart';
 import 'package:tbk_app/util/loadingIndicator_util.dart';
 
 import '../../entity_factory.dart';
@@ -167,21 +168,25 @@ class TopButton extends StatelessWidget {
       child: Row(
         children: <Widget>[
           IconButton(
-            onPressed: () {
-              showToast("用户信息");
+            onPressed: (){
+              NavigatorUtil.push(context, Routers.messagePage);
             },
-            icon: Icon(
-              Icons.message,
-              color: Colors.white,
+            icon: loadAssetImage(
+              "user/message",
+              width: 24.0,
+              height: 24.0,
             ),
           ),
           IconButton(
-            onPressed: () {
-              NavigatorUtil.gotransitionPage(
-                  context, "${Routers.userSetUpPage}");
+            onPressed: (){
+              NavigatorUtil.push(context, Routers.settingPage);
             },
-            icon: Icon(Icons.settings, color: Colors.white),
-          ),
+            icon: loadAssetImage(
+              "user/setting",
+              width: 24.0,
+              height: 24.0,
+            ),
+          )
         ],
       ),
     );

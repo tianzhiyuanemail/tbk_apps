@@ -14,9 +14,29 @@ class Routers {
   static String navigatorRouterPage = '/navigatorRouterPage';
   static String navigatorWebViewPage = '/navigatorWebViewPage';
 
-  static String userSetUpPage = '/userSetUpPage';
   static String userLoginPage = '/userLoginPage';
   static String userLoginPageBangDing = '/userLoginPageBangDing';
+
+
+  static String loginPage = "/login";
+  static String registerPage = "/login/register";
+  static String smsLoginPage = "/login/smsLogin";
+  static String resetPasswordPage = "/login/resetPassword";
+  static String updatePasswordPage = "/login/updatePassword";
+
+
+  static String updateNamePage = "/user/updateNamePage";
+  static String updateTagPage = "/user/updateTagPage";
+  static String userSecurityPage = "/user/userSecurityPage";
+
+  static String messagePage = "/messagePage";
+
+
+  static String settingPage = "/setting";
+  static String aboutPage = "/setting/about";
+  static String accountManagerPage = "/setting/accountManager";
+
+
 
   static void configureRouters(Router router){
 
@@ -38,9 +58,27 @@ class Routers {
     router.define(navigatorRouterPage, handler: navigatorRouterPageHandler);
     router.define(navigatorWebViewPage, handler: navigatorWebViewPageHandler);
 
-    router.define(userSetUpPage, handler: userSetUpPageHandler);
     router.define(userLoginPage, handler: userLoginPageHandler);
     router.define(userLoginPageBangDing, handler: userLoginPageBangDingHandler);
+
+
+    router.define(loginPage, handler:loginPageHandler);
+    router.define(registerPage, handler: registerPageHandler);
+    router.define(smsLoginPage, handler: smsLoginPageHandler);
+    router.define(resetPasswordPage, handler: resetPasswordPageHandler);
+    router.define(updatePasswordPage, handler: updatePasswordPageHandler);
+    router.define(updateNamePage, handler: updateNamePageHandler);
+    router.define(updateTagPage, handler: updateTagPageHandler);
+
+    router.define(userSecurityPage, handler: userSecurityPageHandler);
+
+    router.define(messagePage, handler: messagePageHandler);
+
+    router.define(settingPage, handler: settingPageHandler);
+    router.define(aboutPage, handler: aboutPageHandler);
+    router.define(accountManagerPage, handler: accountManagerPageHandler);
+
+
 
     router.define(root, handler: rootHandler);
   }
