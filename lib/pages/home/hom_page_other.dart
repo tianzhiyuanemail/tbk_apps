@@ -15,6 +15,7 @@ import 'package:tbk_app/util/easy_refresh_util.dart';
 import 'package:tbk_app/util/http_util.dart';
 import 'package:tbk_app/util/image_utils.dart';
 import 'package:tbk_app/util/map_url_params_utils.dart';
+import 'package:tbk_app/util/toast.dart';
 import 'package:tbk_app/widgets/back_top_widget.dart';
 import 'package:tbk_app/widgets/product_list_view_widget.dart';
 import 'package:tbk_app/widgets/product_silvrs_sort_static_bar_widget.dart';
@@ -188,7 +189,7 @@ class SecondaryCategory extends StatelessWidget {
   Widget _itemUI(BuildContext context, item) {
     return InkWell(
       onTap: () {
-        print("点击了导航");
+        Toast.show("点击了导航");
       },
       child: Column(
         children: <Widget>[

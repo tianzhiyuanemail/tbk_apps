@@ -35,3 +35,35 @@ class ImageTextClickItem extends StatelessWidget {
     );
   }
 }
+
+
+
+class CateItem extends StatelessWidget {
+
+  String image;
+  String title;
+  Function onTap;
+  CateItem({Key key,this.image, this.title, this.onTap});
+
+  @override
+  Widget build(BuildContext context) {
+    return InkWell(
+      onTap: onTap,
+      child: Container(
+        color: Colors.white,
+        child: Column(
+          children: <Widget>[
+            Padding(
+              padding: EdgeInsets.only(top: 0,bottom: 0,left: 5,right: 5),
+              child: loadNetworkImage(image,width: 60,height: 60),
+            ),
+            Padding(
+              padding:  EdgeInsets.only(top: 0,bottom: 0,left: 5,right: 5),
+              child: Text(title),
+            )
+          ],
+        ),
+      ),
+    );
+  }
+}

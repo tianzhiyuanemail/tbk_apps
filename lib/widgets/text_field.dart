@@ -127,7 +127,7 @@ class _MyTextFieldState extends State<MyTextField> {
             Offstage(
               offstage: _isShowDelete,
               child: GestureDetector(
-                child: loadAssetImage("login/qyg_shop_icon_delete",
+                child: loadAssetImage("user/qyg_shop_icon_delete",
                   width: 18.0,
                   height: 18.0,
                 ),
@@ -144,7 +144,7 @@ class _MyTextFieldState extends State<MyTextField> {
                 padding: const EdgeInsets.only(left: 15.0),
                 child: GestureDetector(
                   child: loadAssetImage(
-                    _isShowPwd ? "login/qyg_shop_icon_display" : "login/qyg_shop_icon_hide",
+                    _isShowPwd ? "user/qyg_shop_icon_display" : "user/qyg_shop_icon_hide",
                     width: 18.0,
                     height: 18.0,
                   ),

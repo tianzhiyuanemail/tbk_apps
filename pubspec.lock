@@ -132,15 +132,6 @@ packages:
     description: flutter
     source: sdk
     version: "0.0.0"
-  flutter_2d_amap:
-    dependency: "direct main"
-    description:
-      path: "."
-      ref: HEAD
-      resolved-ref: "9705e914e9c3593f41cb4d32d0f43b3abb9b14f1"
-      url: "https://github.com/simplezhli/flutter_2d_amap.git"
-    source: git
-    version: "0.0.1"
   flutter_cache_manager:
     dependency: transitive
     description:
@@ -475,13 +466,6 @@ packages:
       url: "https://pub.flutter-io.cn"
     source: hosted
     version: "0.10.1+5"
-  webview_flutter:
-    dependency: "direct main"
-    description:
-      name: webview_flutter
-      url: "https://pub.flutter-io.cn"
-    source: hosted
-    version: "0.3.10+4"
 sdks:
   dart: ">=2.3.0-dev.0.5.flutter-a1668566e5 <3.0.0"
   flutter: ">=1.5.0 <2.0.0"

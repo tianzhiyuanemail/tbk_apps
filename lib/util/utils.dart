@@ -18,6 +18,7 @@ class Utils {
     }
   }
 
+  /// 键盘关闭
   static KeyboardActionsConfig getKeyboardActionsConfig(List<FocusNode> list){
     return KeyboardActionsConfig(
       keyboardActionsPlatform: KeyboardActionsPlatform.IOS,
