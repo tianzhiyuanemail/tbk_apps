@@ -100,6 +100,7 @@ class _MyTextFieldState extends State<MyTextField> {
           controller: widget.controller,
           textInputAction: TextInputAction.done,
           keyboardType: widget.keyboardType,
+          keyboardAppearance: Brightness.light,
           // 数字、手机号限制格式为0到9(白名单)， 密码限制不包含汉字（黑名单）
           inputFormatters: (widget.keyboardType == TextInputType.number || widget.keyboardType == TextInputType.phone) ? 
           [WhitelistingTextInputFormatter(RegExp("[0-9]"))] : [BlacklistingTextInputFormatter(RegExp("[\u4e00-\u9fa5]"))],

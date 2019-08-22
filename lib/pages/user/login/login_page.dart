@@ -6,13 +6,20 @@ import 'package:flustars/flustars.dart' as FlutterStars;
 
 import 'package:keyboard_actions/keyboard_actions.dart';
 import 'package:tbk_app/common/common.dart';
+import 'package:tbk_app/modle/user_info_entity.dart';
 import 'package:tbk_app/res/resources.dart';
 import 'package:tbk_app/router/routers.dart';
 import 'package:tbk_app/util/fluro_navigator_util.dart';
+import 'package:tbk_app/util/http_util.dart';
+import 'package:tbk_app/util/map_url_params_utils.dart';
+import 'package:tbk_app/util/sp_util.dart';
+import 'package:tbk_app/util/toast.dart';
 import 'package:tbk_app/util/utils.dart';
 import 'package:tbk_app/widgets/app_bar.dart';
 import 'package:tbk_app/widgets/my_button.dart';
 import 'package:tbk_app/widgets/text_field.dart';
+
+import '../../../entity_factory.dart';
 
 /// 用户登录
 class LoginPage extends StatefulWidget {
@@ -59,8 +66,32 @@ class _LoginPageState extends State<LoginPage> {
   }
 
   void _login() {
-    FlutterStars.SpUtil.putString(Constant.phone, _nameController.text);
-    NavigatorUtil.push(context, '');
+
+    Toast.show("确认......");
+    String name = _nameController.text;
+    String password = _passwordController.text;
+
+
+    Map<String, Object> map = Map();
+    map["loginType"] = 4;
+    map["mobile"] = name;
+    map["password"] = password;
+
+    HttpUtil()
+        .get('loginPassword', parms: MapUrlParamsUtils.getUrlParamsByMap(map))
+        .then((val) {
+      if (val["success"]) {
+        Toast.show("登录成功");
+        UserInfoEntity userInfoEntityr =
+        EntityFactory.generateOBJ<UserInfoEntity>(val['data']);
+
+        SpUtil.putString("tocken", userInfoEntityr.tocken);
+        NavigatorUtil.push(context, "${Routers.root}",);
+      }else{
+        Toast.show("登录失败");
+      }
+    });
+
   }
 
   @override

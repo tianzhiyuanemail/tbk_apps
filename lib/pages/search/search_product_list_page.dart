@@ -8,6 +8,7 @@ import 'package:flutter/widgets.dart';
 import 'package:flutter_easyrefresh/easy_refresh.dart';
 import 'package:tbk_app/modle/product_list_entity.dart';
 import 'package:tbk_app/modle/sort_modle.dart';
+import 'package:tbk_app/res/resources.dart';
 import 'package:tbk_app/router/application.dart';
 import 'package:tbk_app/util/easy_refresh_util.dart';
 import 'package:tbk_app/util/http_util.dart';
@@ -18,6 +19,7 @@ import 'package:tbk_app/widgets/product_silvrs_sort_static_bar_widget.dart';
 
 import '../../entity_list_factory.dart';
 
+// ignore: must_be_immutable
 class SearchProductListPage extends StatefulWidget {
   String searchText;
 
@@ -48,6 +50,7 @@ class _SearchProductListPage extends State<SearchProductListPage>
     _getGoods();
     //监听滚动事件，打印滚动位置
     _controller.addListener(() {
+      FocusScope.of(context).requestFocus(FocusNode());
       if (_controller.offset < 1000 && showToTopBtn) {
         setState(() {
           setState(() {
@@ -102,18 +105,22 @@ class _SearchProductListPage extends State<SearchProductListPage>
       appBar: AppBar(
         backgroundColor: Colors.white,
         leading: IconButton(
-          icon: Icon(
-            Icons.arrow_back_ios,
-            color: Colors.black12,
-          ),
           onPressed: () {
-            Application.router.pop(context);
+            FocusScope.of(context).requestFocus(FocusNode());
+            Navigator.maybePop(context);
           },
+          padding: const EdgeInsets.all(12.0),
+          icon: Image.asset(
+            "assets/images/sys/ic_back_black.png",
+            color: Colors.black,
+            width: 25,
+          ),
         ),
         //导航栏和状态栏的的颜色
         elevation: 0,
         //阴影的高度
         brightness: Brightness.light,
+
         centerTitle: true,
         //标题是否居中，默认为false
         //        toolbarOpacity: 0.5, //整个导航栏的不透明度
@@ -138,10 +145,11 @@ class _SearchProductListPage extends State<SearchProductListPage>
               });
             },
             controller: TextEditingController(text: this.searchText),
-            autofocus: true,
+            autofocus: false,
             maxLines: 1,
             keyboardType: TextInputType.text,
-            cursorColor: Color.fromARGB(255, 0, 189, 96),
+            cursorColor: Colours.text_gray,
+            keyboardAppearance: Brightness.light,
             decoration: InputDecoration(
                 contentPadding: const EdgeInsets.only(top: 8.0),
                 border: InputBorder.none,
@@ -153,7 +161,7 @@ class _SearchProductListPage extends State<SearchProductListPage>
                     color: Color.fromARGB(255, 128, 128, 128),
                   ),
                 )),
-            style: TextStyle(fontSize: 17),
+            style: TextStyles.textNormal16,
           ),
         ),
       ),

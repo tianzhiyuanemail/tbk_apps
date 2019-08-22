@@ -3,15 +3,21 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
 import 'package:keyboard_actions/keyboard_actions.dart';
+import 'package:tbk_app/modle/user_info_entity.dart';
 import 'package:tbk_app/res/resources.dart';
 import 'package:tbk_app/res/styles.dart';
 import 'package:tbk_app/router/routers.dart';
 import 'package:tbk_app/util/fluro_navigator_util.dart';
+import 'package:tbk_app/util/http_util.dart';
+import 'package:tbk_app/util/map_url_params_utils.dart';
+import 'package:tbk_app/util/sp_util.dart';
 import 'package:tbk_app/util/toast.dart';
 import 'package:tbk_app/util/utils.dart';
 import 'package:tbk_app/widgets/app_bar.dart';
 import 'package:tbk_app/widgets/my_button.dart';
 import 'package:tbk_app/widgets/text_field.dart';
+
+import '../../../entity_factory.dart';
 
 class SMSLoginPage extends StatefulWidget {
   @override
@@ -52,9 +58,7 @@ class _SMSLoginState extends State<SMSLoginPage> {
     }
   }
 
-  void _login(){
-    Toast.show("去登录......");
-  }
+
 
   @override
   Widget build(BuildContext context) {
@@ -95,7 +99,7 @@ class _SMSLoginState extends State<SMSLoginPage> {
             keyboardType: TextInputType.number,
             hintText: "请输入验证码",
             getVCode: (){
-              Toast.show('获取验证码');
+              _getCode();
               return Future.value(true);
             },
           ),
@@ -140,5 +144,53 @@ class _SMSLoginState extends State<SMSLoginPage> {
         ],
       ),
     );
+  }
+
+  void _login(){
+    Toast.show("去登录......");
+    Toast.show("确认......");
+    String name = _phoneController.text;
+    String code = _vCodeController.text;
+
+
+    Map<String, Object> map = Map();
+    map["loginType"] = 4;
+    map["mobile"] = name;
+    map["code"] = code;
+
+    HttpUtil()
+        .get('loginPhone', parms: MapUrlParamsUtils.getUrlParamsByMap(map))
+        .then((val) {
+      if (val["success"]) {
+        Toast.show("登录成功");
+        UserInfoEntity userInfoEntityr =
+        EntityFactory.generateOBJ<UserInfoEntity>(val['data']);
+
+        SpUtil.putString("tocken", userInfoEntityr.tocken);
+        NavigatorUtil.push(context, "${Routers.root}",);
+      }else{
+        Toast.show("登录失败");
+      }
+    });
+
+  }
+  /// 获取验证码
+  void _getCode() {
+    String phoneNumber = _phoneController.text;
+
+    Map<String, Object> map = Map();
+    map["type"] = 1;
+    map["mobile"] = phoneNumber;
+
+    HttpUtil()
+        .get('sendSms', parms: MapUrlParamsUtils.getUrlParamsByMap(map))
+        .then((val) {
+      if (val["success"]) {
+        Toast.show("验证码已发送");
+      }else{
+        Toast.show("验证码发送失败");
+      }
+    });
+
   }
 }

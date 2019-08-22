@@ -13,6 +13,7 @@ import 'package:tbk_app/util/fluro_navigator_util.dart';
 import 'package:tbk_app/util/http_util.dart';
 import 'package:tbk_app/util/image_utils.dart';
 import 'package:tbk_app/util/loadingIndicator_util.dart';
+import 'package:tbk_app/util/sp_util.dart';
 import 'package:tbk_app/widgets/image_text_click_item.dart';
 
 import '../../entity_factory.dart';
@@ -33,6 +34,8 @@ class _MyInfoPageState extends State<MyInfoPage> {
   void initState() {
     super.initState();
 //
+    print("tocken ::::::::::::::::::::::::::::::::"+SpUtil.getString("tocken"));
+
     HttpUtil().get('getUser').then((val) {
       if (val["success"]) {
         setState(() {

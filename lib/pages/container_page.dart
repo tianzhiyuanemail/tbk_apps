@@ -76,7 +76,7 @@ class _ContainerPageState extends State<ContainerPage> {
         items: this.itemList,
         onTap: (int index) {
           if (index == 3 && (tocken == null || tocken == '')) {
-            NavigatorUtil.gotransitionPage(context, "${Routers.userLoginPage}");
+            NavigatorUtil.gotransitionPage(context, "${Routers.loginPage}");
 //            NavigatorUtil.push(context, "${Routers.loginPage}");
           } else {
             ///这里根据点击的index来显示，非index的page均隐藏

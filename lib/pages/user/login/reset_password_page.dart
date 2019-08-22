@@ -4,12 +4,20 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
 import 'package:keyboard_actions/keyboard_actions.dart';
+import 'package:tbk_app/modle/user_info_entity.dart';
 import 'package:tbk_app/res/styles.dart';
+import 'package:tbk_app/router/routers.dart';
+import 'package:tbk_app/util/fluro_navigator_util.dart';
+import 'package:tbk_app/util/http_util.dart';
+import 'package:tbk_app/util/map_url_params_utils.dart';
+import 'package:tbk_app/util/sp_util.dart';
 import 'package:tbk_app/util/toast.dart';
 import 'package:tbk_app/util/utils.dart';
 import 'package:tbk_app/widgets/app_bar.dart';
 import 'package:tbk_app/widgets/my_button.dart';
 import 'package:tbk_app/widgets/text_field.dart';
+
+import '../../../entity_factory.dart';
 
 /// 修改密码
 class ResetPasswordPage extends StatefulWidget {
@@ -58,9 +66,51 @@ class _ResetPasswordPageState extends State<ResetPasswordPage> {
       });
     }
   }
-  
+
   void _reset(){
     Toast.show("确认......");
+    String phoneNumber = _nameController.text;
+    String vCode = _vCodeController.text;
+    String password = _passwordController.text;
+
+
+    Map<String, Object> map = Map();
+    map["loginType"] = 4;
+    map["mobile"] = phoneNumber;
+    map["code"] = vCode;
+    map["password"] = password;
+
+    HttpUtil()
+        .get('forgetPassword', parms: MapUrlParamsUtils.getUrlParamsByMap(map))
+        .then((val) {
+      if (val["success"]) {
+        Toast.show("修改成功");
+        NavigatorUtil.goBack(context);
+      }else{
+        Toast.show("修改失败");
+      }
+    });
+
+  }
+
+  /// 获取验证码
+  void _getCode() {
+    String phoneNumber = _nameController.text;
+
+    Map<String, Object> map = Map();
+    map["type"] = 1;
+    map["mobile"] = phoneNumber;
+
+    HttpUtil()
+        .get('sendSms', parms: MapUrlParamsUtils.getUrlParamsByMap(map))
+        .then((val) {
+      if (val["success"]) {
+        Toast.show("验证码已发送");
+      }else{
+        Toast.show("验证码发送失败");
+      }
+    });
+
   }
 
   @override
@@ -102,6 +152,7 @@ class _ResetPasswordPageState extends State<ResetPasswordPage> {
             controller: _vCodeController,
             keyboardType: TextInputType.number,
             getVCode: (){
+              _getCode();
               return Future.value(true);
             },
             maxLength: 6,

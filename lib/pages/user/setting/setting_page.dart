@@ -31,7 +31,6 @@ class _UserSetUpPageState extends State<SettingPage> {
   void initState() {
     // TODO: implement initState
     super.initState();
-
     HttpUtil().get('getUser').then((val) {
       if (val["success"]) {
         setState(() {

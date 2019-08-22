@@ -38,7 +38,7 @@ class SliverProductList extends StatelessWidget {
             Container(
               width: ScreenUtil().setWidth(260),
               height: ScreenUtil().setHeight(260),
-              child: loadNetworkImage(obj.pictUrl),
+              child: loadNetworkImage("${obj.pictUrl}_310x310.jpg"),
             ),
             Container(
               width: ScreenUtil().setWidth(450),
@@ -184,7 +184,7 @@ class SliverProductList extends StatelessWidget {
               alignment: Alignment.center,
               width: ScreenUtil().setWidth(350),
               height: ScreenUtil().setHeight(350),
-              child: loadNetworkImage(obj.pictUrl),
+              child: loadNetworkImage("${obj.pictUrl}_310x310.jpg"),
             ),
             Container(
               width: ScreenUtil().setWidth(370),
@@ -323,7 +323,7 @@ class ProductList extends StatelessWidget {
               Container(
                 width: ScreenUtil().setWidth(260),
                 height: ScreenUtil().setHeight(260),
-                child: loadNetworkImage(obj.pictUrl),
+                child: loadNetworkImage("${obj.pictUrl}_310x310.jpg"),
               ),
               Container(
                 width: ScreenUtil().setWidth(450),
@@ -474,7 +474,7 @@ class ProductList extends StatelessWidget {
                 alignment: Alignment.center,
                 width: ScreenUtil().setWidth(350),
                 height: ScreenUtil().setHeight(350),
-                child: loadNetworkImage(obj.pictUrl),
+                child: loadNetworkImage("${obj.pictUrl}_310x310.jpg"),
               ),
               Container(
                 width: ScreenUtil().setWidth(370),

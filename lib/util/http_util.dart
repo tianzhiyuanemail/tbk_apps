@@ -3,8 +3,6 @@ import 'dart:io';
 import 'package:cookie_jar/cookie_jar.dart';
 import 'package:dio/dio.dart';
 import 'package:tbk_app/config/service_url.dart';
-import 'package:tbk_app/modle/user_info_entity.dart';
-import 'package:tbk_app/util/shared_preference_util.dart';
 import 'package:tbk_app/util/sp_util.dart';
 
 class HttpUtil {
@@ -28,9 +26,7 @@ class HttpUtil {
       headers: {
         //do something
         "version": "1.0.0",
-        "Authorization": SpUtil.getString("tocken") == null
-            ? ""
-            : SpUtil.getString("tocken"),
+        "Authorization": SpUtil.getString("tocken"),
       },
       //请求的Content-Type，默认值是[ContentType.json]. 也可以用ContentType.parse("application/x-www-form-urlencoded")
       contentType: ContentType.json,
@@ -47,6 +43,7 @@ class HttpUtil {
     dio.interceptors
         .add(InterceptorsWrapper(onRequest: (RequestOptions options) {
       print("请求之前");
+
       // Do something before request is sent
 //      Loading.before(options.uri, '正在加速中...');
       return options; //continue
@@ -71,6 +68,7 @@ class HttpUtil {
    * get请求
    */
   Future get(path, {parms, data, options, cancelToken}) async {
+//    dio.options.headers.putIfAbsent("", SpUtil.getString("tocken"));
     print("传入参数${servicePath[path]}?${parms}");
 
     Response response;

@@ -56,7 +56,8 @@ Handler searchPageHandler = Handler(
 ///searchProductList
 Handler searchProductListPageHandler = Handler(
     handlerFunc: (BuildContext context, Map<String, List<String>> params) {
-  String searchText = params['searchText'].first;
+  String s = params['searchText'].first;
+  String searchText = FluroConvertUtils.fluroCnParamsDecode(s);
   return SearchProductListPage(searchText);
 });
 

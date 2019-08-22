@@ -2,14 +2,21 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-
 import 'package:keyboard_actions/keyboard_actions.dart';
+import 'package:tbk_app/modle/user_info_entity.dart';
 import 'package:tbk_app/res/resources.dart';
+import 'package:tbk_app/router/routers.dart';
+import 'package:tbk_app/util/fluro_navigator_util.dart';
+import 'package:tbk_app/util/http_util.dart';
+import 'package:tbk_app/util/map_url_params_utils.dart';
+import 'package:tbk_app/util/sp_util.dart';
 import 'package:tbk_app/util/toast.dart';
 import 'package:tbk_app/util/utils.dart';
 import 'package:tbk_app/widgets/app_bar.dart';
 import 'package:tbk_app/widgets/my_button.dart';
 import 'package:tbk_app/widgets/text_field.dart';
+
+import '../../../entity_factory.dart';
 
 /// 用户注册
 class RegisterPage extends StatefulWidget {
@@ -27,7 +34,8 @@ class _RegisterPageState extends State<RegisterPage> {
   final FocusNode _nodeText3 = FocusNode();
   KeyboardActionsConfig _config;
   bool _isClick = false;
-  
+
+
   @override
   void initState() {
     super.initState();
@@ -59,9 +67,6 @@ class _RegisterPageState extends State<RegisterPage> {
     }
   }
   
-  void _register(){
-    Toast.show("确认......");
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -103,8 +108,7 @@ class _RegisterPageState extends State<RegisterPage> {
             keyboardType: TextInputType.number,
             getVCode: () async {
               if (_nameController.text.length == 11){
-                Toast.show("并没有真正发送哦，直接登录吧！");
-                /// 一般可以在这里发送真正的请求，请求成功返回true
+                 _getCode();
                 return true;
               }else{
                 Toast.show("请输入有效的手机号");
@@ -132,4 +136,56 @@ class _RegisterPageState extends State<RegisterPage> {
       ),
     );
   }
+
+
+  void _register(){
+    Toast.show("确认......");
+    String phoneNumber = _nameController.text;
+    String vCode = _vCodeController.text;
+    String password = _passwordController.text;
+
+
+    Map<String, Object> map = Map();
+    map["loginType"] = 4;
+    map["mobile"] = phoneNumber;
+    map["code"] = vCode;
+    map["password"] = password;
+
+    HttpUtil()
+        .get('register', parms: MapUrlParamsUtils.getUrlParamsByMap(map))
+        .then((val) {
+      if (val["success"]) {
+        Toast.show("注册成功");
+        UserInfoEntity userInfoEntityr =
+        EntityFactory.generateOBJ<UserInfoEntity>(val['data']);
+
+        SpUtil.putString("tocken", userInfoEntityr.tocken);
+        NavigatorUtil.gotransitionPage(context, "${Routers.root}");
+      }else{
+        Toast.show("注册失败");
+      }
+    });
+
+  }
+
+  /// 获取验证码
+  void _getCode() {
+    String phoneNumber = _nameController.text;
+
+    Map<String, Object> map = Map();
+    map["type"] = 1;
+    map["mobile"] = phoneNumber;
+
+    HttpUtil()
+        .get('sendSms', parms: MapUrlParamsUtils.getUrlParamsByMap(map))
+        .then((val) {
+      if (val["success"]) {
+        Toast.show("验证码已发送");
+      }else{
+        Toast.show("验证码发送失败");
+      }
+    });
+
+  }
+
 }

@@ -276,7 +276,7 @@ class SwiperDiy extends StatelessWidget {
           Swiper(
             index: 0,
             itemBuilder: (BuildContext context, int index) {
-              return loadNetworkImage("${list[index]}", fit: BoxFit.fill);
+              return loadNetworkImage("${list[index]}_500x500.jpg", fit: BoxFit.fill);
             },
             itemCount: list.length,
             pagination: SwiperPagination(
