@@ -9,6 +9,8 @@ import 'package:flutter/rendering.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_easyrefresh/easy_refresh.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:tbk_app/modle/cate_entity.dart';
+import 'package:tbk_app/modle/home_cate_entity.dart';
 import 'package:tbk_app/modle/product_list_entity.dart';
 import 'package:tbk_app/modle/sort_modle.dart';
 import 'package:tbk_app/util/easy_refresh_util.dart';
@@ -23,7 +25,11 @@ import 'package:tbk_app/widgets/product_silvrs_sort_static_bar_widget.dart';
 import '../../entity_list_factory.dart';
 
 class HomePageOther extends StatefulWidget {
-  String cateId = "16";
+
+  HomeCateEntity homeCateEntity;
+
+  HomePageOther({Key key,this.homeCateEntity});
+
   @override
   _HomePageOtherState createState() => _HomePageOtherState();
 }
@@ -39,11 +45,6 @@ class _HomePageOtherState extends State<HomePageOther>
 
   bool showToTopBtn = false; //是否显示“返回到顶部”按钮
 
-  String productId = "1234";
-  String productImage =
-      "http://kaze-sora.com/sozai/blog_haru/blog_mitubachi01.jpg";
-
-  List secondaryCategoryList = List(10);
   List<ProductListEntity> goodsList = [];
   int page = 0;
 
@@ -101,13 +102,8 @@ class _HomePageOtherState extends State<HomePageOther>
         child: CustomScrollView(
           controller: _controller,
           slivers: <Widget>[
-            CateHotProduct(
-              productImage: productImage,
-              productId: productId,
-            ),
-            SecondaryCategory(
-              secondaryCategoryList: secondaryCategoryList,
-            ),
+            CateHot(homeCateEntity: widget.homeCateEntity),
+            SecondaryCategory(homeCateEntity: widget.homeCateEntity),
             SliverSortStaticyBar.buildStickyBar(_sortModle,
                     (SortModle sortModle) {
                   setState(() {
@@ -130,7 +126,7 @@ class _HomePageOtherState extends State<HomePageOther>
   void _getGoods() {
 
     Map<String, Object> map  = Map();
-    map["cateId"] =   widget.cateId;
+    map["cateId"] =   widget.homeCateEntity.cateId;
     map["pageNo"] =   page;
     map["sort"]   = _sortModle.s1+_sortModle.s2;
 
@@ -160,44 +156,43 @@ class _HomePageOtherState extends State<HomePageOther>
 
 }
 
-class CateHotProduct extends StatelessWidget {
-  final String productImage;
-  final String productId;
+class CateHot extends StatelessWidget {
+  HomeCateEntity homeCateEntity;
 
-  CateHotProduct(
-      {Key key, @required this.productId, @required this.productImage})
+  CateHot(
+      {Key key, @required this.homeCateEntity})
       : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return SliverToBoxAdapter(
       child: InkWell(
-        onTap: () {
-          print(productId);
-        },
-        child: loadNetworkImage(productImage),
+        onTap: () {},
+        child: loadNetworkImage(homeCateEntity.image),
       ),
     );
   }
 }
 
 class SecondaryCategory extends StatelessWidget {
-  final List secondaryCategoryList;
+  HomeCateEntity homeCateEntity;
 
-  SecondaryCategory({Key key, this.secondaryCategoryList}) : super(key: key);
+  SecondaryCategory(
+      {Key key, @required this.homeCateEntity})
+      : super(key: key);
 
-  Widget _itemUI(BuildContext context, item) {
+  Widget _itemUI(BuildContext context,CateEntity cateEntity) {
     return InkWell(
       onTap: () {
-        Toast.show("点击了导航");
+        Toast.show(cateEntity.cateName);
       },
       child: Column(
         children: <Widget>[
           loadNetworkImage(
-            'http://e.hiphotos.baidu.com/image/pic/item/359b033b5bb5c9eac1754f45df39b6003bf3b396.jpg',
-            width: ScreenUtil().setHeight(95),
+            cateEntity.cateIcon,
+            width: ScreenUtil().setHeight(60),
           ),
-          Text("首页")
+          Text(cateEntity.cateName)
         ],
       ),
     );
@@ -213,42 +208,15 @@ class SecondaryCategory extends StatelessWidget {
           physics: NeverScrollableScrollPhysics(),
           crossAxisCount: 5,
           padding: EdgeInsets.all(4.0),
-          children: secondaryCategoryList.map((item) {
-            return _itemUI(context, item);
+          children: homeCateEntity.data.asMap().keys.map((key) {
+            if(key < 10){
+              return _itemUI(context, homeCateEntity.data[key]);
+            }else {
+              return  Container();
+            }
           }).toList(),
         ),
       ),
     );
-  }
-}
-
-class _SliverAppBarDelegate extends SliverPersistentHeaderDelegate {
-  _SliverAppBarDelegate({
-    @required this.minHeight,
-    @required this.maxHeight,
-    @required this.child,
-  });
-
-  final double minHeight;
-  final double maxHeight;
-  final Widget child;
-
-  @override
-  double get minExtent => minHeight;
-
-  @override
-  double get maxExtent => math.max((minHeight ?? kToolbarHeight), minExtent);
-
-  @override
-  Widget build(
-      BuildContext context, double shrinkOffset, bool overlapsContent) {
-    return child;
-  }
-
-  @override
-  bool shouldRebuild(_SliverAppBarDelegate oldDelegate) {
-    return maxHeight != oldDelegate.maxHeight ||
-        minHeight != oldDelegate.minHeight ||
-        child != oldDelegate.child;
   }
 }

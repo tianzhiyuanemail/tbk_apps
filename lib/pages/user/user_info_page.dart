@@ -7,8 +7,8 @@ import 'package:flutter/rendering.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:tbk_app/modle/user_info_entity.dart';
+import 'package:tbk_app/res/colors.dart';
 import 'package:tbk_app/router/routers.dart';
-import 'package:tbk_app/util/colors_util.dart';
 import 'package:tbk_app/util/fluro_navigator_util.dart';
 import 'package:tbk_app/util/http_util.dart';
 import 'package:tbk_app/util/image_utils.dart';
@@ -126,7 +126,7 @@ class HeaderChild extends StatelessWidget {
             margin: EdgeInsets.only(top: 0, bottom: 0),
             padding: EdgeInsets.only(top: 14, bottom: 0),
             decoration: BoxDecoration(
-              color: ColorsUtil.hexToColor(ColorsUtil.appBarColor),
+              color: Colours.appbar_red,
               border: Border(
                 bottom: BorderSide(
                   color: Colors.black12,
@@ -198,7 +198,7 @@ class UserInformation extends StatelessWidget {
     return Container(
         padding: EdgeInsets.only(top: 0, left: 15, bottom: 15),
         width: ScreenUtil().setWidth(750),
-        color: ColorsUtil.hexToColor(ColorsUtil.appBarColor),
+        color: Colours.appbar_red,
         child: Column(
           children: <Widget>[
             /// 头像 昵称 邀请码

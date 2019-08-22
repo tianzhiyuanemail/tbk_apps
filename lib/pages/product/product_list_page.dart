@@ -9,7 +9,7 @@ import 'package:flutter_easyrefresh/easy_refresh.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:tbk_app/modle/product_list_entity.dart';
 import 'package:tbk_app/modle/sort_modle.dart';
-import 'package:tbk_app/util/colors_util.dart';
+import 'package:tbk_app/res/colors.dart';
 import 'package:tbk_app/util/easy_refresh_util.dart';
 import 'package:tbk_app/util/fluro_navigator_util.dart';
 import 'package:tbk_app/util/http_util.dart';
@@ -150,7 +150,7 @@ class _ProductListPage extends State<ProductListPage>
 //      ),
       appBar: PreferredSize(
         child: AppBar(
-          backgroundColor: ColorsUtil.hexToColor(ColorsUtil.appBarColor),
+          backgroundColor: Colours.appbar_red,
           title: Text(widget.cateName,style: TextStyle(fontSize: 15),),
 
           leading: IconButton(

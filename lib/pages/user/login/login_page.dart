@@ -2,7 +2,6 @@ import 'package:fluro/fluro.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flustars/flustars.dart' as FlutterStars;
 
 import 'package:keyboard_actions/keyboard_actions.dart';
 import 'package:tbk_app/common/common.dart';
@@ -42,7 +41,7 @@ class _LoginPageState extends State<LoginPage> {
     //监听输入改变
     _nameController.addListener(_verify);
     _passwordController.addListener(_verify);
-    _nameController.text = FlutterStars.SpUtil.getString(Constant.phone);
+    _nameController.text = SpUtil.getString(Constant.phone);
     _config = Utils.getKeyboardActionsConfig([_nodeText1, _nodeText2]);
   }
 

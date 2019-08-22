@@ -5,7 +5,6 @@ import 'package:tbk_app/modle/sms_entity.dart';
 import 'package:tbk_app/modle/taobao_user_entity.dart';
 import 'package:tbk_app/modle/user_info_entity.dart';
 import 'package:tbk_app/router/routers.dart';
-import 'package:tbk_app/util/colors_util.dart';
 import 'package:tbk_app/util/fluro_navigator_util.dart';
 import 'package:tbk_app/util/http_util.dart';
 import 'package:tbk_app/util/map_url_params_utils.dart';

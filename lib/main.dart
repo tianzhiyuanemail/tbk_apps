@@ -8,13 +8,13 @@ import 'package:oktoast/oktoast.dart';
 import 'package:provide/provide.dart';
 import 'package:tbk_app/provide/child_cate.dart';
 import 'package:tbk_app/provide/user_info_provide.dart';
+import 'package:tbk_app/res/colors.dart';
 import 'package:tbk_app/router/application.dart';
 import 'package:tbk_app/router/routers.dart';
 import 'package:tbk_app/util/sp_util.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'config/loading.dart';
 import 'pages/splash/splash_page.dart';
-import 'util/colors_util.dart';
 
 void main() async {
   var childCate = ChildCate();
@@ -70,8 +70,7 @@ class MyApp extends StatelessWidget {
               debugShowCheckedModeBanner: false,
               theme: ThemeData(
                 platform: TargetPlatform.iOS,
-                backgroundColor:
-                    ColorsUtil.hexToColor(ColorsUtil.backGroundColor),
+                backgroundColor: Colours.bg_color,
               ),
               home: Scaffold(
                 resizeToAvoidBottomPadding: false,

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:tbk_app/modle/material_entity.dart';
-import 'package:tbk_app/util/colors_util.dart';
+import 'package:tbk_app/res/colors.dart';
 import 'package:tbk_app/util/fluro_navigator_util.dart';
 
 import 'navigator_router_view_page.dart';
@@ -36,7 +36,7 @@ class _nineParcelPostState extends State<NavigatorRouterPage>
         child: Scaffold(
           appBar: PreferredSize(
             child: AppBar(
-              backgroundColor: ColorsUtil.hexToColor(ColorsUtil.appBarColor),
+              backgroundColor: Colours.appbar_red,
               title: Container(
                 margin: EdgeInsets.only(top: 5),
                 child: Text(
@@ -104,7 +104,7 @@ class TabBars extends StatelessWidget {
             .toList(),
         isScrollable: true,
         controller: tabController,
-        indicatorColor: ColorsUtil.hexToColor(ColorsUtil.appBarColor),
+        indicatorColor: Colours.appbar_red,
         labelColor: Colors.white,
         labelStyle: TextStyle(fontSize: 15, color: Colors.black45),
         unselectedLabelColor: Colors.black45,

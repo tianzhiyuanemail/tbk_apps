@@ -2,7 +2,7 @@ import 'dart:math' as math;
 
 import 'package:flutter/material.dart';
 import 'package:tbk_app/modle/sort_modle.dart';
-import 'package:tbk_app/util/colors_util.dart';
+import 'package:tbk_app/res/colors.dart';
 
 class SliverSortStaticyBar {
   /// 固定导航
@@ -42,7 +42,7 @@ class SliverSortStaticyBar {
                         "销量",
                         style: TextStyle(
                             color: _sortModle.s1 == _sortModle.total_sales
-                                ?  ColorsUtil.hexToColor(ColorsUtil.appBarColor)
+                                ?  Colours.appbar_red
                                 : null),
                       ),
                       Icon(
@@ -51,7 +51,7 @@ class SliverSortStaticyBar {
                             ? Icons.keyboard_arrow_up
                             : Icons.keyboard_arrow_down,
                         color: _sortModle.s1 == _sortModle.total_sales
-                            ?  ColorsUtil.hexToColor(ColorsUtil.appBarColor)
+                            ?  Colours.appbar_red
                             : null,
                         size: 22,
                       ),
@@ -75,7 +75,7 @@ class SliverSortStaticyBar {
                         "价格",
                         style: TextStyle(
                             color: _sortModle.s1 == _sortModle.price
-                                ?  ColorsUtil.hexToColor(ColorsUtil.appBarColor)
+                                ?  Colours.appbar_red
                                 : null),
                       ),
                       Icon(
@@ -84,7 +84,7 @@ class SliverSortStaticyBar {
                             ? Icons.keyboard_arrow_up
                             : Icons.keyboard_arrow_down,
                         color: _sortModle.s1 == _sortModle.price
-                            ?  ColorsUtil.hexToColor(ColorsUtil.appBarColor)
+                            ? Colours.appbar_red
                             : null,
                         size: 22,
                       ),

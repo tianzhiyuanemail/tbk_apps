@@ -14,9 +14,9 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_swiper/flutter_swiper.dart';
 import 'package:tbk_app/modle/product_entity.dart';
 import 'package:tbk_app/modle/product_list_entity.dart';
+import 'package:tbk_app/res/colors.dart';
 import 'package:tbk_app/router/application.dart';
 import 'package:tbk_app/router/routers.dart';
-import 'package:tbk_app/util/colors_util.dart';
 import 'package:tbk_app/util/easy_refresh_util.dart';
 import 'package:tbk_app/util/fluro_navigator_util.dart';
 import 'package:tbk_app/util/http_util.dart';
@@ -390,7 +390,7 @@ class ProductInfomation extends StatelessWidget {
                     text: '¥${productEntity.afterCouponPrice}',
                     style: TextStyle(
                       fontSize: 20,
-                      color: ColorsUtil.hexToColor(ColorsUtil.appBarColor),
+                      color: Colours.appbar_red,
                     ),
                   ),
 //                  TextSpan(
@@ -491,10 +491,10 @@ class ProductInfomation extends StatelessWidget {
             margin: EdgeInsets.only(left: 0, right: 10, bottom: 0, top: 0),
             padding: EdgeInsets.only(left: 3, right: 3, bottom: 0, top: 0),
             decoration: BoxDecoration(
-              color: ColorsUtil.hexToColor(ColorsUtil.appBarColor),
+              color: Colours.appbar_red,
               border: Border.all(
                   width: 0.70,
-                  color: ColorsUtil.hexToColor(ColorsUtil.appBarColor)),
+                  color: Colours.appbar_red,),
               borderRadius: BorderRadius.circular(2),
             ),
             child: Text(
@@ -921,7 +921,7 @@ class DetailsBottom extends StatelessWidget {
                     "喜欢",
                     style: TextStyle(
                       color: true
-                          ? ColorsUtil.hexToColor(ColorsUtil.appBarColor)
+                          ? Colours.appbar_red
                           : Colors.black,
                       fontSize: 12,
                     ),
@@ -961,7 +961,7 @@ class DetailsBottom extends StatelessWidget {
                 child: Container(
                   alignment: Alignment.center,
                   width: ScreenUtil().setWidth(210),
-                  color: ColorsUtil.hexToColor(ColorsUtil.appBarColor),
+                  color: Colours.appbar_red,
                   padding: EdgeInsets.only(left: 20),
                   child: Row(
                     children: <Widget>[

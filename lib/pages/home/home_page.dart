@@ -4,21 +4,26 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:tbk_app/modle/home_cate_entity.dart';
 import 'package:tbk_app/modle/tab_item_modle.dart';
+import 'package:tbk_app/res/colors.dart';
+import 'package:tbk_app/res/styles.dart';
 import 'package:tbk_app/router/routers.dart';
-import 'package:tbk_app/util/colors_util.dart';
 import 'package:tbk_app/util/fluro_navigator_util.dart';
 import 'package:tbk_app/util/image_utils.dart';
+import 'package:tbk_app/util/sp_util.dart';
 import 'package:tbk_app/util/toast.dart';
 import 'package:tbk_app/widgets/app_bar.dart';
 import 'package:tbk_app/widgets/image_text_click_item.dart';
 import 'package:tbk_app/widgets/popup_window.dart';
 
+import '../../entity_list_factory.dart';
 import 'hom_page_other.dart';
 import 'home_page_first.dart';
 
 /// 首页
 class HomePage extends StatefulWidget {
+
   @override
   State<StatefulWidget> createState() {
     return new _BookAudioVideoPageState();
@@ -28,20 +33,9 @@ class HomePage extends StatefulWidget {
 /// 首页 state
 class _BookAudioVideoPageState extends State<HomePage>
     with SingleTickerProviderStateMixin, AutomaticKeepAliveClientMixin {
-  List<TabItem> titleList = [
-    TabItem("首页", "", "", true),
-    TabItem("猜你喜欢", "", "", true),
-    TabItem("母婴", "", "", true),
-    TabItem("食品", "", "", true),
-    TabItem("女装", "", "", true),
-    TabItem("彩妆", "", "", true),
-    TabItem("洗护", "", "", true),
-    TabItem("内衣", "", "", true),
-    TabItem("百货", "", "", true),
-    TabItem("家电", "", "", true),
-    TabItem("家居", "", "", true),
-    TabItem("数码", "", "", true)
-  ];
+  List<HomeCateEntity> homeCateList = EntityListFactory.generateList<HomeCateEntity>(SpUtil.getObjectList('homeCateList'));
+
+
   GlobalKey _buttonKey = GlobalKey();
   GlobalKey _bodyKey = GlobalKey();
 
@@ -51,7 +45,7 @@ class _BookAudioVideoPageState extends State<HomePage>
   @override
   void initState() {
     super.initState();
-    tabController = TabController(vsync: this, length: titleList.length);
+    tabController = TabController(vsync: this, length: homeCateList.length);
   }
 
   @override
@@ -62,7 +56,7 @@ class _BookAudioVideoPageState extends State<HomePage>
     super.build(context);
     ScreenUtil.instance = ScreenUtil(width: 750, height: 1334)..init(context);
     return DefaultTabController(
-      length: titleList.length,
+      length: homeCateList.length,
       child: Scaffold(
         appBar: HomeAppBar(
           leadingText: "咸鱼",
@@ -105,15 +99,13 @@ class _BookAudioVideoPageState extends State<HomePage>
         Container(
           height: 35,
           child: TabBar(
-            tabs: titleList
-                .map((tabItem) => tabItem.isName
-                    ? Text(tabItem.name, style: TextStyle(fontSize: 15))
-                    : loadNetworkImage(tabItem.img))
+            tabs: homeCateList
+                .map((homeCate) => Text(homeCate.cateName, style: TextStyles.textNormal14))
                 .toList(),
             isScrollable: true,
             controller: tabController,
-            indicatorColor: ColorsUtil.hexToColor(ColorsUtil.appBarColor),
-            labelColor: ColorsUtil.hexToColor(ColorsUtil.appBarColor),
+            indicatorColor: Colours.appbar_red,
+            labelColor: Colours.appbar_red,
             labelStyle: TextStyle(fontSize: 18, color: Colors.black45),
             unselectedLabelColor: Colors.black45,
             unselectedLabelStyle:
@@ -142,13 +134,13 @@ class _BookAudioVideoPageState extends State<HomePage>
   Widget _buildTabBarViews() {
     var viewList = [];
 
-    viewList = titleList.asMap().keys.map((key) {
+    viewList = homeCateList.asMap().keys.map((key) {
       if (key == 0) {
         return HomePageFirst();
       } else if (key == 1) {
         return Page2();
       } else {
-        return HomePageOther();
+        return HomePageOther(homeCateEntity:homeCateList[key]);
       }
     }).toList();
 
@@ -192,14 +184,14 @@ class _BookAudioVideoPageState extends State<HomePage>
               mainAxisSpacing: 0,
               childAspectRatio: 1,
             ),
-            itemCount: titleList.length,
+            itemCount: homeCateList.length,
             itemBuilder: (BuildContext context, int index) {
               return CateItem(
-                title: titleList[index].name,
+                title: homeCateList[index].cateName,
                 image: "",
                 onTap: () {
                   tabController.animateTo(index);
-                  Toast.show("${titleList[index].name}");
+                  Toast.show("${homeCateList[index].cateName}");
                   NavigatorUtil.goBack(context);
                 },
               );

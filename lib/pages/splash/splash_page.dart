@@ -3,12 +3,17 @@ import 'package:flutter/material.dart';
 import 'package:flutter_swiper/flutter_swiper.dart';
 import 'package:rxdart/rxdart.dart';
 import 'package:tbk_app/common/common.dart';
+import 'package:tbk_app/modle/home_cate_entity.dart';
 import 'package:tbk_app/modle/splashModel.dart';
 import 'package:tbk_app/router/routers.dart';
 import 'package:tbk_app/util/fluro_navigator_util.dart';
+import 'package:tbk_app/util/http_util.dart';
 import 'package:tbk_app/util/image_utils.dart';
+import 'package:tbk_app/util/map_url_params_utils.dart';
 import 'package:tbk_app/util/sp_util.dart';
 import 'package:tbk_app/util/utils.dart';
+
+import '../../entity_list_factory.dart';
 
 class SplashPage extends StatefulWidget {
   @override
@@ -19,6 +24,8 @@ class SplashPage extends StatefulWidget {
 
 class SplashPageState extends State<SplashPage> {
   TimerUtil _timerUtil;
+
+
 
   List<String> _guideList = [
     'splash/app_start_1',
@@ -35,7 +42,7 @@ class SplashPageState extends State<SplashPage> {
 
     /// 初始化
     _initAsync();
-
+    _getHomeCateList();
     setState(() {
       _splashModel.image =
       'https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1562757288566&di=d2a66fc564ec399b02919be1792e420d&imgtype=0&src=http%3A%2F%2Ff.hiphotos.baidu.com%2Fimage%2Fpic%2Fitem%2F8326cffc1e178a82c4403d44f803738da877e8d2.jpg';
@@ -142,6 +149,23 @@ class SplashPageState extends State<SplashPage> {
         _initBanner();
       } else {
         _initSplash();
+      }
+    });
+  }
+
+  //
+  void _getHomeCateList() {
+    HttpUtil()
+        .get('homeCateList')
+        .then((val) {
+      if (val["success"]) {
+        setState(() {
+          List<HomeCateEntity> homeCateList = EntityListFactory.generateList<HomeCateEntity>(val['data']);
+          print(homeCateList.length);
+          SpUtil.putObjectList('homeCateList', homeCateList);
+
+
+        });
       }
     });
   }

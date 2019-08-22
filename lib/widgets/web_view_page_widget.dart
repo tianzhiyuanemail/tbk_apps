@@ -4,7 +4,8 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_webview_plugin/flutter_webview_plugin.dart';
-import 'package:tbk_app/util/colors_util.dart';
+import 'package:tbk_app/res/colors.dart';
+
 import 'package:tbk_app/util/fluro_navigator_util.dart';
 
 // ignore: must_be_immutable
@@ -117,7 +118,7 @@ class _WebViewPageWidgetState extends State<WebViewPageWidget> {
     return new WebviewScaffold(
       appBar: PreferredSize(
         child: AppBar(
-          backgroundColor: ColorsUtil.hexToColor(ColorsUtil.appBarColor),
+          backgroundColor: Colours.appbar_red,
           title: new Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: titleContent,

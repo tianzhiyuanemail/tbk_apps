@@ -1,5 +1,5 @@
-//const serviceUrl= 'http://localhost:8090/';
-const serviceUrl= 'http://www.shuzibika.com/';
+const serviceUrl= 'http://localhost:8090/';
+//const serviceUrl= 'http://www.shuzibika.com/';
 const servicePath={
 
   /// index
@@ -13,6 +13,7 @@ const servicePath={
 
   /// cate
   'cateGetList': serviceUrl+'/tbk/product/cate/getList.json', // 商品分类
+  'homeCateList': serviceUrl+'/tbk/product/homeCate/getList.json', // 商品分类
   'cateListByPid': serviceUrl+'tbk/cateListByPid.json', // 商品一级分类
 
   /// product detail

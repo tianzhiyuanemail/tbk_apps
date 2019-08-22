@@ -8,8 +8,8 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:provide/provide.dart';
 import 'package:tbk_app/modle/cate_entity.dart';
 import 'package:tbk_app/provide/child_cate.dart';
+import 'package:tbk_app/res/colors.dart';
 import 'package:tbk_app/router/routers.dart';
-import 'package:tbk_app/util/colors_util.dart';
 import 'package:tbk_app/util/fluro_convert_util.dart';
 import 'package:tbk_app/util/fluro_navigator_util.dart';
 import 'package:tbk_app/util/http_util.dart';
@@ -123,8 +123,8 @@ class _CatePageState extends State<CatePage>
         alignment: Alignment.center,
         decoration: _selected
             ? BoxDecoration(
-                color: ColorsUtil.hexToColor(ColorsUtil.appBarColor),
-                border: Border.all(width: 2.0, color: ColorsUtil.hexToColor(ColorsUtil.appBarColor),),
+                color: Colours.appbar_red,
+                border: Border.all(width: 2.0, color: Colours.appbar_red,),
                 borderRadius: BorderRadius.all(Radius.circular(15)),
               )
             : BoxDecoration(
