@@ -24,7 +24,7 @@ class SliverProductList extends StatelessWidget {
     ProductListEntity obj = list[index];
     return InkWell(
       onTap: () {
-        NavigatorUtil.gotransitionPage(
+        NavigatorUtil.push(
             context, "${Routers.detailsPage}?id=${obj.itemId}");
       },
       child: Container(
@@ -165,7 +165,7 @@ class SliverProductList extends StatelessWidget {
     ProductListEntity obj = list[index];
     return InkWell(
       onTap: () {
-        NavigatorUtil.gotransitionPage(
+        NavigatorUtil.push(
             context, Routers.detailsPage + "?id=${obj.itemId}");
       },
       child: Container(
@@ -306,7 +306,7 @@ class ProductList extends StatelessWidget {
     return list.map((obj) {
       return InkWell(
         onTap: () {
-          NavigatorUtil.gotransitionPage(
+          NavigatorUtil.push(
               context, "${Routers.detailsPage}?id=${obj.itemId}");
         },
         child: Container(
@@ -450,7 +450,7 @@ class ProductList extends StatelessWidget {
     return list.map((obj) {
       return InkWell(
         onTap: () {
-          NavigatorUtil.gotransitionPage(
+          NavigatorUtil.push(
               context, "${Routers.detailsPage}?id=${obj.itemId}");
         },
         child: Container(
