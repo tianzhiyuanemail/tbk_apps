@@ -15,6 +15,7 @@ import 'package:tbk_app/util/easy_refresh_util.dart';
 import 'package:tbk_app/util/http_util.dart';
 import 'package:tbk_app/util/map_url_params_utils.dart';
 import 'package:tbk_app/widgets/back_top_widget.dart';
+import 'package:tbk_app/widgets/my_easy_refresh.dart';
 import 'package:tbk_app/widgets/product_list_view_widget.dart';
 import 'package:tbk_app/widgets/product_silvrs_sort_static_bar_widget.dart';
 
@@ -33,15 +34,14 @@ class _NavigatorRouterViewPageState extends State<NavigatorRouterViewPage>
     with AutomaticKeepAliveClientMixin {
   ScrollController _controller = new ScrollController();
 
-  GlobalKey<RefreshFooterState> _refreshFooterState =
-  GlobalKey<RefreshFooterState>();
-  GlobalKey<RefreshHeaderState> _refreshHeaderState =
-  GlobalKey<RefreshHeaderState>();
+  EasyRefreshController _easyRefreshController;
 
-  bool showToTopBtn = false; //是否显示“返回到顶部”按钮
+  bool showToTopBtn = false;
+  bool noMore = false;
 
   List<ProductListEntity> goodsList = [];
   int page = 0;
+  int totalCount = 0;
 
 
   @override
@@ -64,6 +64,7 @@ class _NavigatorRouterViewPageState extends State<NavigatorRouterViewPage>
         });
       }
     });
+    _easyRefreshController = EasyRefreshController();
 
     super.initState();
   }
@@ -72,6 +73,8 @@ class _NavigatorRouterViewPageState extends State<NavigatorRouterViewPage>
   void dispose() {
     ///为了避免内存泄露，需要调用_controller.dispose
     _controller.dispose();
+    _easyRefreshController.dispose();
+
     super.dispose();
   }
 
@@ -80,19 +83,22 @@ class _NavigatorRouterViewPageState extends State<NavigatorRouterViewPage>
     return Scaffold(
       floatingActionButton:
           BackTopButton(controller: _controller, showToTopBtn: showToTopBtn),
-      body: EasyRefresh(
-        refreshFooter: EasyRefreshUtil.classicsFooter(_refreshFooterState),
-        refreshHeader: EasyRefreshUtil.classicsHeader(_refreshHeaderState),
-        loadMore: () async {
+      body: MyEasyRefresh(
+        easyRefreshController: _easyRefreshController,
+
+        onLoad: () async {
           _getGoods();
+          _easyRefreshController.resetLoadState();
+
         },
         onRefresh: () async {
           setState(() {
             page = 1;
           });
           _getGoods();
+          _easyRefreshController.finishLoad(noMore: noMore);
+
         },
-        autoLoad: true,
         child: ListView(
           controller: _controller,
           children: <Widget>[
@@ -116,14 +122,19 @@ class _NavigatorRouterViewPageState extends State<NavigatorRouterViewPage>
     HttpUtil().get('choiceMaterial',parms: MapUrlParamsUtils.getUrlParamsByMap(map)).then((val) {
       if(val["success"]){
         List<ProductListEntity> list = EntityListFactory.generateList<ProductListEntity>(val['data']);
-        setState(() {
-          if (page == 1){
-            goodsList = list;
-          }else{
+
+        if (list == null) {
+          setState(() {
             goodsList.addAll(list);
-          }
-          page++;
-        });
+            page++;
+          });
+        } else {
+          setState(() {
+            goodsList.addAll(list);
+            noMore = true;
+          });
+        }
+
       }else{
         setState(() {
           print(val["message"]);

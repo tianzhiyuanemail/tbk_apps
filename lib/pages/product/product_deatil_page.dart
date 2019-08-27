@@ -25,6 +25,7 @@ import 'package:tbk_app/util/loadingIndicator_util.dart';
 import 'package:tbk_app/util/nautilus_util.dart';
 import 'package:tbk_app/util/screen.dart';
 import 'package:tbk_app/widgets/back_top_widget.dart';
+import 'package:tbk_app/widgets/my_easy_refresh.dart';
 import 'package:tbk_app/widgets/product_list_view_widget.dart';
 
 import '../../entity_factory.dart';
@@ -43,10 +44,7 @@ class ProductDetail extends StatefulWidget {
 
 class _ProductDetailState extends State<ProductDetail> {
   ScrollController _controller = ScrollController();
-  GlobalKey<RefreshFooterState> _refreshFooterState =
-      GlobalKey<RefreshFooterState>();
-  GlobalKey<RefreshHeaderState> _refreshHeaderState =
-      GlobalKey<RefreshHeaderState>();
+  EasyRefreshController _easyRefreshController;
 
   bool showToTopBtn = false;
 
@@ -65,6 +63,8 @@ class _ProductDetailState extends State<ProductDetail> {
   @override
   void initState() {
     super.initState();
+    _easyRefreshController = EasyRefreshController();
+
     _getHotGoods();
     _getProductInfo();
     _getItemDeatilRichText();
@@ -140,6 +140,8 @@ class _ProductDetailState extends State<ProductDetail> {
   void dispose() {
     ///为了避免内存泄露，需要调用_controller.dispose
     _controller.dispose();
+    _easyRefreshController.dispose();
+
     super.dispose();
   }
 
@@ -150,14 +152,8 @@ class _ProductDetailState extends State<ProductDetail> {
         children: <Widget>[
           productEntity == null
               ? LoadingIndicatorUtil()
-              : EasyRefresh(
-                  refreshFooter:
-                      EasyRefreshUtil.classicsFooter(_refreshFooterState),
-                  refreshHeader:
-                      EasyRefreshUtil.classicsHeader(_refreshHeaderState),
-                  loadMore: () async {},
-                  onRefresh: () async {},
-                  autoLoad: true,
+              : MyEasyRefresh(
+                  easyRefreshController: _easyRefreshController,
                   child: _customScrollView(),
                 ),
           buildNavigationBar(),
@@ -276,7 +272,8 @@ class SwiperDiy extends StatelessWidget {
           Swiper(
             index: 0,
             itemBuilder: (BuildContext context, int index) {
-              return loadNetworkImage("${list[index]}_500x500.jpg", fit: BoxFit.fill);
+              return loadNetworkImage("${list[index]}_500x500.jpg",
+                  fit: BoxFit.fill);
             },
             itemCount: list.length,
             pagination: SwiperPagination(
@@ -493,8 +490,9 @@ class ProductInfomation extends StatelessWidget {
             decoration: BoxDecoration(
               color: Colours.appbar_red,
               border: Border.all(
-                  width: 0.70,
-                  color: Colours.appbar_red,),
+                width: 0.70,
+                color: Colours.appbar_red,
+              ),
               borderRadius: BorderRadius.circular(2),
             ),
             child: Text(
@@ -920,9 +918,7 @@ class DetailsBottom extends StatelessWidget {
                   Text(
                     "喜欢",
                     style: TextStyle(
-                      color: true
-                          ? Colours.appbar_red
-                          : Colors.black,
+                      color: true ? Colours.appbar_red : Colors.black,
                       fontSize: 12,
                     ),
                   )

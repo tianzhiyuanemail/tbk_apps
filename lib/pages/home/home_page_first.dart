@@ -25,6 +25,7 @@ import 'package:tbk_app/util/http_util.dart';
 import 'package:tbk_app/util/image_utils.dart';
 import 'package:tbk_app/util/map_url_params_utils.dart';
 import 'package:tbk_app/widgets/back_top_widget.dart';
+import 'package:tbk_app/widgets/my_easy_refresh.dart';
 import 'package:tbk_app/widgets/product_list_view_widget.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -37,14 +38,11 @@ class HomePageFirst extends StatefulWidget {
 
 class _HomePageFirstState extends State<HomePageFirst>
     with AutomaticKeepAliveClientMixin {
+  EasyRefreshController _easyRefreshController = EasyRefreshController();
   ScrollController _controller = new ScrollController();
-  GlobalKey<RefreshFooterState> _refreshFooterState =
-      GlobalKey<RefreshFooterState>();
-  GlobalKey<RefreshHeaderState> _refreshHeaderState =
-      GlobalKey<RefreshHeaderState>();
-  SwiperController _swiperController;
-
+  SwiperController _swiperController = new SwiperController();
   bool showToTopBtn = false; //是否显示“返回到顶部”按钮
+  bool noMore = false;
 
   int page = 1;
   List<ProductListEntity> hotGoodsList = [];
@@ -74,7 +72,6 @@ class _HomePageFirstState extends State<HomePageFirst>
       }
     });
 
-    _swiperController = new SwiperController();
     _swiperController.startAutoplay();
     super.initState();
   }
@@ -83,6 +80,7 @@ class _HomePageFirstState extends State<HomePageFirst>
   void dispose() {
     //为了避免内存泄露，需要调用_controller.dispose
     _controller.dispose();
+//    _easyRefreshController.dispose();
     _swiperController.stopAutoplay();
     _swiperController.dispose();
     super.dispose();
@@ -94,16 +92,18 @@ class _HomePageFirstState extends State<HomePageFirst>
     return Scaffold(
       floatingActionButton:
           BackTopButton(controller: _controller, showToTopBtn: showToTopBtn),
-      body: EasyRefresh(
-        refreshFooter: EasyRefreshUtil.classicsFooter(_refreshFooterState),
-        refreshHeader: EasyRefreshUtil.classicsHeader(_refreshHeaderState),
-        loadMore: () async {
+      body: MyEasyRefresh(
+        easyRefreshController: _easyRefreshController,
+        onLoad: () async {
+          _easyRefreshController.finishLoad(noMore: noMore);
+
           _loadMore();
         },
         onRefresh: () async {
-          _onRefresh();
+//          _onRefresh();
+          _easyRefreshController.resetLoadState();
+
         },
-        autoLoad: true,
         child: CustomScrollView(
           controller: _controller,
           reverse: false,
@@ -146,10 +146,18 @@ class _HomePageFirstState extends State<HomePageFirst>
         List<ProductListEntity> list =
             EntityListFactory.generateList<ProductListEntity>(val['data']);
 
-        setState(() {
-          hotGoodsList.addAll(list);
-          page++;
-        });
+        if(list == null){
+          setState(() {
+            hotGoodsList.addAll(list);
+            page++;
+          });
+        }else {
+          setState(() {
+            hotGoodsList.addAll(list);
+            noMore = true;
+          });
+        }
+
       }
     });
   }

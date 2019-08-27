@@ -138,7 +138,7 @@ packages:
       name: flutter_easyrefresh
       url: "https://pub.flutter-io.cn"
     source: hosted
-    version: "1.2.7"
+    version: "2.0.3"
   flutter_html_widget:
     dependency: "direct main"
     description:

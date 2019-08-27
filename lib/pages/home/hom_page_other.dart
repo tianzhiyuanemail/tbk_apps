@@ -19,16 +19,16 @@ import 'package:tbk_app/util/image_utils.dart';
 import 'package:tbk_app/util/map_url_params_utils.dart';
 import 'package:tbk_app/util/toast.dart';
 import 'package:tbk_app/widgets/back_top_widget.dart';
+import 'package:tbk_app/widgets/my_easy_refresh.dart';
 import 'package:tbk_app/widgets/product_list_view_widget.dart';
 import 'package:tbk_app/widgets/product_silvrs_sort_static_bar_widget.dart';
 
 import '../../entity_list_factory.dart';
 
 class HomePageOther extends StatefulWidget {
-
   HomeCateEntity homeCateEntity;
 
-  HomePageOther({Key key,this.homeCateEntity});
+  HomePageOther({Key key, this.homeCateEntity});
 
   @override
   _HomePageOtherState createState() => _HomePageOtherState();
@@ -38,15 +38,14 @@ class _HomePageOtherState extends State<HomePageOther>
     with AutomaticKeepAliveClientMixin {
   ScrollController _controller = new ScrollController();
 
-  GlobalKey<RefreshFooterState> _refreshFooterState =
-  GlobalKey<RefreshFooterState>();
-  GlobalKey<RefreshHeaderState> _refreshHeaderState =
-  GlobalKey<RefreshHeaderState>();
+  EasyRefreshController _easyRefreshController;
 
   bool showToTopBtn = false; //是否显示“返回到顶部”按钮
+  bool noMore = false;
 
   List<ProductListEntity> goodsList = [];
   int page = 0;
+  int totalCount = 0;
 
   SortModle _sortModle = new SortModle();
 
@@ -55,7 +54,7 @@ class _HomePageOtherState extends State<HomePageOther>
 
   @override
   void initState() {
-    _getGoods();
+//    _getGoods();
     //监听滚动事件，打印滚动位置
     _controller.addListener(() {
       if (_controller.offset < 1000 && showToTopBtn) {
@@ -71,6 +70,8 @@ class _HomePageOtherState extends State<HomePageOther>
       }
     });
 
+    _easyRefreshController = EasyRefreshController();
+
     super.initState();
   }
 
@@ -78,6 +79,8 @@ class _HomePageOtherState extends State<HomePageOther>
   void dispose() {
     ///为了避免内存泄露，需要调用_controller.dispose
     _controller.dispose();
+//    _easyRefreshController.dispose();
+
     super.dispose();
   }
 
@@ -86,32 +89,35 @@ class _HomePageOtherState extends State<HomePageOther>
     return Scaffold(
       floatingActionButton:
           BackTopButton(controller: _controller, showToTopBtn: showToTopBtn),
-      body: EasyRefresh(
-        refreshFooter: EasyRefreshUtil.classicsFooter(_refreshFooterState),
-        refreshHeader: EasyRefreshUtil.classicsHeader(_refreshHeaderState),
-        loadMore: () async {
+      body: MyEasyRefresh(
+        easyRefreshController: _easyRefreshController,
+        onRefresh: () async {
+          _easyRefreshController.resetLoadState();
+
           _getGoods();
         },
-        onRefresh: () async {
+        onLoad: () async {
           setState(() {
             page = 1;
           });
+          _easyRefreshController.finishLoad(noMore: noMore);
+
           _getGoods();
         },
-        autoLoad: true,
         child: CustomScrollView(
           controller: _controller,
+          reverse: false,
           slivers: <Widget>[
             CateHot(homeCateEntity: widget.homeCateEntity),
             SecondaryCategory(homeCateEntity: widget.homeCateEntity),
             SliverSortStaticyBar.buildStickyBar(_sortModle,
-                    (SortModle sortModle) {
-                  setState(() {
-                    _sortModle = sortModle;
-                    page = 1;
-                  });
-                  _getGoods();
-                }),
+                (SortModle sortModle) {
+              setState(() {
+                _sortModle = sortModle;
+                page = 1;
+              });
+              _getGoods();
+            }),
             SliverProductList(
               list: goodsList,
               crossAxisCount: _sortModle.crossAxisCount,
@@ -122,46 +128,47 @@ class _HomePageOtherState extends State<HomePageOther>
     );
   }
 
-
   void _getGoods() {
+    Map<String, Object> map = Map();
+    map["cateId"] = widget.homeCateEntity.cateId;
+    map["pageNo"] = page;
+    map["sort"] = _sortModle.s1 + _sortModle.s2;
 
-    Map<String, Object> map  = Map();
-    map["cateId"] =   widget.homeCateEntity.cateId;
-    map["pageNo"] =   page;
-    map["sort"]   = _sortModle.s1+_sortModle.s2;
+    _easyRefreshController.finishLoad(noMore: page >= totalCount / 20);
 
-    HttpUtil().get('getProductList',parms: MapUrlParamsUtils.getUrlParamsByMap(map)).then((val) {
-      if(val["success"]){
-        List<ProductListEntity> list = EntityListFactory.generateList<ProductListEntity>(val['data']);
-        setState(() {
-          if (page == 1){
-            goodsList = list;
-          }else{
+    HttpUtil()
+        .get('getProductList', parms: MapUrlParamsUtils.getUrlParamsByMap(map))
+        .then((val) {
+      if (val["success"]) {
+        List<ProductListEntity> list =
+            EntityListFactory.generateList<ProductListEntity>(val['data']);
+
+        if (list == null) {
+          setState(() {
             goodsList.addAll(list);
-          }
-          page++;
-        });
-      }else{
-
+            page++;
+          });
+        } else {
+          setState(() {
+            goodsList.addAll(list);
+            noMore = true;
+          });
+        }
+      } else {
         setState(() {
           print(val["message"]);
           goodsList = List();
-          page  = 1;
+          page = 1;
         });
       }
-
     });
-
   }
-
 }
 
 class CateHot extends StatelessWidget {
   HomeCateEntity homeCateEntity;
 
-  CateHot(
-      {Key key, @required this.homeCateEntity})
-      : super(key: key);
+  CateHot({Key key, @required this.homeCateEntity}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -177,11 +184,9 @@ class CateHot extends StatelessWidget {
 class SecondaryCategory extends StatelessWidget {
   HomeCateEntity homeCateEntity;
 
-  SecondaryCategory(
-      {Key key, @required this.homeCateEntity})
-      : super(key: key);
+  SecondaryCategory({Key key, @required this.homeCateEntity}) : super(key: key);
 
-  Widget _itemUI(BuildContext context,CateEntity cateEntity) {
+  Widget _itemUI(BuildContext context, CateEntity cateEntity) {
     return InkWell(
       onTap: () {
         Toast.show(cateEntity.cateName);
@@ -209,10 +214,10 @@ class SecondaryCategory extends StatelessWidget {
           crossAxisCount: 5,
           padding: EdgeInsets.all(4.0),
           children: homeCateEntity.data.asMap().keys.map((key) {
-            if(key < 10){
+            if (key < 10) {
               return _itemUI(context, homeCateEntity.data[key]);
-            }else {
-              return  Container();
+            } else {
+              return Container();
             }
           }).toList(),
         ),

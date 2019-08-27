@@ -14,6 +14,7 @@ import 'package:tbk_app/util/easy_refresh_util.dart';
 import 'package:tbk_app/util/http_util.dart';
 import 'package:tbk_app/util/map_url_params_utils.dart';
 import 'package:tbk_app/widgets/back_top_widget.dart';
+import 'package:tbk_app/widgets/my_easy_refresh.dart';
 import 'package:tbk_app/widgets/product_list_view_widget.dart';
 import 'package:tbk_app/widgets/product_silvrs_sort_static_bar_widget.dart';
 
@@ -32,14 +33,15 @@ class SearchProductListPage extends StatefulWidget {
 class _SearchProductListPage extends State<SearchProductListPage>
     with AutomaticKeepAliveClientMixin {
   ScrollController _controller = new ScrollController();
-  GlobalKey<RefreshFooterState> _refreshFooterState =
-      GlobalKey<RefreshFooterState>();
-  GlobalKey<RefreshHeaderState> _refreshHeaderState =
-      GlobalKey<RefreshHeaderState>();
 
-  bool showToTopBtn = false; //是否显示“返回到顶部”按钮
+  EasyRefreshController _easyRefreshController;
+
+  bool showToTopBtn = false;
+  bool noMore = false;
   List<ProductListEntity> goodsList = [];
   int page = 1;
+  int totalCount = 0;
+
   /// 排序相关
   SortModle _sortModle = new SortModle();
   String searchText;
@@ -63,6 +65,7 @@ class _SearchProductListPage extends State<SearchProductListPage>
         });
       }
     });
+    _easyRefreshController = EasyRefreshController();
 
     searchText = widget.searchText;
     super.initState();
@@ -78,14 +81,19 @@ class _SearchProductListPage extends State<SearchProductListPage>
     HttpUtil().get('getProductList',parms: MapUrlParamsUtils.getUrlParamsByMap(map)).then((val) {
       if(val["success"]){
         List<ProductListEntity> list = EntityListFactory.generateList<ProductListEntity>(val['data']);
-        setState(() {
-          if (page == 1){
-            goodsList = list;
-          }else{
+
+
+        if (list == null) {
+          setState(() {
             goodsList.addAll(list);
-          }
-          page++;
-        });
+            page++;
+          });
+        } else {
+          setState(() {
+            goodsList.addAll(list);
+            noMore = true;
+          });
+        }
       }else{
 
         setState(() {
@@ -167,19 +175,20 @@ class _SearchProductListPage extends State<SearchProductListPage>
       ),
       floatingActionButton:
           BackTopButton(controller: _controller, showToTopBtn: showToTopBtn),
-      body: EasyRefresh(
-        refreshFooter: EasyRefreshUtil.classicsFooter(_refreshFooterState),
-        refreshHeader: EasyRefreshUtil.classicsHeader(_refreshHeaderState),
-        loadMore: () async {
+      body: MyEasyRefresh(
+        easyRefreshController: _easyRefreshController,
+        onLoad: () async {
           _getGoods();
+          _easyRefreshController.finishLoad(noMore: noMore);
+
         },
         onRefresh: () async {
           setState(() {
             page = 1;
           });
           _getGoods();
+          _easyRefreshController.resetLoadState();
         },
-        autoLoad: true,
         child: CustomScrollView(
           controller: _controller,
           slivers: <Widget>[
@@ -208,6 +217,8 @@ class _SearchProductListPage extends State<SearchProductListPage>
   void dispose() {
     ///为了避免内存泄露，需要调用_controller.dispose
     _controller.dispose();
+    _easyRefreshController.dispose();
+
     super.dispose();
   }
 }
