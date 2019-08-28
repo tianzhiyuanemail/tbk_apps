@@ -1,5 +1,6 @@
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
+import 'package:tbk_app/res/resources.dart';
 
 /// 封装
 /// 1 点击空白 收起键盘
@@ -21,7 +22,7 @@ class MyScaffold extends StatefulWidget {
     this.endDrawer,
     this.bottomNavigationBar,
     this.bottomSheet,
-    this.backgroundColor,
+    this.backgroundColor = Colours.bg_color,
     this.resizeToAvoidBottomPadding,
     this.resizeToAvoidBottomInset,
     this.primary = true,
@@ -52,7 +53,7 @@ class MyScaffold extends StatefulWidget {
 
   final Widget endDrawer;
 
-  final Color backgroundColor;
+  final Color backgroundColor ;
 
   final Widget bottomNavigationBar;
 

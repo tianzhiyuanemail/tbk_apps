@@ -74,6 +74,7 @@ class MyApp extends StatelessWidget {
               ),
               home: Scaffold(
                 resizeToAvoidBottomPadding: false,
+                backgroundColor: Colours.bg_color,
                 body: SplashPage(),
               ),
               localizationsDelegates: [

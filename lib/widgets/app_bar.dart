@@ -6,7 +6,7 @@ import 'package:tbk_app/res/resources.dart';
 class MyAppBar extends StatelessWidget implements PreferredSizeWidget {
   const MyAppBar(
       {Key key,
-      this.backgroundColor: Colors.white,
+      this.backgroundColor: Colours.appbar_red,
       this.title: "",
       this.centerTitle: "",
       this.actionName: "",

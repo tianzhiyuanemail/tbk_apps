@@ -46,6 +46,13 @@ class _BookAudioVideoPageState extends State<HomePage>
   void initState() {
     super.initState();
     tabController = TabController(vsync: this, length: homeCateList.length);
+
+    tabController.addListener(() {//TabBar的监听
+      if (tabController.indexIsChanging) {//判断TabBar是否切换
+        print(tabController.index);
+        Toast.show("${homeCateList[tabController.index].cateName}");
+      }
+    });
   }
 
   @override
@@ -59,7 +66,7 @@ class _BookAudioVideoPageState extends State<HomePage>
       length: homeCateList.length,
       child: Scaffold(
         appBar: HomeAppBar(
-          leadingText: "咸鱼",
+          leadingText: "乐享",
           title: InkWell(
             onTap: () {
               NavigatorUtil.gotransitionPage(context, Routers.searchPage);
@@ -111,6 +118,7 @@ class _BookAudioVideoPageState extends State<HomePage>
             unselectedLabelStyle:
                 TextStyle(fontSize: 18, color: Colors.black45),
             indicatorSize: TabBarIndicatorSize.label,
+
           ),
         ),
         Positioned(
@@ -119,7 +127,7 @@ class _BookAudioVideoPageState extends State<HomePage>
             top: 5,
             child: Container(
               color: Colors.white,
-              padding: EdgeInsets.only(left: 10, right: 10, bottom: 0),
+              padding: EdgeInsets.only(left: 10, right: 13, bottom: 0),
               child: GestureDetector(
                 child: loadAssetImage("sys/expand", width: 25.0, height: 25.0),
                 onTap: () {
@@ -155,10 +163,10 @@ class _BookAudioVideoPageState extends State<HomePage>
     final RenderBox button = _buttonKey.currentContext.findRenderObject();
     final RenderBox overlay = Overlay.of(context).context.findRenderObject();
     // 获得控件左下方的坐标
-    var a = button.localToGlobal(Offset(0.0, button.size.height + 12.0),
+    var a = button.localToGlobal(Offset(0.0, button.size.height +5 ),
         ancestor: overlay);
     // 获得控件右下方的坐标
-    var b = button.localToGlobal(button.size.bottomLeft(Offset(0, 12.0)),
+    var b = button.localToGlobal(button.size.bottomLeft(Offset(0,5)),
         ancestor: overlay);
     final RelativeRect position = RelativeRect.fromRect(
       Rect.fromPoints(a, b),
@@ -175,8 +183,9 @@ class _BookAudioVideoPageState extends State<HomePage>
           NavigatorUtil.goBack(context);
         },
         child: Container(
-          color: Color(0x99000000),
-          height: body.size.height - button.size.height + 10,
+          color: Colors.white,
+          padding: EdgeInsets.all(10),
+          height: body.size.height,
           child: GridView.builder(
             gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
               crossAxisCount: 4,
@@ -188,10 +197,10 @@ class _BookAudioVideoPageState extends State<HomePage>
             itemBuilder: (BuildContext context, int index) {
               return CateItem(
                 title: homeCateList[index].cateName,
-                image: "",
+                image:   homeCateList[index].cateIcon,
                 onTap: () {
                   tabController.animateTo(index);
-                  Toast.show("${homeCateList[index].cateName}");
+//                  Toast.show("${homeCateList[index].cateName}");
                   NavigatorUtil.goBack(context);
                 },
               );

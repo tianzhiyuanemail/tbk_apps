@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_easyrefresh/easy_refresh.dart';
+import 'package:tbk_app/res/colors.dart';
 
 class MyEasyRefresh extends StatefulWidget {
   EasyRefreshController easyRefreshController;
@@ -20,6 +21,12 @@ class MyEasyRefresh extends StatefulWidget {
 }
 
 class _MyEasyRefreshState extends State<MyEasyRefresh> {
+
+  //创建时间对象，获取当前时间
+  DateTime now = new DateTime.now();
+
+//  print("日本于${victoryDay.year}年${victoryDay.month}月${victoryDay.day}日在南京签署中国战区投降书");
+
   @override
   Widget build(BuildContext context) {
     return EasyRefresh(
@@ -31,10 +38,10 @@ class _MyEasyRefreshState extends State<MyEasyRefresh> {
         refreshedText: '刷新完成',
         refreshFailedText: '刷新失败',
         noMoreText: '没有更多',
-        textColor: Colors.red,
-        infoText: '更新于 10:10',
+        textColor: Colours.appbar_red,
+        infoText: '更新于 ${now.hour}:${now.second}',
         bgColor: Colors.white,
-        infoColor: Colors.red,
+        infoColor: Colours.appbar_red,
         float: false,
         enableHapticFeedback: true,
       ),
@@ -46,16 +53,16 @@ class _MyEasyRefreshState extends State<MyEasyRefresh> {
         loadedText: '加载完成',
         loadFailedText: '加载失败',
         noMoreText: '已经到底了哦',
-        infoText: '更新于 10:10',
-        textColor: Colors.red,
+        infoText: '更新于 ${now.hour}:${now.second}',
+        textColor: Colours.appbar_red,
         bgColor: Colors.white,
-        infoColor: Colors.red,
+        infoColor: Colours.appbar_red,
         enableHapticFeedback: true,
         triggerDistance: 100.0,
       ),
       enableControlFinishRefresh: false,
       enableControlFinishLoad: true,
-      firstRefresh: true,
+      firstRefresh: false,
       controller: widget.easyRefreshController,
       onRefresh: widget.onRefresh != null
           ? () async {

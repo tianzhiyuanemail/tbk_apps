@@ -16,6 +16,8 @@ import 'package:tbk_app/modle/banners_entity.dart';
 import 'package:tbk_app/modle/home_navigator_entity.dart';
 import 'package:tbk_app/modle/product_list_entity.dart';
 import 'package:tbk_app/modle/product_recommend_entity.dart';
+import 'package:tbk_app/res/colors.dart';
+import 'package:tbk_app/res/resources.dart';
 import 'package:tbk_app/router/routers.dart';
 import 'package:tbk_app/util/cache_network_image_util.dart';
 import 'package:tbk_app/util/easy_refresh_util.dart';
@@ -24,6 +26,7 @@ import 'package:tbk_app/util/fluro_navigator_util.dart';
 import 'package:tbk_app/util/http_util.dart';
 import 'package:tbk_app/util/image_utils.dart';
 import 'package:tbk_app/util/map_url_params_utils.dart';
+import 'package:tbk_app/util/res_list_util.dart';
 import 'package:tbk_app/widgets/back_top_widget.dart';
 import 'package:tbk_app/widgets/my_easy_refresh.dart';
 import 'package:tbk_app/widgets/product_list_view_widget.dart';
@@ -146,18 +149,13 @@ class _HomePageFirstState extends State<HomePageFirst>
         List<ProductListEntity> list =
             EntityListFactory.generateList<ProductListEntity>(val['data']);
 
-        if(list == null){
-          setState(() {
-            hotGoodsList.addAll(list);
-            page++;
-          });
-        }else {
-          setState(() {
-            hotGoodsList.addAll(list);
-            noMore = true;
-          });
-        }
-
+        ResListEntity resListEntity =  ResListUtil.buildResList(hotGoodsList, list, page, noMore);
+        setState(() {
+          print(val["message"]);
+          hotGoodsList = resListEntity.list;
+          noMore = resListEntity.noMore;
+          page = resListEntity.page;
+        });
       }
     });
   }
@@ -338,7 +336,7 @@ class TopNavigator extends StatelessWidget {
             height: ScreenUtil().setHeight(95),
             child: loadNetworkImage(navigatorEntity.imageUrl),
           ),
-          Text(navigatorEntity.title)
+          Text(navigatorEntity.title,style: TextStyles.textNormal14,)
         ],
       ),
     );
@@ -349,6 +347,7 @@ class TopNavigator extends StatelessWidget {
     return Container(
       height: ScreenUtil().setHeight(320),
       padding: EdgeInsets.all(3.0),
+      color: Colors.white,
       child: GridView.count(
         shrinkWrap: true,
         physics: NeverScrollableScrollPhysics(),

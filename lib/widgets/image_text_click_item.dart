@@ -59,7 +59,7 @@ class CateItem extends StatelessWidget {
             ),
             Padding(
               padding:  EdgeInsets.only(top: 0,bottom: 0,left: 5,right: 5),
-              child: Text(title),
+              child: Text(title,style: TextStyles.textNormal14,)
             )
           ],
         ),

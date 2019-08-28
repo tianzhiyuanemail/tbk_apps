@@ -14,6 +14,7 @@ import 'package:tbk_app/util/fluro_convert_util.dart';
 import 'package:tbk_app/util/fluro_navigator_util.dart';
 import 'package:tbk_app/util/http_util.dart';
 import 'package:tbk_app/util/image_utils.dart';
+import 'package:tbk_app/widgets/app_bar.dart';
 
 import '../../entity_list_factory.dart';
 
@@ -68,15 +69,22 @@ class _CatePageState extends State<CatePage>
     super.dispose();
   }
 
+
   @override
   Widget build(BuildContext context) {
-    return Container(
-      width: ScreenUtil.screenWidth,
-      child: Row(
-        children: <Widget>[
-          leftWidget(),
-          rightWidget(),
-        ],
+    return Scaffold(
+      appBar: MyAppBar(
+        centerTitle: "商品分类",
+        isBack: false,
+      ),
+      body: Container(
+        width: ScreenUtil.screenWidth,
+        child: Row(
+          children: <Widget>[
+            leftWidget(),
+            rightWidget(),
+          ],
+        ),
       ),
     );
   }

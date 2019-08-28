@@ -13,10 +13,15 @@ import 'package:tbk_app/modle/cate_entity.dart';
 import 'package:tbk_app/modle/home_cate_entity.dart';
 import 'package:tbk_app/modle/product_list_entity.dart';
 import 'package:tbk_app/modle/sort_modle.dart';
+import 'package:tbk_app/res/resources.dart';
+import 'package:tbk_app/router/routers.dart';
 import 'package:tbk_app/util/easy_refresh_util.dart';
+import 'package:tbk_app/util/fluro_convert_util.dart';
+import 'package:tbk_app/util/fluro_navigator_util.dart';
 import 'package:tbk_app/util/http_util.dart';
 import 'package:tbk_app/util/image_utils.dart';
 import 'package:tbk_app/util/map_url_params_utils.dart';
+import 'package:tbk_app/util/res_list_util.dart';
 import 'package:tbk_app/util/toast.dart';
 import 'package:tbk_app/widgets/back_top_widget.dart';
 import 'package:tbk_app/widgets/my_easy_refresh.dart';
@@ -54,7 +59,7 @@ class _HomePageOtherState extends State<HomePageOther>
 
   @override
   void initState() {
-//    _getGoods();
+    _getGoods();
     //监听滚动事件，打印滚动位置
     _controller.addListener(() {
       if (_controller.offset < 1000 && showToTopBtn) {
@@ -92,14 +97,14 @@ class _HomePageOtherState extends State<HomePageOther>
       body: MyEasyRefresh(
         easyRefreshController: _easyRefreshController,
         onRefresh: () async {
+          setState(() {
+            page = 0;
+          });
           _easyRefreshController.resetLoadState();
 
           _getGoods();
         },
         onLoad: () async {
-          setState(() {
-            page = 1;
-          });
           _easyRefreshController.finishLoad(noMore: noMore);
 
           _getGoods();
@@ -114,7 +119,7 @@ class _HomePageOtherState extends State<HomePageOther>
                 (SortModle sortModle) {
               setState(() {
                 _sortModle = sortModle;
-                page = 1;
+                page = 0;
               });
               _getGoods();
             }),
@@ -134,31 +139,26 @@ class _HomePageOtherState extends State<HomePageOther>
     map["pageNo"] = page;
     map["sort"] = _sortModle.s1 + _sortModle.s2;
 
-    _easyRefreshController.finishLoad(noMore: page >= totalCount / 20);
-
     HttpUtil()
         .get('getProductList', parms: MapUrlParamsUtils.getUrlParamsByMap(map))
         .then((val) {
       if (val["success"]) {
         List<ProductListEntity> list =
             EntityListFactory.generateList<ProductListEntity>(val['data']);
+        ResListEntity resListEntity =
+            ResListUtil.buildResList(goodsList, list, page, noMore);
 
-        if (list == null) {
-          setState(() {
-            goodsList.addAll(list);
-            page++;
-          });
-        } else {
-          setState(() {
-            goodsList.addAll(list);
-            noMore = true;
-          });
-        }
+        setState(() {
+          print(val["message"]);
+          goodsList = resListEntity.list;
+          noMore = resListEntity.noMore;
+          page = resListEntity.page;
+        });
       } else {
         setState(() {
           print(val["message"]);
           goodsList = List();
-          page = 1;
+          noMore = true;
         });
       }
     });
@@ -190,6 +190,10 @@ class SecondaryCategory extends StatelessWidget {
     return InkWell(
       onTap: () {
         Toast.show(cateEntity.cateName);
+        NavigatorUtil.gotransitionPage(
+            context,
+            Routers.productListPage +
+                "?cateId=${cateEntity.cateId}&cateName=${FluroConvertUtils.fluroCnParamsEncode(cateEntity.cateName)}");
       },
       child: Column(
         children: <Widget>[
@@ -197,7 +201,10 @@ class SecondaryCategory extends StatelessWidget {
             cateEntity.cateIcon,
             width: ScreenUtil().setHeight(60),
           ),
-          Text(cateEntity.cateName)
+          Text(
+            cateEntity.cateName,
+            style: TextStyles.textNormal14,
+          )
         ],
       ),
     );
@@ -207,8 +214,11 @@ class SecondaryCategory extends StatelessWidget {
   Widget build(BuildContext context) {
     return SliverToBoxAdapter(
       child: Container(
-        height: ScreenUtil().setHeight(320),
-        padding: EdgeInsets.all(3.0),
+        height: ScreenUtil().setHeight(270),
+        margin: EdgeInsets.only(left: 10.0, right: 10, top: 10, bottom: 10),
+        decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.all(Radius.circular(14))),
         child: GridView.count(
           physics: NeverScrollableScrollPhysics(),
           crossAxisCount: 5,

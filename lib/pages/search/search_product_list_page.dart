@@ -13,6 +13,7 @@ import 'package:tbk_app/router/application.dart';
 import 'package:tbk_app/util/easy_refresh_util.dart';
 import 'package:tbk_app/util/http_util.dart';
 import 'package:tbk_app/util/map_url_params_utils.dart';
+import 'package:tbk_app/util/res_list_util.dart';
 import 'package:tbk_app/widgets/back_top_widget.dart';
 import 'package:tbk_app/widgets/my_easy_refresh.dart';
 import 'package:tbk_app/widgets/product_list_view_widget.dart';
@@ -82,18 +83,15 @@ class _SearchProductListPage extends State<SearchProductListPage>
       if(val["success"]){
         List<ProductListEntity> list = EntityListFactory.generateList<ProductListEntity>(val['data']);
 
+        ResListEntity resListEntity =  ResListUtil.buildResList(goodsList, list, page, noMore);
 
-        if (list == null) {
-          setState(() {
-            goodsList.addAll(list);
-            page++;
-          });
-        } else {
-          setState(() {
-            goodsList.addAll(list);
-            noMore = true;
-          });
-        }
+        setState(() {
+          print(val["message"]);
+          goodsList = resListEntity.list;
+          noMore = resListEntity.noMore;
+          page = resListEntity.page;
+        });
+
       }else{
 
         setState(() {

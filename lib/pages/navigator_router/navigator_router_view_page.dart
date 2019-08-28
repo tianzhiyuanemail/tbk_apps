@@ -14,6 +14,7 @@ import 'package:tbk_app/modle/sort_modle.dart';
 import 'package:tbk_app/util/easy_refresh_util.dart';
 import 'package:tbk_app/util/http_util.dart';
 import 'package:tbk_app/util/map_url_params_utils.dart';
+import 'package:tbk_app/util/res_list_util.dart';
 import 'package:tbk_app/widgets/back_top_widget.dart';
 import 'package:tbk_app/widgets/my_easy_refresh.dart';
 import 'package:tbk_app/widgets/product_list_view_widget.dart';
@@ -123,17 +124,14 @@ class _NavigatorRouterViewPageState extends State<NavigatorRouterViewPage>
       if(val["success"]){
         List<ProductListEntity> list = EntityListFactory.generateList<ProductListEntity>(val['data']);
 
-        if (list == null) {
-          setState(() {
-            goodsList.addAll(list);
-            page++;
-          });
-        } else {
-          setState(() {
-            goodsList.addAll(list);
-            noMore = true;
-          });
-        }
+        ResListEntity resListEntity =  ResListUtil.buildResList(goodsList, list, page, noMore);
+
+        setState(() {
+          print(val["message"]);
+          goodsList = resListEntity.list;
+          noMore = resListEntity.noMore;
+          page = resListEntity.page;
+        });
 
       }else{
         setState(() {
