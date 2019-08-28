@@ -18,7 +18,7 @@ class MyButton extends StatelessWidget {
     return FlatButton(
       onPressed: onPressed,
       textColor: Colors.white,
-      color: Colours.app_main,
+      color: Colours.appbar_red,
       disabledTextColor: Colours.login_text_disabled,
       disabledColor: Colours.login_button_disabled,
       //shape:RoundedRectangleBorder(borderRadius: BorderRadius.circular(20.0)),
