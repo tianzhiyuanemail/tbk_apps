@@ -160,7 +160,7 @@ class _RegisterPageState extends State<RegisterPage> {
         EntityFactory.generateOBJ<UserInfoEntity>(val['data']);
 
         SpUtil.putString("tocken", userInfoEntityr.tocken);
-        NavigatorUtil.gotransitionPage(context, "${Routers.root}");
+        NavigatorUtil.push(context, "${Routers.root}");
       }else{
         Toast.show("注册失败");
       }

@@ -190,7 +190,7 @@ class SecondaryCategory extends StatelessWidget {
     return InkWell(
       onTap: () {
         Toast.show(cateEntity.cateName);
-        NavigatorUtil.gotransitionPage(
+        NavigatorUtil.push(
             context,
             Routers.productListPage +
                 "?cateId=${cateEntity.cateId}&cateName=${FluroConvertUtils.fluroCnParamsEncode(cateEntity.cateName)}");

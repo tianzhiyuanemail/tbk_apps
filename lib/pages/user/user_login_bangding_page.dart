@@ -338,7 +338,7 @@ class _UserLoginBangDingPageState extends State<UserLoginBangDingPage> {
             EntityFactory.generateOBJ<UserInfoEntity>(val['data']);
 
         SpUtil.putString("tocken", userInfoEntityr.tocken);
-        NavigatorUtil.gotransitionPage(context, "${Routers.root}");
+        NavigatorUtil.push(context, "${Routers.root}");
       }
     });
   }

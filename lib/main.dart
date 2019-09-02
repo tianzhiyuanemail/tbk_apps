@@ -6,6 +6,7 @@ import 'package:flutter/services.dart';
 import 'package:nautilus/nautilus.dart' as nautilus;
 import 'package:oktoast/oktoast.dart';
 import 'package:provide/provide.dart';
+import 'package:tbk_app/pages/user/setting/update_dialog.dart';
 import 'package:tbk_app/provide/child_cate.dart';
 import 'package:tbk_app/provide/user_info_provide.dart';
 import 'package:tbk_app/res/colors.dart';
@@ -89,7 +90,8 @@ class MyApp extends StatelessWidget {
           textPadding:
               const EdgeInsets.symmetric(horizontal: 16.0, vertical: 10.0),
           radius: 20.0,
-          position: ToastPosition.bottom),
+          position: ToastPosition.bottom,
+      ),
     );
   }
 }
@@ -121,6 +123,7 @@ class _RestartWidgetState extends State<RestartWidget> {
       key = UniqueKey();
     });
   }
+
 
   @override
   Widget build(BuildContext context) {

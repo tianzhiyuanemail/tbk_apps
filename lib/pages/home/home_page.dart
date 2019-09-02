@@ -69,7 +69,7 @@ class _BookAudioVideoPageState extends State<HomePage>
           leadingText: "乐享",
           title: InkWell(
             onTap: () {
-              NavigatorUtil.gotransitionPage(context, Routers.searchPage);
+              NavigatorUtil.push(context, Routers.searchPage);
             },
             child: Container(
               child: loadAssetImage('sys/search_text'),

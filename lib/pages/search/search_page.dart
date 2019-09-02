@@ -25,7 +25,7 @@ class _SearchPageState extends State<SearchPage> {
   void _onSubmitted(String searchText) {
     print(searchText);
     FocusScope.of(context).requestFocus(FocusNode());
-    NavigatorUtil.gotransitionPage(context,
+    NavigatorUtil.push(context,
         Routers.searchProductListPage + "?searchText=" +  FluroConvertUtils.fluroCnParamsEncode(searchText.toString()));
   }
 

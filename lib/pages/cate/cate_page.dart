@@ -200,7 +200,7 @@ class _CatePageState extends State<CatePage>
       children: cateChild.map((cate) {
         return InkWell(
           onTap: () {
-            NavigatorUtil.gotransitionPage(context, Routers.productListPage + "?cateId=${cate.cateId}&cateName=${FluroConvertUtils.fluroCnParamsEncode(cate.cateName)}");
+            NavigatorUtil.push(context, Routers.productListPage + "?cateId=${cate.cateId}&cateName=${FluroConvertUtils.fluroCnParamsEncode(cate.cateName)}");
           },
           child: Container(
             //width: 20,

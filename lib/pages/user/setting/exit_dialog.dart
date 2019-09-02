@@ -31,7 +31,7 @@ class _ExitDialog extends State<ExitDialog>{
 
         Navigator.of(context).pop('1');
         SpUtil.remove("tocken");
-        NavigatorUtil.gotransitionPage(
+        NavigatorUtil.push(
             context, "${Routers.root}");
         NavigatorUtil.push(context,  Routers.loginPage, clearStack: true);
       },

@@ -104,4 +104,12 @@ class Gaps {
 
   static Widget line = Container(height: 0.6, color: Colours.line);
   static const Widget empty = SizedBox();
+
+  static Widget vGap(double h) {
+    return SizedBox(height: h);
+  }
+
+  static Widget hGap(double w) {
+    return SizedBox(width: w);
+  }
 }

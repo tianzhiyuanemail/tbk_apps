@@ -885,7 +885,7 @@ class DetailsBottom extends StatelessWidget {
         children: <Widget>[
           InkWell(
             onTap: () {
-              NavigatorUtil.gotransitionPage(context, Routers.root);
+              NavigatorUtil.push(context, Routers.root);
             },
             child: Container(
               alignment: Alignment.center,

@@ -308,7 +308,7 @@ class TopNavigator extends StatelessWidget {
         print(navigatorEntity.url);
 
         if (navigatorEntity.isNative == 1) {
-          NavigatorUtil.gotransitionPage(
+          NavigatorUtil.push(
               context,
               Routers.navigatorWebViewPage +
                   "?url=" +
@@ -316,7 +316,7 @@ class TopNavigator extends StatelessWidget {
                   "&title=" +
                   FluroConvertUtils.fluroCnParamsEncode(navigatorEntity.title));
         } else if (navigatorEntity.isNative == 2) {
-          NavigatorUtil.gotransitionPage(
+          NavigatorUtil.push(
               context,
               Routers.navigatorRouterPage +
                   "?url=" +
@@ -389,7 +389,7 @@ class AdBanner extends StatelessWidget {
           return InkWell(
             onTap: () {
               String s = Uri.encodeComponent(adList[0]?.url);
-              NavigatorUtil.gotransitionPage(
+              NavigatorUtil.push(
                   context,
                   Routers.navigatorWebViewPage +
                       "?url=${s}&title=" +
@@ -449,7 +449,7 @@ class Recommend extends StatelessWidget {
   Widget _item(int index, BuildContext context) {
     return InkWell(
       onTap: () {
-        NavigatorUtil.gotransitionPage(context,
+        NavigatorUtil.push(context,
             "${Routers.detailsPage}?id=${recommendList[index].productId}");
       },
       child: Container(

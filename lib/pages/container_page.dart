@@ -1,12 +1,17 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
+import 'package:tbk_app/pages/user/login/login_page.dart';
+import 'package:tbk_app/pages/user/setting/update_dialog.dart';
 import 'package:tbk_app/pages/user/user_info_page.dart';
 import 'package:tbk_app/pages/product/product_deatil_page.dart';
 import 'package:tbk_app/res/colors.dart';
 import 'package:tbk_app/router/routers.dart';
 import 'package:tbk_app/util/fluro_navigator_util.dart';
+import 'package:tbk_app/util/full_screen_dialog_util.dart';
 import 'package:tbk_app/util/sp_util.dart';
+import 'package:tbk_app/widgets/search_dialog.dart';
 
 import 'cate/cate_page.dart';
 import 'home/home_page.dart';
@@ -21,7 +26,8 @@ class ContainerPage extends StatefulWidget {
   }
 }
 
-class _ContainerPageState extends State<ContainerPage> {
+class _ContainerPageState extends State<ContainerPage>
+    with WidgetsBindingObserver {
 //  final ShopPageWidget shopPageWidget  = ShopPageWidget();
   List<Widget> pages = new List<Widget>();
 
@@ -42,25 +48,41 @@ class _ContainerPageState extends State<ContainerPage> {
   @override
   void initState() {
     super.initState();
-    pages
-      ..add(HomePage())
-      ..add(CatePage())
-      ..add(ProductDetail('588618803525'))
-      ..add(MyInfoPage());
+
+    // 在当前页面放一个观察者。
+    WidgetsBinding.instance.addObserver(this);
+    pages..add(HomePage())..add(CatePage())..add(
+        ProductDetail('588618803525'))..add(MyInfoPage());
     tocken =
-        SpUtil.getString("tocken") == null ? "" : SpUtil.getString("tocken");
+    SpUtil.getString("tocken") == null ? "" : SpUtil.getString("tocken");
 
     if (itemList == null) {
       itemList = itemNames
           .map(
-            (item) => BottomNavigationBarItem(
-                  icon: Image.asset(item.normalIcon, width: 25.0, height: 25.0),
-                  title: Text(item.name, style: TextStyle(fontSize: 12.0)),
-                  activeIcon:
-                      Image.asset(item.activeIcon, width: 24.0, height: 24.0),
-                ),
-          )
+            (item) =>
+            BottomNavigationBarItem(
+              icon: Image.asset(item.normalIcon, width: 25.0, height: 25.0),
+              title: Text(item.name, style: TextStyle(fontSize: 12.0)),
+              activeIcon:
+              Image.asset(item.activeIcon, width: 24.0, height: 24.0),
+            ),
+      )
           .toList();
+    }
+  }
+
+  @override
+  void dispose() {
+    // 移除当前页面的观察者。
+    WidgetsBinding.instance.removeObserver(this);
+    super.dispose();
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    // 当App生命周期状态为恢复时。
+    if (state == AppLifecycleState.resumed) {
+      getClipboardContents();
     }
   }
 
@@ -68,6 +90,31 @@ class _ContainerPageState extends State<ContainerPage> {
   void didUpdateWidget(ContainerPage oldWidget) {
     super.didUpdateWidget(oldWidget);
     print('didUpdateWidget');
+  }
+
+  /// 使用异步调用获取系统剪贴板的返回值。
+  getClipboardContents() async {
+    // 访问剪贴板的内容。
+    ClipboardData clipboardData = await Clipboard.getData(Clipboard.kTextPlain);
+    String searchText = SpUtil.getString("searchText");
+
+    // 剪贴板不为空时。
+    if (clipboardData != null && clipboardData.text.trim() != '' &&
+        (searchText == null || searchText != clipboardData.text.trim())) {
+      String _name = clipboardData.text.trim();
+      // 淘口令的正则表达式，能判断类似“￥123456￥”的文本。
+      //      if (RegExp(r'[\uffe5]+.+[\uffe5]').hasMatch(_name)) {
+      // 处理淘口令的业务逻辑。
+      showDialog(
+        context: context,
+        barrierDismissible: true,
+        builder: (BuildContext context) {
+          return SearchDialog(_name);
+        },
+      );
+      SpUtil.putString("searchText", _name);
+      //      }
+    }
   }
 
   @override
@@ -78,7 +125,7 @@ class _ContainerPageState extends State<ContainerPage> {
         items: this.itemList,
         onTap: (int index) {
           if (index == 3 && (tocken == null || tocken == '')) {
-            NavigatorUtil.gotransitionPage(context, "${Routers.loginPage}");
+            FullScreenDialogUtil.openFullDialog(context, LoginPage());
           } else {
             ///这里根据点击的index来显示，非index的page均隐藏
             setState(() {

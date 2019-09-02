@@ -380,7 +380,7 @@ class _UserLoginPageState extends State<UserLoginPage> {
             EntityFactory.generateOBJ<UserInfoEntity>(val['data']);
 
         SpUtil.putString("tocken", userInfoEntityr.tocken);
-        NavigatorUtil.gotransitionPage(context, "${Routers.root}");
+        NavigatorUtil.push(context, "${Routers.root}");
       }
     });
   }
@@ -399,7 +399,7 @@ class _UserLoginPageState extends State<UserLoginPage> {
           t.topAccessToken = data.user.topAccessToken;
           t.topAuthCode = data.user.topAuthCode;
 
-          NavigatorUtil.gotransitionPage(
+          NavigatorUtil.push(
               context,
               Routers.userLoginPageBangDing +
                   "?json=" +
