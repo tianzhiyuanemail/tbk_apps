@@ -1,8 +1,6 @@
 /*
  * Copyright (C) 2019 Baidu, Inc. All Rights Reserved.
  */
-import 'dart:math' as math;
-
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
@@ -12,10 +10,11 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:tbk_app/modle/cate_entity.dart';
 import 'package:tbk_app/modle/home_cate_entity.dart';
 import 'package:tbk_app/modle/product_list_entity.dart';
-import 'package:tbk_app/modle/sort_modle.dart';
 import 'package:tbk_app/res/resources.dart';
 import 'package:tbk_app/router/routers.dart';
-import 'package:tbk_app/util/easy_refresh_util.dart';
+import 'package:tbk_app/util/dropdown_menu/src/gzx_dropdown_header.dart';
+import 'package:tbk_app/util/dropdown_menu/src/gzx_dropdown_menu.dart';
+import 'package:tbk_app/util/dropdown_menu/src/gzx_dropdown_menu_controller.dart';
 import 'package:tbk_app/util/fluro_convert_util.dart';
 import 'package:tbk_app/util/fluro_navigator_util.dart';
 import 'package:tbk_app/util/http_util.dart';
@@ -23,13 +22,13 @@ import 'package:tbk_app/util/image_utils.dart';
 import 'package:tbk_app/util/map_url_params_utils.dart';
 import 'package:tbk_app/util/res_list_util.dart';
 import 'package:tbk_app/util/toast.dart';
-import 'package:tbk_app/widgets/back_top_widget.dart';
+import 'package:tbk_app/widgets/MyScaffold.dart';
 import 'package:tbk_app/widgets/my_easy_refresh.dart';
 import 'package:tbk_app/widgets/product_list_view_widget.dart';
-import 'package:tbk_app/widgets/product_silvrs_sort_static_bar_widget.dart';
 
 import '../../entity_list_factory.dart';
 
+// ignore: must_be_immutable
 class HomePageOther extends StatefulWidget {
   HomeCateEntity homeCateEntity;
 
@@ -41,91 +40,121 @@ class HomePageOther extends StatefulWidget {
 
 class _HomePageOtherState extends State<HomePageOther>
     with AutomaticKeepAliveClientMixin {
-  ScrollController _controller = new ScrollController();
-
+  /// 列表相关类
+  ScrollController _scrollController;
   EasyRefreshController _easyRefreshController;
+  ResListEntity<ProductListEntity> _listEntity = new ResListEntity(
+      list: new List<ProductListEntity>(), page: 0, hasMore: false);
 
-  bool showToTopBtn = false; //是否显示“返回到顶部”按钮
-  bool noMore = false;
-
-  List<ProductListEntity> goodsList = [];
-  int page = 0;
-  int totalCount = 0;
-
-  SortModle _sortModle = new SortModle();
+  /// 排序相关类
+  GZXDropdownMenuController _dropdownMenuController;
+  GlobalKey _scaffoldKey = new GlobalKey<ScaffoldState>();
+  GlobalKey _stackKey = GlobalKey();
+  SortModle _sortModle = SortModle(
+      sortStr: SortConstant.map['综合'],
+      single: false,
+      zongheSortConditions: SortConstant.zongheSortConditions,
+      title: SortConstant.zongheSortConditions[0].name);
 
   @override
   bool get wantKeepAlive => true;
 
   @override
   void initState() {
-    _getGoods();
-    //监听滚动事件，打印滚动位置
-    _controller.addListener(() {
-      if (_controller.offset < 1000 && showToTopBtn) {
-        setState(() {
-          setState(() {
-            showToTopBtn = false;
-          });
-        });
-      } else if (_controller.offset >= 1000 && showToTopBtn == false) {
-        setState(() {
-          showToTopBtn = true;
-        });
-      }
-    });
-
+    _getList(reset: true);
+    _scrollController = new ScrollController();
     _easyRefreshController = EasyRefreshController();
 
+    _dropdownMenuController = GZXDropdownMenuController();
     super.initState();
   }
 
   @override
   void dispose() {
     ///为了避免内存泄露，需要调用_controller.dispose
-    _controller.dispose();
-//    _easyRefreshController.dispose();
-
+    _scrollController.dispose();
+    _easyRefreshController.dispose();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      floatingActionButton:
-          BackTopButton(controller: _controller, showToTopBtn: showToTopBtn),
+    return MyScaffold(
+      globalKey: _scaffoldKey,
+//      endDrawer: Container(
+//        margin: EdgeInsets.only(
+//            left: MediaQuery.of(context).size.width / 5, top: 0),
+//        color: Colors.white,
+//        child: ListView(
+//          children: <Widget>[TextField()],
+//        ),
+//      ),
+      backTop: true,
+      scrollController: _scrollController,
+      stackKey: _stackKey,
+      issort: true,
+      sortFilter: GZXDropDownMenu(
+        // controller用于控制menu的显示或隐藏
+        controller: _dropdownMenuController,
+        // 下拉菜单显示或隐藏动画时长
+        animationMilliseconds: 500,
+        // 下拉菜单，高度自定义，你想显示什么就显示什么，完全由你决定，你只需要在选择后调用_dropdownMenuController.hide();即可
+        menus: [
+          GZXDropdownMenuBuilder(
+              dropDownHeight: 40.0 * 4,
+              dropDownWidget: GZXDropDownMenu.buildConditionListWidget(
+                  _sortModle.zongheSortConditions, (value) {
+                setState(() {
+                  _sortModle.title = value.name;
+                  _sortModle.sortStr = SortConstant.map[value.name];
+                });
+                _getList(reset: true);
+                _dropdownMenuController.hide();
+              })),
+        ],
+      ),
       body: MyEasyRefresh(
         easyRefreshController: _easyRefreshController,
         onRefresh: () async {
-          setState(() {
-            page = 0;
-          });
           _easyRefreshController.resetLoadState();
-
-          _getGoods();
+          _getList(reset: true);
         },
         onLoad: () async {
-          _easyRefreshController.finishLoad(noMore: noMore);
-
-          _getGoods();
+          _easyRefreshController.finishLoad(noMore: _listEntity.hasMore);
+//          _getList(reset: false);
         },
         child: CustomScrollView(
-          controller: _controller,
+          controller: _scrollController,
           reverse: false,
           slivers: <Widget>[
             CateHot(homeCateEntity: widget.homeCateEntity),
             SecondaryCategory(homeCateEntity: widget.homeCateEntity),
-            SliverSortStaticyBar.buildStickyBar(_sortModle,
-                (SortModle sortModle) {
-              setState(() {
-                _sortModle = sortModle;
-                page = 0;
-              });
-              _getGoods();
-            }),
+            GZXDropDownHeader(
+              // 下拉的头部项 修改
+              title: _sortModle.title,
+              sortModle: _sortModle,
+              onTap1: (SortModle modle) {
+                setState(() {
+                  _sortModle = modle;
+                });
+                _getList(reset: true);
+              },
+              onTap2: (SortModle modle) {
+                setState(() {
+                  _sortModle = modle;
+                });
+              },
+              // GZXDropDownHeader对应第一父级Stack的key
+              stackKey: _stackKey,
+              scaffoldKey: _scaffoldKey,
+              // controller用于控制menu的显示或隐藏
+              controller: _dropdownMenuController,
+            ),
             SliverProductList(
-              list: goodsList,
-              crossAxisCount: _sortModle.crossAxisCount,
+              list: _listEntity.list,
+              hasMore:  _listEntity.hasMore,
+              single: _sortModle.single,
+              onLoad:  _getList,
             ),
           ],
         ),
@@ -133,11 +162,17 @@ class _HomePageOtherState extends State<HomePageOther>
     );
   }
 
-  void _getGoods() {
+  void _getList({bool reset = false}) {
+    if (reset) {
+      setState(() {
+        _listEntity.page = 0;
+        _listEntity.hasMore = false;
+      });
+    }
     Map<String, Object> map = Map();
     map["cateId"] = widget.homeCateEntity.cateId;
-    map["pageNo"] = page;
-    map["sort"] = _sortModle.s1 + _sortModle.s2;
+    map["pageNo"] = _listEntity.page;
+    map["sort"] = _sortModle.sortStr;
 
     HttpUtil()
         .get('getProductList', parms: MapUrlParamsUtils.getUrlParamsByMap(map))
@@ -146,19 +181,15 @@ class _HomePageOtherState extends State<HomePageOther>
         List<ProductListEntity> list =
             EntityListFactory.generateList<ProductListEntity>(val['data']);
         ResListEntity resListEntity =
-            ResListUtil.buildResList(goodsList, list, page, noMore);
-
+            ResListUtil.buildResList(_listEntity, list);
         setState(() {
-          print(val["message"]);
-          goodsList = resListEntity.list;
-          noMore = resListEntity.noMore;
-          page = resListEntity.page;
+          _listEntity = resListEntity;
         });
       } else {
         setState(() {
           print(val["message"]);
-          goodsList = List();
-          noMore = true;
+          _listEntity.list = List();
+          _listEntity.hasMore = true;
         });
       }
     });

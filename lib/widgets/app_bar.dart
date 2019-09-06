@@ -122,7 +122,7 @@ class HomeAppBar extends StatelessWidget implements PreferredSizeWidget {
   @override
   Widget build(BuildContext context) {
     return AppBar(
-      backgroundColor: Colors.white,
+      backgroundColor: Theme.of(context).primaryColor,
       elevation: 0,
       brightness: ThemeData.estimateBrightnessForColor(backgroundColor) ==
               Brightness.dark
@@ -142,7 +142,7 @@ class HomeAppBar extends StatelessWidget implements PreferredSizeWidget {
           return Align(
             widthFactor: 10,
             alignment: Alignment.center,
-            child: Text(leadingText, style: TextStyles.textNormal14),
+            child: Text(leadingText, style: TextStyles.textWhite14),
           );
         },
       ),

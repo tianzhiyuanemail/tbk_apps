@@ -16,7 +16,7 @@ class BackTopButton extends StatelessWidget {
       child: FloatingActionButton(
           heroTag: null,
           /// 解决错误 There are multiple heroes that share the same tag within a subtree.
-          backgroundColor: Colors.pink.withOpacity(0.7),
+          backgroundColor: Theme.of(context).primaryColor,
           child: Icon(
             Icons.arrow_upward,
             color: Colors.white,

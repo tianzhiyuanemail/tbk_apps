@@ -90,6 +90,30 @@ class HttpUtil {
   }
 
   /*
+   * get请求
+   */
+  Future getAllPath(path, { data, options, cancelToken}) async {
+    print("传入参数${data}");
+
+    Response response;
+    try {
+      response = await dio.get(path,
+          queryParameters: data, options: options, cancelToken: cancelToken);
+      print('get success---------${response.statusCode}');
+
+      //      response.data; 响应体
+      //      response.headers; 响应头
+      //      response.request; 请求体
+      //      response.statusCode; 状态码
+
+    } on DioError catch (e) {
+      print('get error---------$e');
+      formatError(e);
+    }
+    return response.data;
+  }
+
+  /*
    * post请求
    */
   Future post(path, parms, {data, options, cancelToken}) async {

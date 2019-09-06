@@ -12,6 +12,8 @@ class MyScaffold extends StatefulWidget {
   /// Creates a visual scaffold for material design widgets.
   const MyScaffold({
     Key key,
+    this.globalKey,
+    this.stackKey,
     this.appBar,
     this.body,
     this.floatingActionButton,
@@ -27,6 +29,8 @@ class MyScaffold extends StatefulWidget {
     this.resizeToAvoidBottomInset,
     this.primary = true,
     this.scrollController,
+    this.sortFilter,
+    this.issort = false,
     this.backTop = false,
     this.drawerDragStartBehavior = DragStartBehavior.start,
     this.extendBody = false,
@@ -34,6 +38,9 @@ class MyScaffold extends StatefulWidget {
         assert(extendBody != null),
         assert(drawerDragStartBehavior != null),
         super(key: key);
+
+  final GlobalKey globalKey;
+  final GlobalKey stackKey;
 
   final bool extendBody;
 
@@ -58,6 +65,9 @@ class MyScaffold extends StatefulWidget {
   final Widget bottomNavigationBar;
 
   final Widget bottomSheet;
+
+  final Widget sortFilter;
+  final bool issort;
 
   final bool resizeToAvoidBottomPadding;
 
@@ -100,12 +110,7 @@ class _MyState extends State<MyScaffold> {
     }
   }
 
-  @override
-  void dispose() {
-    ///为了避免内存泄露，需要调用_controller.dispose
-    widget.scrollController.dispose();
-    super.dispose();
-  }
+
 
   @override
   Widget build(BuildContext context) {
@@ -115,10 +120,11 @@ class _MyState extends State<MyScaffold> {
         // 触摸收起键盘
         FocusScope.of(context).requestFocus(FocusNode());
       },
-      child:  MyScaffold(
-        key: widget.key,
+      child:  Scaffold(
+        key: widget.globalKey,
         appBar: widget.appBar,
         body: Stack(
+          key: widget.stackKey,
           children: <Widget>[
             widget.body,
             Positioned(
@@ -128,6 +134,7 @@ class _MyState extends State<MyScaffold> {
                   controller: widget.scrollController,
                   showToTopBtn: showToTopBtn),
             ),
+            widget.issort? widget.sortFilter:Container(),
           ],
         ),
         floatingActionButton: widget.floatingActionButton,
@@ -165,7 +172,7 @@ class BackTopButton extends StatelessWidget {
           heroTag: null,
 
           /// 解决错误 There are multiple heroes that share the same tag within a subtree.
-          backgroundColor: Colors.pink.withOpacity(0.7),
+          backgroundColor: Theme.of(context).primaryColor,
           child: Icon(
             Icons.arrow_upward,
             color: Colors.white,

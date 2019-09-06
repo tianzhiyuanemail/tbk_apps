@@ -100,3 +100,13 @@ flutter:
     - assets/images/user/account/
     - assets/images/sys/
     - assets/data/china.json
+
+
+
+  fonts:
+    - family: taobaoIconFont
+      fonts:
+        - asset: static/font/taobao/iconfont.ttf
+    - family: wxIconFont
+      fonts:
+        - asset: static/font/weixin_font/iconfont.ttf

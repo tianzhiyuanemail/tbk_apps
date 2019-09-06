@@ -14,14 +14,21 @@ import 'package:tbk_app/util/image_utils.dart';
 /// Sliver 商品列表  SliverList
 class SliverProductList extends StatelessWidget {
   final List<ProductListEntity> list;
-  final int crossAxisCount;
+  final bool single;
+  final bool hasMore;
+  final Function onLoad;
 
-  SliverProductList({Key key, this.list, this.crossAxisCount})
+  SliverProductList({Key key, this.list, this.single,this.hasMore, this.onLoad})
       : super(key: key);
 
   /// 商品列表
   Widget _getWidget1(BuildContext context, int index) {
     ProductListEntity obj = list[index];
+    if ((index + 3) == list.length && !hasMore) {
+      print(
+          'SearchResultListWidget.build next page,current data count ${list.length}');
+      onLoad();
+    }
     return InkWell(
       onTap: () {
         NavigatorUtil.push(
@@ -163,6 +170,11 @@ class SliverProductList extends StatelessWidget {
   /// 商品列表
   Widget _getWidget2(BuildContext context, int index) {
     ProductListEntity obj = list[index];
+    if ((index + 4) == list.length && !hasMore) {
+      print(
+          'SearchResultListWidget.build next page,current data count ${list.length}');
+      onLoad();
+    }
     return InkWell(
       onTap: () {
         NavigatorUtil.push(
@@ -245,7 +257,7 @@ class SliverProductList extends StatelessWidget {
 
   Widget _List(BuildContext context) {
     if (list.length != 0) {
-      if (crossAxisCount == 1) {
+      if (single) {
         return SliverGrid(
           gridDelegate: new SliverGridDelegateWithMaxCrossAxisExtent(
             maxCrossAxisExtent: 500.0,
@@ -281,7 +293,7 @@ class SliverProductList extends StatelessWidget {
           child: Container(
         alignment: Alignment.center,
         height: ScreenUtil().setHeight(750),
-        child: CupertinoActivityIndicator(),
+        child: CircularProgressIndicator(),
       ));
     }
   }

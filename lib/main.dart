@@ -10,6 +10,7 @@ import 'package:tbk_app/pages/user/setting/update_dialog.dart';
 import 'package:tbk_app/provide/child_cate.dart';
 import 'package:tbk_app/provide/user_info_provide.dart';
 import 'package:tbk_app/res/colors.dart';
+import 'package:tbk_app/res/gzx_style.dart';
 import 'package:tbk_app/router/application.dart';
 import 'package:tbk_app/router/routers.dart';
 import 'package:tbk_app/util/sp_util.dart';
@@ -67,12 +68,13 @@ class MyApp extends StatelessWidget {
           dismissOtherOnShow: true,
           // 这一步
           child: MaterialApp(
-              onGenerateRoute: Application.router.generator,
-              debugShowCheckedModeBanner: false,
               theme: ThemeData(
                 platform: TargetPlatform.iOS,
-                backgroundColor: Colours.bg_color,
+                primarySwatch: GZXColors.primarySwatch,
               ),
+              onGenerateRoute: Application.router.generator,
+              debugShowCheckedModeBanner: false,
+
               home: Scaffold(
                 resizeToAvoidBottomPadding: false,
                 backgroundColor: Colours.bg_color,

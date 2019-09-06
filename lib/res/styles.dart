@@ -77,6 +77,15 @@ class TextStyles {
     fontSize: Dimens.font_sp14,
     color: Colours.text_gray_c,
   );
+    static const TextStyle textWhite14 = TextStyle(
+    fontSize: Dimens.font_sp14,
+    color: Colours.white,
+  );
+
+
+
+
+
 }
 
 /// 间隔

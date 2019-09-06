@@ -2,13 +2,11 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
-import 'package:tbk_app/pages/user/login/login_page.dart';
-import 'package:tbk_app/pages/user/setting/update_dialog.dart';
-import 'package:tbk_app/pages/user/user_info_page.dart';
 import 'package:tbk_app/pages/product/product_deatil_page.dart';
+import 'package:tbk_app/pages/user/login/login_page.dart';
+import 'package:tbk_app/pages/user/user_info_page.dart';
 import 'package:tbk_app/res/colors.dart';
-import 'package:tbk_app/router/routers.dart';
-import 'package:tbk_app/util/fluro_navigator_util.dart';
+import 'package:tbk_app/res/gzx_style.dart';
 import 'package:tbk_app/util/full_screen_dialog_util.dart';
 import 'package:tbk_app/util/sp_util.dart';
 import 'package:tbk_app/widgets/search_dialog.dart';
@@ -31,19 +29,12 @@ class _ContainerPageState extends State<ContainerPage>
 //  final ShopPageWidget shopPageWidget  = ShopPageWidget();
   List<Widget> pages = new List<Widget>();
 
-  final itemNames = [
-    _Item('首页', 'assets/images/sys/ic_tab_home_active.png',
-        'assets/images/sys/ic_tab_home_normal.png'),
-    _Item('分类', 'assets/images/sys/ic_tab_subject_active.png',
-        'assets/images/sys/ic_tab_subject_normal.png'),
-    _Item('社区', 'assets/images/sys/ic_tab_shequ_active.png',
-        'assets/images/sys/ic_tab_shequ_normal.png'),
-    _Item('我的', 'assets/images/sys/ic_tab_profile_active.png',
-        'assets/images/sys/ic_tab_profile_normal.png')
-  ];
+
   String tocken;
-  List<BottomNavigationBarItem> itemList;
-  int _selectIndex = 0;
+   int _selectIndex = 0;
+
+  Color _bottomNavigationColor = Color(0xFF585858);
+  Color _bottomNavigationActiveColor = Colours.appbar_red;
 
   @override
   void initState() {
@@ -51,24 +42,21 @@ class _ContainerPageState extends State<ContainerPage>
 
     // 在当前页面放一个观察者。
     WidgetsBinding.instance.addObserver(this);
-    pages..add(HomePage())..add(CatePage())..add(
-        ProductDetail('588618803525'))..add(MyInfoPage());
+    pages
+      ..add(HomePage())
+      ..add(CatePage())
+      ..add(ProductDetail('588618803525'))
+      ..add(MyInfoPage());
     tocken =
-    SpUtil.getString("tocken") == null ? "" : SpUtil.getString("tocken");
+        SpUtil.getString("tocken") == null ? "" : SpUtil.getString("tocken");
+  }
 
-    if (itemList == null) {
-      itemList = itemNames
-          .map(
-            (item) =>
-            BottomNavigationBarItem(
-              icon: Image.asset(item.normalIcon, width: 25.0, height: 25.0),
-              title: Text(item.name, style: TextStyle(fontSize: 12.0)),
-              activeIcon:
-              Image.asset(item.activeIcon, width: 24.0, height: 24.0),
-            ),
-      )
-          .toList();
-    }
+  Widget _buildBarItemTitle(String text, int index) {
+    return Text(
+      text,
+      style: TextStyle(
+          color: _selectIndex == index ? _bottomNavigationActiveColor : _bottomNavigationColor, fontSize: 12),
+    );
   }
 
   @override
@@ -99,7 +87,8 @@ class _ContainerPageState extends State<ContainerPage>
     String searchText = SpUtil.getString("searchText");
 
     // 剪贴板不为空时。
-    if (clipboardData != null && clipboardData.text.trim() != '' &&
+    if (clipboardData != null &&
+        clipboardData.text.trim() != '' &&
         (searchText == null || searchText != clipboardData.text.trim())) {
       String _name = clipboardData.text.trim();
       // 淘口令的正则表达式，能判断类似“￥123456￥”的文本。
@@ -122,7 +111,50 @@ class _ContainerPageState extends State<ContainerPage>
     return Scaffold(
       backgroundColor: Colors.black12,
       bottomNavigationBar: BottomNavigationBar(
-        items: this.itemList,
+        items: [
+          BottomNavigationBarItem(
+              icon: Icon(
+                GZXIcons.home,
+                color: _selectIndex == 0 ? _bottomNavigationActiveColor : _bottomNavigationColor,
+              ),
+              activeIcon: Icon(
+                GZXIcons.home_active,
+                color: _selectIndex == 0 ? _bottomNavigationActiveColor : _bottomNavigationColor,
+                size: 34,
+              ),
+              title: _selectIndex == 0 ? Container() : _buildBarItemTitle('首页', 0)
+          ),
+          BottomNavigationBarItem(
+              icon: Icon(
+                GZXIcons.we_tao,
+                color: _selectIndex == 1 ? _bottomNavigationActiveColor : _bottomNavigationColor,
+              ),
+              activeIcon: Icon(
+                GZXIcons.we_tao_fill,
+                color: _selectIndex == 1 ? _bottomNavigationActiveColor : _bottomNavigationColor,
+              ),
+              title: _buildBarItemTitle('微淘', 1)),
+          BottomNavigationBarItem(
+              icon: Icon(
+                GZXIcons.cart,
+                color: _selectIndex == 2 ? _bottomNavigationActiveColor : _bottomNavigationColor,
+              ),
+              activeIcon: Icon(
+                GZXIcons.cart_fill,
+                color: _selectIndex == 2 ? _bottomNavigationActiveColor : _bottomNavigationColor,
+              ),
+              title: _buildBarItemTitle('购物车', 2)),
+          BottomNavigationBarItem(
+              icon: Icon(
+                GZXIcons.my,
+                color: _selectIndex == 3 ? _bottomNavigationActiveColor : _bottomNavigationColor,
+              ),
+              activeIcon: Icon(
+                GZXIcons.my_fill,
+                color: _selectIndex == 3 ? _bottomNavigationActiveColor : _bottomNavigationColor,
+              ),
+              title: _buildBarItemTitle('我的乐享', 3)),
+        ],
         onTap: (int index) {
           if (index == 3 && (tocken == null || tocken == '')) {
             FullScreenDialogUtil.openFullDialog(context, LoginPage());
@@ -130,8 +162,6 @@ class _ContainerPageState extends State<ContainerPage>
             ///这里根据点击的index来显示，非index的page均隐藏
             setState(() {
               _selectIndex = index;
-              //这个是用来控制比较特别的shopPage中WebView不能动态隐藏的问题
-              //shopPageWidget.setShowState(pages.indexOf(shopPageWidget) == _selectIndex);
             });
           }
         },
@@ -157,7 +187,14 @@ class _ContainerPageState extends State<ContainerPage>
 
 /// vo 对象
 class _Item {
-  String name, activeIcon, normalIcon;
+  String name;
 
-  _Item(this.name, this.activeIcon, this.normalIcon);
+  IconData icon;
+  IconData icon_active;
+
+  _Item(
+    this.name,
+    this.icon,
+    this.icon_active,
+  );
 }

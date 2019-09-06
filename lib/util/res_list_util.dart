@@ -1,28 +1,26 @@
 class ResListEntity<T> {
   List<T> list;
   int page;
-  bool noMore;
+  bool hasMore;
+
+  ResListEntity({this.list, this.page, this.hasMore});
+
+
 }
 
 class ResListUtil<T> {
-  static ResListEntity buildResList<T>(
-      List<T> listBase, List<T> listRes, int page, bool noMore) {
-    ResListEntity<T> resListEntity = new ResListEntity();
+  static ResListEntity buildResList<T>(ResListEntity listEntity ,  List<T> listRes) {
     if (listRes == null || listRes.length == 0) {
-      resListEntity.noMore = true;
+      listEntity.hasMore = true;
     } else {
-      if (page == 0) {
-        listBase = listRes;
+      if (listEntity.page == 0) {
+        listEntity.list = listRes;
       } else {
-        listBase.addAll(listRes);
+        listEntity.list.addAll(listRes);
       }
-      page++;
+      listEntity.page++;
     }
 
-    resListEntity.list = listBase;
-    resListEntity.page = page;
-    resListEntity.noMore = noMore;
-
-    return resListEntity;
+    return listEntity;
   }
 }

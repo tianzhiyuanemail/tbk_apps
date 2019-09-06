@@ -3,6 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:tbk_app/modle/material_entity.dart';
 import 'package:tbk_app/modle/taobao_user_entity.dart';
 import 'package:tbk_app/pages/container_page.dart';
+import 'package:tbk_app/pages/search/search_page.dart';
+import 'package:tbk_app/pages/search/search_result_page.dart';
 import 'package:tbk_app/pages/user/fund/account_record_list_page.dart';
 import 'package:tbk_app/pages/user/fund/add_withdrawal_account_page.dart';
 import 'package:tbk_app/pages/user/fund/bank_select_page.dart';
@@ -25,7 +27,7 @@ import 'package:tbk_app/pages/user/user_login_bangding_page.dart';
 import 'package:tbk_app/pages/user/user_login_page.dart';
 import 'package:tbk_app/pages/navigator_router/navigator_router_page.dart';
 import 'package:tbk_app/pages/product/product_list_page.dart';
-import 'package:tbk_app/pages/search/search_product_list_page.dart';
+import 'package:tbk_app/pages/search/search_result_list_page.dart';
 import 'package:tbk_app/pages/user/login/login_page.dart';
 import 'package:tbk_app/pages/user/login/register_page.dart';
 import 'package:tbk_app/pages/user/login/reset_password_page.dart';
@@ -36,7 +38,6 @@ import 'package:tbk_app/widgets/web_view_page_widget.dart';
 
 import '../entity_factory.dart';
 import '../pages/product/product_deatil_page.dart';
-import '../pages/search/search_page.dart';
 import 'dart:convert';
 
 /// details
@@ -50,15 +51,18 @@ Handler detailsHandler = Handler(
 /// searchPage
 Handler searchPageHandler = Handler(
     handlerFunc: (BuildContext context, Map<String, List<String>> params) {
-  return SearchPage();
-});
+//  return SearchPage();
+        return SearchPage(keywords: "",);
+
+    });
 
 ///searchProductList
 Handler searchProductListPageHandler = Handler(
     handlerFunc: (BuildContext context, Map<String, List<String>> params) {
   String s = params['searchText'].first;
   String searchText = FluroConvertUtils.fluroCnParamsDecode(s);
-  return SearchProductListPage(searchText);
+//  return SearchProductListPage(searchText);
+  return SearchResultPage(keywords: searchText,);
 });
 
 ///productListPage
