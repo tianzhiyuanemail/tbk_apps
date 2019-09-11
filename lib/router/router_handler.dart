@@ -2,9 +2,12 @@ import 'package:fluro/fluro.dart';
 import 'package:flutter/material.dart';
 import 'package:tbk_app/modle/material_entity.dart';
 import 'package:tbk_app/modle/taobao_user_entity.dart';
+import 'package:tbk_app/pages/brand/brand_page.dart';
+import 'package:tbk_app/pages/cate/cate_page.dart';
 import 'package:tbk_app/pages/container_page.dart';
 import 'package:tbk_app/pages/search/search_page.dart';
 import 'package:tbk_app/pages/search/search_result_page.dart';
+import 'package:tbk_app/pages/share/weitao_page.dart';
 import 'package:tbk_app/pages/user/fund/account_record_list_page.dart';
 import 'package:tbk_app/pages/user/fund/add_withdrawal_account_page.dart';
 import 'package:tbk_app/pages/user/fund/bank_select_page.dart';
@@ -17,6 +20,7 @@ import 'package:tbk_app/pages/user/fund/withdrawal_password_page.dart';
 import 'package:tbk_app/pages/user/fund/withdrawal_record_list_page.dart';
 import 'package:tbk_app/pages/user/fund/withdrawal_result_page.dart';
 import 'package:tbk_app/pages/user/message/message_page.dart';
+import 'package:tbk_app/pages/user/my_page.dart';
 import 'package:tbk_app/pages/user/setting/about_page.dart';
 import 'package:tbk_app/pages/user/setting/account_manager_page.dart';
 import 'package:tbk_app/pages/user/setting/setting_page.dart';
@@ -54,6 +58,17 @@ Handler searchPageHandler = Handler(
 //  return SearchPage();
         return SearchPage(keywords: "",);
 
+    });
+
+/// catePage
+Handler catePageHandler = Handler(
+    handlerFunc: (BuildContext context, Map<String, List<String>> params) {
+        return CatePage();
+    });
+/// brandPage
+Handler brandPageHandler = Handler(
+    handlerFunc: (BuildContext context, Map<String, List<String>> params) {
+         return BrandPage();
     });
 
 ///searchProductList
@@ -105,6 +120,12 @@ Handler userLoginPageHandler = Handler(
   return UserLoginPage();
 });
 
+/// myPage
+Handler myPageHandler = Handler(
+    handlerFunc: (BuildContext context, Map<String, List<String>> params) {
+  return MyPage();
+});
+
 /// userLoginPageBangDing
 Handler userLoginPageBangDingHandler = Handler(
     handlerFunc: (BuildContext context, Map<String, List<String>> params) {
@@ -115,11 +136,23 @@ Handler userLoginPageBangDingHandler = Handler(
   return UserLoginBangDingPage(taobaoUserEntity);
 });
 
+/// weiTaoPage
+Handler weiTaoPageHandler = Handler(
+    handlerFunc: (BuildContext context, Map<String, List<String>> params) {
+  return WeiTaoPage();
+});
+
+
 /// login start
 Handler loginPageHandler = Handler(
     handlerFunc: (BuildContext context, Map<String, List<String>> params) {
   return LoginPage();
 });
+
+
+
+
+
 Handler registerPageHandler = Handler(
     handlerFunc: (BuildContext context, Map<String, List<String>> params) {
   return RegisterPage();

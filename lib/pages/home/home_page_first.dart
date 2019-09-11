@@ -2,7 +2,6 @@
  * Copyright (C) 2019 Baidu, Inc. All Rights Reserved.
  */
 
-import 'package:common_utils/common_utils.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/painting.dart';
@@ -18,25 +17,18 @@ import 'package:tbk_app/modle/home_navigator_entity.dart';
 import 'package:tbk_app/modle/product.dart';
 import 'package:tbk_app/modle/product_list_entity.dart';
 import 'package:tbk_app/modle/product_recommend_entity.dart';
-import 'package:tbk_app/res/colors.dart';
 import 'package:tbk_app/res/gzx_style.dart';
-import 'package:tbk_app/res/resources.dart';
 import 'package:tbk_app/router/routers.dart';
-import 'package:tbk_app/util/cache_network_image_util.dart';
-import 'package:tbk_app/util/easy_refresh_util.dart';
 import 'package:tbk_app/util/fluro_convert_util.dart';
 import 'package:tbk_app/util/fluro_navigator_util.dart';
 import 'package:tbk_app/util/http_util.dart';
 import 'package:tbk_app/util/image_utils.dart';
 import 'package:tbk_app/util/map_url_params_utils.dart';
-import 'package:tbk_app/util/res_list_util.dart';
 import 'package:tbk_app/widgets/animation_headlines.dart';
 import 'package:tbk_app/widgets/back_top_widget.dart';
 import 'package:tbk_app/widgets/menue.dart';
 import 'package:tbk_app/widgets/my_easy_refresh.dart';
-import 'package:tbk_app/widgets/product_list_view_widget.dart';
 import 'package:tbk_app/widgets/recommed.dart';
-import 'package:url_launcher/url_launcher.dart';
 
 import '../../entity_list_factory.dart';
 
@@ -429,28 +421,33 @@ class _HomePageFirstState extends State<HomePageFirst>
     return Container(
       height: ScreenUtil().setHeight(333),
       width: ScreenUtil().setWidth(750),
+      margin: EdgeInsets.only(left: 10,right: 10),
       child: Swiper(
         index: 0,
         itemBuilder: (BuildContext context, int index) {
-          return loadNetworkImage("${swiperList[index].imageUrl}",
-              fit: BoxFit.fill);
+          return Container(
+            decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(20),
+                image: DecorationImage(
+                  image: NetworkImage("${swiperList[index].imageUrl}"),  // 图片数组
+                  fit: BoxFit.cover,
+                ),
+            ),
+          );
         },
         itemCount: swiperList.length,
         pagination: SwiperPagination(
           builder: DotSwiperPaginationBuilder(
               color: Colors.white,
-              // 其他点的颜色
               activeColor: Colors.pink,
-              // 当前点的颜色
               space: 8,
-              // 点与点之间的距离
               activeSize: 8,
-              // 当前点的大小
               size: 8),
         ),
-        loop: false,
-        autoplay: false,
+        loop: true,
+        autoplay: true,
         controller: _swiperController,
+        scale: 0.8,
       ),
     );
   }

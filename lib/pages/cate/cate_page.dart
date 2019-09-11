@@ -42,24 +42,20 @@ class _CatePageState extends State<CatePage>
     _cateGetList();
   }
 
-
   void _cateGetList() {
-
     HttpUtil().get('cateGetList').then((val) {
-      if(val["success"]){
+      if (val["success"]) {
         setState(() {
-          list  = EntityListFactory.generateList<CateEntity>(val['data']);
+          list = EntityListFactory.generateList<CateEntity>(val['data']);
           _updateCateChild(0);
         });
-
-      }else{
+      } else {
         setState(() {
           print(val["message"]);
           list = List();
         });
       }
     });
-
   }
 
   @override
@@ -69,30 +65,32 @@ class _CatePageState extends State<CatePage>
     super.dispose();
   }
 
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: MyAppBar(
         centerTitle: "商品分类",
-        isBack: false,
       ),
-      body: Container(
-        width: ScreenUtil.screenWidth,
-        child: Row(
-          children: <Widget>[
-            leftWidget(),
-            rightWidget(),
-          ],
-        ),
-      ),
+      body: list.length == 0
+          ? Container(
+              alignment: Alignment.center,
+              height: ScreenUtil().setHeight(750),
+              child: CircularProgressIndicator(),
+            )
+          : Container(
+              width: ScreenUtil.screenWidth,
+              child: Row(
+                children: <Widget>[
+                  leftWidget(),
+                  rightWidget(),
+                ],
+              ),
+            ),
     );
   }
 
   /// 切换选择
   _changeSelected(double begin, double end) {
-    final CurvedAnimation curve =
-        new CurvedAnimation(parent: controller, curve: Curves.elasticOut);
     numberAnimation = new Tween(begin: begin, end: end).animate(controller)
       ..addListener(() {
         setState(() {
@@ -100,13 +98,6 @@ class _CatePageState extends State<CatePage>
         });
       });
     controller.forward(from: 0.0);
-  }
-
-  /// 滚动到选择的位置
-  _animateTo(double index) {
-    double scrollNumber = (index - 1) * 1580 / 50;
-    _scrollController.animateTo(scrollNumber,
-        duration: new Duration(milliseconds: 300), curve: Curves.ease);
   }
 
   /// 初始化二级类目
@@ -126,13 +117,15 @@ class _CatePageState extends State<CatePage>
       },
       child: Container(
         margin: EdgeInsets.only(top: 10, bottom: 10, left: 10, right: 10),
-//        padding: EdgeInsets.only(top: 3, bottom: 3),
         height: ScreenUtil().setWidth(50),
         alignment: Alignment.center,
         decoration: _selected
             ? BoxDecoration(
                 color: Colours.appbar_red,
-                border: Border.all(width: 2.0, color: Colours.appbar_red,),
+                border: Border.all(
+                  width: 2.0,
+                  color: Colours.appbar_red,
+                ),
                 borderRadius: BorderRadius.all(Radius.circular(15)),
               )
             : BoxDecoration(
@@ -162,7 +155,6 @@ class _CatePageState extends State<CatePage>
             right: BorderSide(width: 2, color: Colors.black12),
           )),
       child: ListView(
-        //controller: _scrollController,
         children: list.asMap().keys.map((v) {
           return _item(v.toDouble());
         }).toList(),
@@ -174,20 +166,20 @@ class _CatePageState extends State<CatePage>
 
   Widget rightWidget() {
     return Container(
-        width: ScreenUtil().setWidth(550),
-        child: Provide<ChildCate>(
-          builder: (context, child, data) {
-            return Container(
-              decoration: BoxDecoration(
-                color: Colors.white,
-                border: Border(
-                  bottom: BorderSide(width: 1, color: Colors.black12),
-                ),
+      width: ScreenUtil().setWidth(550),
+      child: Provide<ChildCate>(
+        builder: (context, child, data) {
+          return Container(
+            decoration: BoxDecoration(
+              color: Colors.white,
+              border: Border(
+                bottom: BorderSide(width: 1, color: Colors.black12),
               ),
-              child: rightList(data.chileCate),
-            );
-          },
-        ),
+            ),
+            child: rightList(data.chileCate),
+          );
+        },
+      ),
     );
   }
 
@@ -200,10 +192,12 @@ class _CatePageState extends State<CatePage>
       children: cateChild.map((cate) {
         return InkWell(
           onTap: () {
-            NavigatorUtil.push(context, Routers.productListPage + "?cateId=${cate.cateId}&cateName=${FluroConvertUtils.fluroCnParamsEncode(cate.cateName)}");
+            NavigatorUtil.push(
+                context,
+                Routers.productListPage +
+                    "?cateId=${cate.cateId}&cateName=${FluroConvertUtils.fluroCnParamsEncode(cate.cateName)}");
           },
           child: Container(
-            //width: 20,
             padding: EdgeInsets.all(23),
             child: Column(
               children: <Widget>[

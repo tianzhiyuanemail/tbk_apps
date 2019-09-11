@@ -18,7 +18,7 @@ class GZXColors {
 //  static const int primaryValue = 0xFF24292E;
 //  static const int primaryLightValue = 0xFF42464b;
 //  static const int primaryDarkValue = 0xFF121917;
-  static const int primaryValue = 0xFFfe7301; // 橘黄色
+  static const int primaryValue = 0xFFFD4375; // 橘黄色
   static const int primaryLightValue = 0xFFfe7301;
   static const int primaryDarkValue = 0xFFfe7301;
 

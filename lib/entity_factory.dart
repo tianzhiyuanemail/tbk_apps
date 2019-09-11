@@ -5,6 +5,9 @@ import 'package:tbk_app/modle/advertisement_entity.dart';
 import 'package:tbk_app/modle/product_entity.dart';
 import 'package:tbk_app/modle/home_cate_entity.dart';
 import 'package:tbk_app/modle/product_recommend_entity.dart';
+import 'package:tbk_app/modle/haodanku/brand_item_list_entity.dart';
+import 'package:tbk_app/modle/haodanku/brand_today_item_list_entity.dart';
+import 'package:tbk_app/modle/haodanku/brand_subject_item_list_entity.dart';
 import 'package:tbk_app/modle/banners_entity.dart';
 import 'package:tbk_app/modle/user_info_entity.dart';
 import 'package:tbk_app/modle/material_entity.dart';
@@ -31,6 +34,12 @@ class EntityFactory {
       return HomeCateEntity.fromJson(json) as T;
     } else if (T.toString() == "ProductRecommendEntity") {
       return ProductRecommendEntity.fromJson(json) as T;
+    } else if (T.toString() == "BrandItemListEntity") {
+      return BrandItemListEntity.fromJson(json) as T;
+    } else if (T.toString() == "BrandTodayItemListEntity") {
+      return BrandTodayItemListEntity.fromJson(json) as T;
+    } else if (T.toString() == "BrandSubjectItemListEntity") {
+      return BrandSubjectItemListEntity.fromJson(json) as T;
     } else if (T.toString() == "BannersEntity") {
       return BannersEntity.fromJson(json) as T;
     } else if (T.toString() == "UserInfoEntity") {

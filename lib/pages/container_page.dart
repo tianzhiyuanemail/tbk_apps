@@ -2,9 +2,10 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
-import 'package:tbk_app/pages/product/product_deatil_page.dart';
+import 'package:tbk_app/pages/brand/brand_page.dart';
+import 'package:tbk_app/pages/share/weitao_page.dart';
 import 'package:tbk_app/pages/user/login/login_page.dart';
-import 'package:tbk_app/pages/user/user_info_page.dart';
+import 'package:tbk_app/pages/user/my_page.dart';
 import 'package:tbk_app/res/colors.dart';
 import 'package:tbk_app/res/gzx_style.dart';
 import 'package:tbk_app/util/full_screen_dialog_util.dart';
@@ -44,9 +45,10 @@ class _ContainerPageState extends State<ContainerPage>
     WidgetsBinding.instance.addObserver(this);
     pages
       ..add(HomePage())
+      ..add(BrandPage())
       ..add(CatePage())
-      ..add(ProductDetail('588618803525'))
-      ..add(MyInfoPage());
+      ..add(WeiTaoPage())
+      ..add(MyPage());
     tocken =
         SpUtil.getString("tocken") == null ? "" : SpUtil.getString("tocken");
   }
@@ -136,27 +138,37 @@ class _ContainerPageState extends State<ContainerPage>
               title: _buildBarItemTitle('微淘', 1)),
           BottomNavigationBarItem(
               icon: Icon(
-                GZXIcons.cart,
+                GZXIcons.we_tao,
                 color: _selectIndex == 2 ? _bottomNavigationActiveColor : _bottomNavigationColor,
+              ),
+              activeIcon: Icon(
+                GZXIcons.we_tao_fill,
+                color: _selectIndex == 2 ? _bottomNavigationActiveColor : _bottomNavigationColor,
+              ),
+              title: _buildBarItemTitle('微淘', 2)),
+          BottomNavigationBarItem(
+              icon: Icon(
+                GZXIcons.cart,
+                color: _selectIndex == 3 ? _bottomNavigationActiveColor : _bottomNavigationColor,
               ),
               activeIcon: Icon(
                 GZXIcons.cart_fill,
-                color: _selectIndex == 2 ? _bottomNavigationActiveColor : _bottomNavigationColor,
+                color: _selectIndex == 3 ? _bottomNavigationActiveColor : _bottomNavigationColor,
               ),
-              title: _buildBarItemTitle('购物车', 2)),
+              title: _buildBarItemTitle('分享', 3)),
           BottomNavigationBarItem(
               icon: Icon(
                 GZXIcons.my,
-                color: _selectIndex == 3 ? _bottomNavigationActiveColor : _bottomNavigationColor,
+                color: _selectIndex == 4 ? _bottomNavigationActiveColor : _bottomNavigationColor,
               ),
               activeIcon: Icon(
                 GZXIcons.my_fill,
-                color: _selectIndex == 3 ? _bottomNavigationActiveColor : _bottomNavigationColor,
+                color: _selectIndex == 4 ? _bottomNavigationActiveColor : _bottomNavigationColor,
               ),
-              title: _buildBarItemTitle('我的乐享', 3)),
+              title: _buildBarItemTitle('我的乐享', 4)),
         ],
         onTap: (int index) {
-          if (index == 3 && (tocken == null || tocken == '')) {
+          if (index == 4 && (tocken == null || tocken == '')) {
             FullScreenDialogUtil.openFullDialog(context, LoginPage());
           } else {
             ///这里根据点击的index来显示，非index的page均隐藏
@@ -183,18 +195,4 @@ class _ContainerPageState extends State<ContainerPage>
       ),
     );
   }
-}
-
-/// vo 对象
-class _Item {
-  String name;
-
-  IconData icon;
-  IconData icon_active;
-
-  _Item(
-    this.name,
-    this.icon,
-    this.icon_active,
-  );
 }

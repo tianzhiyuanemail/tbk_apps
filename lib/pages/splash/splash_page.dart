@@ -33,7 +33,7 @@ class SplashPageState extends State<SplashPage> {
     'splash/app_start_3',
   ];
   int _status = 0;
-  int _count = 3;
+  int _count = 1;
   splashModel _splashModel = splashModel();
 
   @override

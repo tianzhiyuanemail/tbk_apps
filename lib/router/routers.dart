@@ -7,6 +7,8 @@ class Routers {
   static String root = '/';
   static String detailsPage = '/detail';
   static String searchPage = '/searchPagee';
+  static String catePage = '/catePage';
+  static String brandPage = '/brandPage';
 
   static String searchProductListPage = '/searchProductListPage';
   static String productListPage = '/productListPage';
@@ -14,8 +16,15 @@ class Routers {
   static String navigatorRouterPage = '/navigatorRouterPage';
   static String navigatorWebViewPage = '/navigatorWebViewPage';
 
+  static String myPage = '/myPage';
+
+
   static String userLoginPage = '/userLoginPage';
   static String userLoginPageBangDing = '/userLoginPageBangDing';
+
+
+  static String weiTaoPage = "/weiTaoPage";
+
 
 
   static String loginPage = "/login";
@@ -64,6 +73,8 @@ class Routers {
     /// 配置路由
     router.define(detailsPage, handler: detailsHandler);
     router.define(searchPage, handler: searchPageHandler);
+    router.define(catePage, handler: catePageHandler);
+    router.define(brandPage, handler: brandPageHandler);
 
     router.define(searchProductListPage, handler: searchProductListPageHandler);
     router.define(productListPage, handler: productListPageHandler);
@@ -71,8 +82,13 @@ class Routers {
     router.define(navigatorRouterPage, handler: navigatorRouterPageHandler);
     router.define(navigatorWebViewPage, handler: navigatorWebViewPageHandler);
 
+    router.define(myPage, handler: myPageHandler);
     router.define(userLoginPage, handler: userLoginPageHandler);
     router.define(userLoginPageBangDing, handler: userLoginPageBangDingHandler);
+
+
+    router.define(weiTaoPage, handler:weiTaoPageHandler);
+
 
 
     router.define(loginPage, handler:loginPageHandler);

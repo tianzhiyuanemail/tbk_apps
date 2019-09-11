@@ -184,7 +184,8 @@ class _BookAudioVideoPageState extends State<HomePage>
               child: GestureDetector(
                 child: loadAssetImage("sys/expand", width: 25.0, height: 25.0),
                 onTap: () {
-                  _showSortMenu();
+                  NavigatorUtil.push(context, Routers.catePage );
+//                  _showSortMenu();
                 },
               ),
             ))

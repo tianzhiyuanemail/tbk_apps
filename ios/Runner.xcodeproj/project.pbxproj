@@ -19,7 +19,7 @@
 		97C146F31CF9000F007C117D /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 97C146F21CF9000F007C117D /* main.m */; };
 		97C146FC1CF9000F007C117D /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 97C146FA1CF9000F007C117D /* Main.storyboard */; };
 		97C146FE1CF9000F007C117D /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 97C146FD1CF9000F007C117D /* Assets.xcassets */; };
-		97C147011CF9000F007C117D /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 97C146FF1CF9000F007C117D /* LaunchScreen.storyboard */; };
+		E1229D12232664B700B51A03 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 97C146FF1CF9000F007C117D /* LaunchScreen.storyboard */; };
 		E1E376F922D4620D000C153C /* yw_1222.jpg in Resources */ = {isa = PBXBuildFile; fileRef = E1E376F822D4620D000C153C /* yw_1222.jpg */; };
 		E1E376FC22D46498000C153C /* bridge.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1E376FB22D46498000C153C /* bridge.swift */; };
 /* End PBXBuildFile section */
@@ -227,10 +227,10 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				97C147011CF9000F007C117D /* LaunchScreen.storyboard in Resources */,
 				3B3967161E833CAA004F5970 /* AppFrameworkInfo.plist in Resources */,
 				9740EEB41CF90195004384FC /* Debug.xcconfig in Resources */,
 				97C146FE1CF9000F007C117D /* Assets.xcassets in Resources */,
+				E1229D12232664B700B51A03 /* LaunchScreen.storyboard in Resources */,
 				E1E376F922D4620D000C153C /* yw_1222.jpg in Resources */,
 				97C146FC1CF9000F007C117D /* Main.storyboard in Resources */,
 			);
