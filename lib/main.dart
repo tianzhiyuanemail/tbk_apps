@@ -19,6 +19,7 @@ import 'config/loading.dart';
 import 'pages/splash/splash_page.dart';
 
 void main() async {
+
   var childCate = ChildCate();
   var userInfoProvide = UserInfoProvide();
 
